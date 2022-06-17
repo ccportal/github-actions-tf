@@ -64,17 +64,17 @@ jobs:
     #       echo "### No Changes in a source organization :rocket:" >> $GITHUB_STEP_SUMMARY
     #       exit 1
 
-  SCAassociatesEMEA:
-    name: 'SCAassociatesEMEA'
+  deploy2org1:
+    name: 'deploy2org1'
     needs: export
     runs-on: ubuntu-latest
-    environment: SCAassociatesEMEA
+    environment: genesyscloud-org1
 
     # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
     defaults:
       run:
         shell: bash
-        working-directory: targets
+        working-directory: organizations/org1
 
     steps:
     # Checkout the repository to the GitHub Actions runner
@@ -85,15 +85,8 @@ jobs:
       with:
         name: source-cache                            
 
-    - name: Apply Export from Source Org      
-      run: cp ../genesyscloud.tf.json input.tf.json
-
-    - name: Get Last Terraform state file
-      if: hashFiles('./{{ github.job}}/terraform.tfstate') != ''
-      run: cp ./{{ github.job}}/terraform.tfstate terraform.tfstate
-
-    - name: Test Folder
-      run: ls
+    - name: Apply Export       
+      run: cp ../../genesyscloud.tf.json input.tf.json
 
     - name: Terraform Init
       run: terraform init
@@ -101,8 +94,6 @@ jobs:
     - name: Terraform Apply      
       run: terraform apply -auto-approve -input=false -var=TF_VAR_REGION="eu-central-1" -var=TF_VAR_ID=${{ secrets.ORG1_USER_ID }} -var=TF_VAR_SECRET=${{ secrets.ORG1_SECRET }}
     
-    - name: Save TFState file
-      run: mv terraform.tfstate ./{{ github.job}}/terraform.tfstate
 
    # Push new file to repo
     - name: Push new file to repo
@@ -112,5 +103,46 @@ jobs:
           git config user.email github-actions@github.com
           git pull                    
           git add terraform.tfstate
-          git commit -m "changes applied"
+          git commit -m "org1 deployed"
+          git push
+
+  deploy2org2:
+    name: 'deploy2org2'
+    needs: export
+    runs-on: ubuntu-latest
+    environment: genesyscloud-org2
+
+    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+    defaults:
+      run:
+        shell: bash
+        working-directory: organizations/org2
+
+    steps:
+    # Checkout the repository to the GitHub Actions runner
+    - name: Checkout
+      uses: actions/checkout@v3
+    
+    - uses: actions/download-artifact@v2
+      with:
+        name: source-cache                            
+
+    - name: Apply Export       
+      run: cp ../../genesyscloud.tf.json input.tf.json             
+    
+    - name: Terraform Init
+      run: terraform init
+
+    - name: Terraform Apply      
+      run: terraform apply -auto-approve -input=false -var=TF_VAR_REGION="eu-west-1" -var=TF_VAR_ID=${{ secrets.ORG2_USER_ID }} -var=TF_VAR_SECRET=${{ secrets.ORG2_SECRET }}
+            
+   # Push new file to repo
+    - name: Push new file to repo
+      continue-on-error: true          
+      run: |       
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git pull          
+          git add terraform.tfstate
+          git commit -m "org2 deployed"
           git push
