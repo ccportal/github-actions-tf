@@ -31,8 +31,6 @@ jobs:
     # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v2
-      # with:
-      #   cli_config_credentials_token: ${{ secrets.TF_API_TOKEN2 }}
 
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
     - name: Terraform Init
@@ -42,9 +40,6 @@ jobs:
       # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
     - name: Terraform Apply      
       run: terraform apply -auto-approve -input=false -var=TF_VAR_REGION="eu-west-1" -var=TF_VAR_ID=${{ secrets.SOURCE_USER_ID }} -var=TF_VAR_SECRET=${{ secrets.SOURCE_SECRET }}
-
-    - name: Test dir
-      run: ls
 
     - uses: actions/upload-artifact@v2
       with:
@@ -105,8 +100,7 @@ jobs:
       continue-on-error: true          
       run: |       
           git config user.name github-actions
-          git config user.email github-actions@github.com
-          git pull                    
+          git config user.email github-actions@github.com                   
           git add terraform.tfstate
           git commit -m "org1 deployed"
           git push
@@ -146,8 +140,7 @@ jobs:
       continue-on-error: true          
       run: |       
           git config user.name github-actions
-          git config user.email github-actions@github.com
-          git pull          
+          git config user.email github-actions@github.com        
           git add terraform.tfstate
           git commit -m "org2 deployed"
           git push
