@@ -66,7 +66,13 @@ jobs:
 
     - uses: actions/download-artifact@v2
       with:
-        name: source-cache                            
+        name: source-cache    
+
+    - name: Create target directory (if not exists)      
+      run: |
+        if [ ! -d ${{github.job}} ]; then
+          mkdir ${{github.job}}
+        fi                        
 
     - name: Apply Export from Source Org      
       run: cp ../genesyscloud.tf.json ./input.tf.json
@@ -81,12 +87,6 @@ jobs:
     - name: Terraform Apply      
       run: terraform apply -auto-approve -input=false -var=TF_VAR_REGION="eu-central-1" -var=TF_VAR_ID=${{ secrets.ORG1_USER_ID }} -var=TF_VAR_SECRET=${{ secrets.ORG1_SECRET }}
     
-    - name: Create target directory (if not exists)      
-      run: |
-        if [ ! -d ${{github.job}} ]; then
-          mkdir ${{github.job}}
-        fi
-
     - name: Save TFState file
       run: mv terraform.tfstate ./${{github.job}}/terraform.tfstate
 
@@ -101,10 +101,10 @@ jobs:
 
 
   Finalize:
-    name: ${{github.job}}
+    name: 'Finalize'
     needs: [SCAassociatesEMEA]
     runs-on: ubuntu-latest
-    environment: ${{github.job}}
+    environment: 'Finalize'
 
     # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
     defaults:
