@@ -48,10 +48,10 @@ jobs:
 
 
   SCAassociatesEMEA:
-    name: 'SCAassociatesEMEA'
+    name: ${{github.job}}
     needs: export
     runs-on: ubuntu-latest
-    environment: SCAassociatesEMEA
+    environment: ${{github.job}}
 
     # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
     defaults:
@@ -82,7 +82,7 @@ jobs:
       run: terraform apply -auto-approve -input=false -var=TF_VAR_REGION="eu-central-1" -var=TF_VAR_ID=${{ secrets.ORG1_USER_ID }} -var=TF_VAR_SECRET=${{ secrets.ORG1_SECRET }}
     
     - name: Create target directory (if not exists)
-      if: if [ -d ${{github.job}} ];
+      if: if [ ! -d ${{github.job}} ];
       run: mkdir ${{github.job}}
 
     - name: Save TFState file
