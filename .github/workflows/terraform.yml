@@ -90,21 +90,16 @@ jobs:
     
     - name: Save TFState file
       run: mv terraform.tfstate ./${{github.job}}/terraform.tfstate
-
-    - name: GIT Diff
-      run: git diff ./${{github.job}}/terraform.tfstate
-
+    
    # Push new file to repo
-    - name: Push new file to repo
-      if: git diff ./${{github.job}}/terraform.tfstate
+    - name: Push new file to repo      
       continue-on-error: true          
       run: |       
           git config user.name github-actions
           git config user.email github-actions@github.com                    
           git pull
-          git add ./${{github.job}}/terraform.tfstate
-          git commit -m "changes applied"          
-          git push
+          git add ./${{github.job}}/terraform.tfstate              
+          git diff-index --quiet HEAD || (git commit -a -m'changes applied' --allow-empty && git push -f)
 
   PureCloud-Poland:
     name: ${{github.job}}
@@ -158,6 +153,5 @@ jobs:
           git config user.name github-actions
           git config user.email github-actions@github.com                    
           git pull
-          git add ./${{github.job}}/terraform.tfstate
-          git commit -m "changes applied"          
-          git push
+          git add ./${{github.job}}/terraform.tfstate          
+          git diff-index --quiet HEAD || (git commit -a -m'changes applied' --allow-empty && git push -f)
