@@ -93,13 +93,11 @@ jobs:
 
    # Push new file to repo
     - name: Push new file to repo
-      continue-on-error: true          
+      #continue-on-error: true          
       run: |       
           git config user.name github-actions
           git config user.email github-actions@github.com                    
           git add ./${{github.job}}/terraform.tfstate
-          git commit -m "changes applied"
-          git push
 
 
   Finalize:
@@ -119,5 +117,11 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
 
-    - name: Test
-      run: echo test
+   # Push new file to repo
+    - name: Push state updates to repository
+      continue-on-error: true          
+      run: |       
+          git config user.name github-actions
+          git config user.email github-actions@github.com                              
+          git commit -m "changes applied"
+          git push
