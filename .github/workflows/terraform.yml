@@ -46,13 +46,10 @@ jobs:
 
 
 
-    - name: Cache source export
-      uses: actions/cache@v2
-      env:
-        cache-name: cache-source-export
-      with:        
+    - uses: actions/upload-artifact@v2
+      with:
+        name: source-cache
         path: export/genesyscloud.tf.json
-        key: ${{ hashFiles('export/genesyscloud.tf.json') }}
 
 
     # Push new file to repo
@@ -89,22 +86,12 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
 
-
-    - name: Test Export
-      run: echo ${{ cache-source-export }}
-
-    - name: cache-source-import
-      id: cache-source-import
-      uses: actions/cache@v2
+    - uses: actions/download-artifact@v2
       with:
-        path: export
-        key: genesyscloud.tf.json
+        name: source-cache
 
-    - name: Test Export2
-      run: echo ${{ cache-source-import }}
-
-    - name: Test Export3
-      run: echo ${{ genesyscloud.tf.json }}
+    - name: Test Import Cache
+      run: ls
 
 
     # Pull new file to repo
