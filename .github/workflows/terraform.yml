@@ -81,8 +81,17 @@ jobs:
     - name: Terraform Apply      
       run: terraform apply -auto-approve -input=false -var=TF_VAR_REGION="eu-central-1" -var=TF_VAR_ID=${{ secrets.ORG1_USER_ID }} -var=TF_VAR_SECRET=${{ secrets.ORG1_SECRET }}
     
+    -name: Check if directory exists
+      id: dir-verify            
+      run: |
+          if [ -d ${{github.job}} ]; then
+            echo "::set-output name=exists::true"
+          else 
+            echo "::set-output name=exists::false"
+          fi
+
     - name: Create target directory (if not exists)
-      if: if [ ! -d ${{github.job}} ];
+      if: if steps.dir-verify.exists != true
       run: mkdir ${{github.job}}
 
     - name: Save TFState file
