@@ -85,18 +85,12 @@ jobs:
       with:
         name: source-cache                            
 
-    - name: Test current Directory      
-      run: pwd
-
     - name: Apply Export from Source Org      
       run: cp ../genesyscloud.tf.json ./input.tf.json
 
     - name: Get Last Terraform state file
       if: hashFiles('./{{ github.job}}/terraform.tfstate') != ''
       run: cp ./{{ github.job}}/terraform.tfstate terraform.tfstate
-
-    - name: Test Folder
-      run: ls
 
     - name: Terraform Init
       run: terraform init
