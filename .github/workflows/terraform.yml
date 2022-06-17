@@ -88,15 +88,7 @@ jobs:
 
     - uses: actions/download-artifact@v2
       with:
-        name: source-cache
-
-
-    # Pull new file to repo
-    # - name: Pull                
-    #   run: |       
-    #       git config user.name github-actions
-    #       git config user.email github-actions@github.com
-    #       git pull                              
+        name: source-cache                            
 
     - name: Apply Export       
       run: cp ../../genesyscloud.tf.json input.tf.json
@@ -136,15 +128,12 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
     
-    # Pull new file to repo
-    - name: Pull                
-      run: |       
-          git config user.name github-actions
-          git config user.email github-actions@github.com
-          git pull  
+    - uses: actions/download-artifact@v2
+      with:
+        name: source-cache                            
 
-    - name: Copy Export from Source Org    
-      run: cp ../../source/export/genesyscloud.tf.json input.tf.json                
+    - name: Apply Export       
+      run: cp ../../genesyscloud.tf.json input.tf.json             
     
     - name: Terraform Init
       run: terraform init
