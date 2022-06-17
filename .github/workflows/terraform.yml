@@ -91,7 +91,7 @@ jobs:
           fi
 
     - name: Create target directory (if not exists)
-      if: if steps.dir-verify.exists != true
+      if: steps.dir-verify.exists != true
       run: mkdir ${{github.job}}
 
     - name: Save TFState file
