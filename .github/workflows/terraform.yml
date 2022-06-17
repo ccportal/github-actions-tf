@@ -77,8 +77,9 @@ jobs:
     - name: Apply Export from Source Org      
       run: cp ../genesyscloud.tf.json ./input.tf.json
 
-    - name: Get Last Terraform state file      
-      run: [ -f "./${{github.job}}/terraform.tfstate" ]  && cp ./${{github.job}}/terraform.tfstate terraform.tfstate
+    - name: Get Last Terraform state file    
+      run: |
+          [ -f "./${{github.job}}/terraform.tfstate" ]  && cp ./${{github.job}}/terraform.tfstate terraform.tfstate
 
     - name: Terraform Init
       run: terraform init
