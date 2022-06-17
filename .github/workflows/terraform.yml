@@ -82,7 +82,10 @@ jobs:
       run: terraform apply -auto-approve -input=false -var=TF_VAR_REGION="eu-central-1" -var=TF_VAR_ID=${{ secrets.ORG1_USER_ID }} -var=TF_VAR_SECRET=${{ secrets.ORG1_SECRET }}
     
     - name: Create target directory (if not exists)      
-      run: if not exist ${{github.job}} mkdir ${{github.job}}
+      run: |
+        if [ ! -d ${{github.job}} ]; then
+          mkdir ${{github.job}}
+        fi
 
     - name: Save TFState file
       run: mv terraform.tfstate ./${{github.job}}/terraform.tfstate
@@ -97,3 +100,24 @@ jobs:
           git add ./${{github.job}}/terraform.tfstate
           git commit -m "changes applied"
           git push
+
+
+  Finalize:
+    name: ${{github.job}}
+    needs: [SCAassociatesEMEA]
+    runs-on: ubuntu-latest
+    environment: ${{github.job}}
+
+    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+    defaults:
+      run:
+        shell: bash
+        working-directory: targets
+
+    steps:
+    # Checkout the repository to the GitHub Actions runner
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Test
+      run: echo test
