@@ -69,10 +69,7 @@ jobs:
         name: source-cache    
 
     - name: Create target directory (if not exists)      
-      run: |
-        if [ ! -d ${{github.job}} ]; then
-          mkdir ${{github.job}}
-        fi    
+      run: mkdir -p ${{github.job}}       
 
     - name: Test Directory
       run: ls                    
