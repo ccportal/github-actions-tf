@@ -92,11 +92,11 @@ jobs:
       run: mv terraform.tfstate ./${{github.job}}/terraform.tfstate
 
     - name: GIT Diff
-      run: git diff ./${{github.job}}/terraform.tfstate origin/master
+      run: git diff ./${{github.job}}/terraform.tfstate
 
    # Push new file to repo
     - name: Push new file to repo
-      if: git diff ./${{github.job}}/terraform.tfstate origin/master
+      if: git diff ./${{github.job}}/terraform.tfstate
       continue-on-error: true          
       run: |       
           git config user.name github-actions
