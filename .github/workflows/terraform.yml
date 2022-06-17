@@ -33,7 +33,7 @@ jobs:
       run: mkdir ${{github.job}}
 
     - name: Save TFState file
-      run: mv export "./${{github.job}}/terraform.tfstate"
+      run: mv export.tf ./${{github.job}}/terraform.tfstate
 
 
     # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
