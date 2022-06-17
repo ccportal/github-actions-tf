@@ -49,7 +49,7 @@ jobs:
     - uses: actions/upload-artifact@v2
       with:
         name: source-cache
-        path: export/genesyscloud.tf.json
+        path: ./export/genesyscloud.tf.json
 
 
     # Push new file to repo
