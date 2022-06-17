@@ -78,8 +78,8 @@ jobs:
       run: cp ../genesyscloud.tf.json ./input.tf.json
 
     - name: Get Last Terraform state file
-      if: hashFiles('./${{github.job}}/terraform.tfstate') != ''
-      run: cp ./${{github.job}}/terraform.tfstate terraform.tfstate
+      if: hashFiles('${{github.job}}/terraform.tfstate') != ''
+      run: cp ${{github.job}}/terraform.tfstate terraform.tfstate
 
     - name: Terraform Init
       run: terraform init
