@@ -44,17 +44,6 @@ jobs:
       run: terraform apply -auto-approve -input=false -var=TF_VAR_REGION="eu-west-1" -var=TF_VAR_ID=${{ secrets.SOURCE_USER_ID }} -var=TF_VAR_SECRET=${{ secrets.SOURCE_SECRET }}
 
 
-
-
-    - name: Cache source export
-      uses: actions/cache@v2
-      env:
-        cache-name: cache-source-export
-      with:        
-        path: export/genesyscloud.tf.json
-        key: ${{ hashFiles('**/genesyscloud.tf.json') }}
-
-
     # Push new file to repo
     - name: Push new file to repo
       id: source-push
@@ -66,11 +55,11 @@ jobs:
           git commit -m "update exported configuration"
           git push
 
-    # - name: Check on failures
-    #   if: steps.source-push.outcome != 'success'
-    #   run: |
-    #       echo "### No Changes in a source organization :rocket:" >> $GITHUB_STEP_SUMMARY
-    #       exit 1
+    - name: Check on failures
+      if: steps.source-push.outcome != 'success'
+      run: |
+          echo "### No Changes in a source organization :rocket:" >> $GITHUB_STEP_SUMMARY
+          exit 1
 
   deploy2org1:
     name: 'deploy2org1'
@@ -88,16 +77,6 @@ jobs:
     # Checkout the repository to the GitHub Actions runner
     - name: Checkout
       uses: actions/checkout@v3
-
-    - name: cache-source-import
-      id: cache-source-import
-      uses: actions/cache@v2
-      with:
-        path: export
-        key: genesyscloud.tf.json
-
-    - name: Test Export
-      run: echo genesyscloud.tf.json
 
     # Pull new file to repo
     - name: Pull                
