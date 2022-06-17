@@ -118,6 +118,9 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
 
+    - name: List files
+      run: ls
+
    # Push new file to repo
     - name: Push state updates to repository
       continue-on-error: true          
