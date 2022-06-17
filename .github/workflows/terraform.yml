@@ -28,6 +28,10 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3    
 
+    - name: Create target directory (if not exists)
+      if: if [ -d ${{github.job}} ];
+      run: mkdir ${{github.job}}
+
     - name: Save TFState file
       run: mv export "./${{github.job}}/terraform.tfstate"
 
