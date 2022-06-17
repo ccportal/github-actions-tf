@@ -84,14 +84,14 @@ jobs:
     - name: Check if directory exists
       id: dir-verify            
       run: |
-          if [ ! -d ${{github.job}} ]; then
+          if [ -d ${{github.job}} ]; then
             echo "::set-output name=exists::true"
           else 
             echo "::set-output name=exists::false"
           fi
 
     - name: Create target directory (if not exists)
-      if: steps.dir-verify.exists == false
+      if: steps.dir-verify.exists === false
       run: mkdir ${{github.job}}
 
     - name: Save TFState file
