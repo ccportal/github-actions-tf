@@ -71,9 +71,6 @@ jobs:
     - name: Create target directory (if not exists)      
       run: mkdir -p ${{github.job}}       
 
-    - name: Test Directory
-      run: ls                    
-
     - name: Apply Export from Source Org      
       run: cp ../genesyscloud.tf.json ./input.tf.json
 
@@ -124,17 +121,13 @@ jobs:
 
     - name: Create target directory (if not exists)      
       run: mkdir -p ${{github.job}}       
-
-    - name: Test Directory
-      run: ls                    
-
+                 
     - name: Apply Export from Source Org      
       run: cp ../genesyscloud.tf.json ./input.tf.json
 
     - name: Get Last Terraform state file    
       run: |
           cp ./${{github.job}}/terraform.tfstate terraform.tfstate 2>/dev/null || :
-
 
     - name: Terraform Init
       run: terraform init
