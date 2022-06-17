@@ -85,6 +85,9 @@ jobs:
       with:
         name: source-cache                            
 
+    - name: Test current Directory      
+      run: pwd
+
     - name: Apply Export from Source Org      
       run: cp ../genesyscloud.tf.json ./input.tf.json
 
