@@ -43,13 +43,13 @@ jobs:
     - name: Terraform Apply      
       run: terraform apply -auto-approve -input=false -var=TF_VAR_REGION="eu-west-1" -var=TF_VAR_ID=${{ secrets.SOURCE_USER_ID }} -var=TF_VAR_SECRET=${{ secrets.SOURCE_SECRET }}
 
-
-
+    - name: Test dir
+      run: ls
 
     - uses: actions/upload-artifact@v2
       with:
         name: source-cache
-        path: ./export/genesyscloud.tf.json
+        path: source/export/genesyscloud.tf.json
 
 
     # Push new file to repo
