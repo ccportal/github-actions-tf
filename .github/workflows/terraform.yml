@@ -86,7 +86,7 @@ jobs:
         name: source-cache                            
 
     - name: Apply Export from Source Org      
-      run: cp ../genesyscloud.tf.json input.tf.json
+      run: cp ../genesyscloud.tf.json ./input.tf.json
 
     - name: Get Last Terraform state file
       if: hashFiles('./{{ github.job}}/terraform.tfstate') != ''
