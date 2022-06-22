@@ -88,13 +88,10 @@ jobs:
     # - name: Save TFState file
     #   run: mv terraform.tfstate ./${{github.job}}/terraform.tfstate
 
-    - name: Test DIR
-      run: ls
-
     - uses: actions/upload-artifact@v2
       with:
         name: tf-state-${{github.job}}
-        path: ./terraform.tfstate
+        path: targets/terraform.tfstate
     
    # Push new file to repo
     # - name: Push new file to repo      
@@ -143,15 +140,12 @@ jobs:
     - name: Terraform Apply      
       run: terraform apply -auto-approve -input=false -var=TF_VAR_REGION="eu-west-1" -var=TF_VAR_ID=${{ secrets.ORG2_USER_ID }} -var=TF_VAR_SECRET=${{ secrets.ORG2_SECRET }}
     
-    - name: Test DIR
-      run: ls
-
     # - name: Save TFState file
     #   run: mv terraform.tfstate ./${{github.job}}/terraform.tfstate
     - uses: actions/upload-artifact@v2
       with:
         name: tf-state-${{github.job}}
-        path: ./terraform.tfstate
+        path: targets/terraform.tfstate
 
 
    # Push new file to repo
