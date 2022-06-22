@@ -88,10 +88,15 @@ jobs:
     # - name: Save TFState file
     #   run: mv terraform.tfstate ./${{github.job}}/terraform.tfstate
 
-    - uses: actions/upload-artifact@v2
-      with:
-        name: tf-state-${{github.job}}
-        path: targets/terraform.tfstate
+    # - uses: actions/upload-artifact@v2
+    #   with:
+    #     name: tf-state-${{github.job}}
+    #     path: targets/terraform.tfstate
+
+    - uses: actions/cache@v3
+        with:
+          path: targets/terraform.tfstate
+          key: tf-state-${{github.job}}
     
    # Push new file to repo
     # - name: Push new file to repo      
@@ -142,10 +147,15 @@ jobs:
     
     # - name: Save TFState file
     #   run: mv terraform.tfstate ./${{github.job}}/terraform.tfstate
-    - uses: actions/upload-artifact@v2
-      with:
-        name: tf-state-${{github.job}}
-        path: targets/terraform.tfstate
+    # - uses: actions/upload-artifact@v2
+    #   with:
+    #     name: tf-state-${{github.job}}
+    #     path: targets/terraform.tfstate
+
+    - uses: actions/cache@v3
+        with:
+          path: targets/terraform.tfstate
+          key: tf-state-${{github.job}}
 
 
    # Push new file to repo
@@ -178,27 +188,37 @@ jobs:
 
     # Save SCAassociatesEMEA to GitHub repo
 
-    - uses: actions/download-artifact@v2
-      with:
-        name: tf-state-SCAassociatesEMEA
+    # - uses: actions/download-artifact@v2
+    #   with:
+    #     name: tf-state-SCAassociatesEMEA
+
+    - uses: actions/cache@v3
+        with:   
+          path: targets/terraform.tfstate       
+          key: tf-state-SCAassociatesEMEA
     
     - name: Create target directory (if not exists)      
       run: mkdir -p SCAassociatesEMEA
 
     - name: Save TFState file
-      run: mv ../terraform.tfstate ./SCAassociatesEMEA/terraform.tfstate
+      run: mv ./terraform.tfstate ./SCAassociatesEMEA/terraform.tfstate
     
     # Save PureCloud-Poland to GitHub repo
 
-    - uses: actions/download-artifact@v2
-      with:
-        name: tf-state-PureCloud-Poland
+    # - uses: actions/download-artifact@v2
+    #   with:
+    #     name: tf-state-PureCloud-Poland
+
+    - uses: actions/cache@v3
+        with:
+          path: targets/terraform.tfstate          
+          key: tf-state-PureCloud-Poland
     
     - name: Create target directory (if not exists)      
       run: mkdir -p PureCloud-Poland
 
     - name: Save TFState file
-      run: mv ../terraform.tfstate ./PureCloud-Poland/terraform.tfstate
+      run: mv ./terraform.tfstate ./PureCloud-Poland/terraform.tfstate
 
     # Push new files to repo
     - name: Push new file to repo
