@@ -94,9 +94,9 @@ jobs:
     #     path: targets/terraform.tfstate
 
     - uses: actions/cache@v3
-        with:
-          path: targets/terraform.tfstate
-          key: tf-state-${{github.job}}
+      with:
+        path: targets/terraform.tfstate
+        key: tf-state-${{github.job}}
     
    # Push new file to repo
     # - name: Push new file to repo      
@@ -153,9 +153,9 @@ jobs:
     #     path: targets/terraform.tfstate
 
     - uses: actions/cache@v3
-        with:
-          path: targets/terraform.tfstate
-          key: tf-state-${{github.job}}
+      with:
+        path: targets/terraform.tfstate
+        key: tf-state-${{github.job}}
 
 
    # Push new file to repo
@@ -193,9 +193,9 @@ jobs:
     #     name: tf-state-SCAassociatesEMEA
 
     - uses: actions/cache@v3
-        with:   
-          path: targets/terraform.tfstate       
-          key: tf-state-SCAassociatesEMEA
+      with:   
+        path: targets/terraform.tfstate       
+        key: tf-state-SCAassociatesEMEA
     
     - name: Create target directory (if not exists)      
       run: mkdir -p SCAassociatesEMEA
@@ -210,9 +210,9 @@ jobs:
     #     name: tf-state-PureCloud-Poland
 
     - uses: actions/cache@v3
-        with:
-          path: targets/terraform.tfstate          
-          key: tf-state-PureCloud-Poland
+      with:
+        path: targets/terraform.tfstate          
+        key: tf-state-PureCloud-Poland
     
     - name: Create target directory (if not exists)      
       run: mkdir -p PureCloud-Poland
