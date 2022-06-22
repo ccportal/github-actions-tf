@@ -96,7 +96,8 @@ jobs:
     - uses: actions/cache@v3
       with:
         path: targets/terraform.tfstate
-        key: tf-state-${{github.job}}
+        key: tf-state-${{github.job}}-${{ hashFiles('targets/terraform.tfstate') }}
+        restore-keys: tf-state-${{github.job}}
     
    # Push new file to repo
     # - name: Push new file to repo      
@@ -155,7 +156,8 @@ jobs:
     - uses: actions/cache@v3
       with:
         path: targets/terraform.tfstate
-        key: tf-state-${{github.job}}
+        key: tf-state-${{github.job}}-${{ hashFiles('targets/terraform.tfstate') }}
+        restore-keys: tf-state-${{github.job}}
 
 
    # Push new file to repo
