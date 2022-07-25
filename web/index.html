@@ -4,6 +4,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css" />
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js" integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   </head>
   <body>
     <nav class="navbar bg-light">
@@ -13,7 +14,7 @@
           Business Continuity
         </a>
         <div class="d-flex">
-          <button onclick="handleLoginBtn()" type="button" class="btn btn-primary"><i class="bi bi-box-arrow-in-right"></i> Login</button>
+          <button id="btn-login" onclick="handleLoginBtn()" type="button" class="btn btn-primary"><i class="bi bi-box-arrow-in-right"></i> Login</button>
         </div>
       </div>
     </nav>
@@ -38,7 +39,8 @@
                   <label class="form-label">Region:</label>
                   <input type="text" class="form-control" id="src_region"/>
                   <button type="submit" id="src_verify_button" class="btn btn-primary" onClick="verifyOrg('src')">Verify</button>
-              </div>
+                  <br/>
+                </div>
               <div class="col">
                 <!-- Home Org Input-->
                 <div class="col">Destination</div>
@@ -50,22 +52,25 @@
                 <input type="text" class="form-control" id="dest_region">
                 <button type="submit" id="dest_verify_button"  class="btn btn-primary" onClick="verifyOrg('dest')">Verify</button>
               </div>
-          </div>
+              <div class="row align-items-start">
+                <div class="col">
+                  Configuration Items:
+                </div>
+            </div>
       
 
       </div>
       <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">History</div>
     </div>
-
   </body>
   <script>
-   
+    var githubCode;
+
     const GITHUB_TOKEN = '';
 
-    const callAxios = async (url, method, body) => { 
-      
-      const BASE_URL = 'https://api.github.com/repos/ccportal/github-actions-tf/actions/runs';   
-      try {        
+    const callAxios = async (url, method, body) => {
+      const BASE_URL = 'https://api.github.com/repos/ccportal/github-actions-tf/actions/runs';
+      try {
         const result = await axios({
           url: url,
           method: method,
@@ -73,38 +78,71 @@
             'Content-Type': 'application/json',
             Authorization: `Bearer ${GITHUB_TOKEN}`, // PAT for now hardcoded, removed later
           },
-          data: body ? JSON.stringify(body): null,
+          data: body ? JSON.stringify(body) : null,
         });
-                               
-      console.log(`Response`, result.data);
 
-      return result.data;
+        console.log(`Response`, result.data);
 
+        return result.data;
       } catch (errors) {
         console.error(errors);
       }
     };
 
-    callAxios('https://api.github.com/repos/ccportal/github-actions-tf/actions/runs','GET');
+    callAxios('https://api.github.com/repos/ccportal/github-actions-tf/actions/runs', 'GET');
 
     const handleLoginBtn = () => {
       console.log('handleLoginBtn()');
+      let redirectUri, clientId;
+      if (true === isLocalhost()) {
+        clientId = 'a5ebd9911ada00cd8d34';
+        redirectUri = 'https://localhost/web/index.html';
+      } else {
+        clientId = 'aaf007c288a3586bb2da';
+        redirectUri = 'https://ccportal.github.io/github-actions-tf/web/index.html';
+      }
+      const loginUrl = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}`;
+      console.log('loginUrl:', loginUrl);
+      window.location.href = loginUrl;
     };
 
-    const verifyOrg = (orgType) => {
-     alert(`Verifying org for ${orgType}`);
+    const isLocalhost = () => 'localhost' === window.location.host;
 
+    const getGithubCode = () => {
+      const params = new URLSearchParams(window.location.search);
+      const code = params.get('code');
+      return code;
+    };
+
+
+    const verifyOrg = (orgType) => {
      //TODO: Check the auth is valid
 
      //disable the input boxes
-     document.getElementById(`${orgType}_client_id`).disabled = true;
-     document.getElementById(`${orgType}_client_secret`).disabled = true;
-     document.getElementById(`${orgType}_region`).disabled = true;
-     document.getElementById(`${orgType}_verify_button`).disabled = true;
+     $(`#${orgType}_client_id`).prop('disabled', true);
+     $(`#${orgType}_client_secret`).prop('disabled', true);
+     $(`#${orgType}_region`).prop('disabled', true);
+     $(`#${orgType}_verify_button`).prop('disabled', true);
+
+     //document.getElementById(`${orgType}_client_id`).disabled = true;
+     //document.getElementById(`${orgType}_client_secret`).disabled = true;
+    // document.getElementById(`${orgType}_region`).disabled = true;
+    // document.getElementById(`${orgType}_verify_button`).disabled = true;
     }
 
     const onSetConfiguration = (config) => {
       console.log('Setting Configuration', config);
     }
+
+    const init = () => {
+      console.log('init()');
+      githubCode = getGithubCode();
+      if (githubCode) {
+        $('#btn-login').prop('disabled', true);
+      }
+    };
+
+    
+    init();
   </script>
 </html>
