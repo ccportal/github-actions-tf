@@ -30,6 +30,8 @@
     </div>
   </body>
   <script>
+    var githubCode;
+
     const GITHUB_TOKEN = '';
 
     const callAxios = async (url, method, body) => {
@@ -71,5 +73,13 @@
     };
 
     const isLocalhost = () => 'localhost' === window.location.host;
+
+    const getGithubCode = () => {
+      const params = new URLSearchParams(window.location.search);
+      const code = params.get('code');
+      return code;
+    };
+
+    githubCode = getGithubCode();
   </script>
 </html>
