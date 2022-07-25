@@ -28,16 +28,13 @@
       <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">Configuration</div>
       <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">History</div>
     </div>
-
   </body>
   <script>
-   
     const GITHUB_TOKEN = '';
 
-    const callAxios = async (url, method, body) => { 
-      
-      const BASE_URL = 'https://api.github.com/repos/ccportal/github-actions-tf/actions/runs';   
-      try {        
+    const callAxios = async (url, method, body) => {
+      const BASE_URL = 'https://api.github.com/repos/ccportal/github-actions-tf/actions/runs';
+      try {
         const result = await axios({
           url: url,
           method: method,
@@ -45,23 +42,25 @@
             'Content-Type': 'application/json',
             Authorization: `Bearer ${GITHUB_TOKEN}`, // PAT for now hardcoded, removed later
           },
-          data: body ? JSON.stringify(body): null,
+          data: body ? JSON.stringify(body) : null,
         });
-                               
-      console.log(`Response`, result.data);
 
-      return result.data;
+        console.log(`Response`, result.data);
 
+        return result.data;
       } catch (errors) {
         console.error(errors);
       }
     };
 
-    callAxios('https://api.github.com/repos/ccportal/github-actions-tf/actions/runs','GET');
+    callAxios('https://api.github.com/repos/ccportal/github-actions-tf/actions/runs', 'GET');
 
     const handleLoginBtn = () => {
       console.log('handleLoginBtn()');
+      const redirectUri = isLocalhost() ? 'https://localhost/web/index.html' : 'https://ccportal.github.io/github-actions-tf/web/index.html';
+      console.log('redirectUri:', redirectUri);
     };
 
+    const isLocalhost = () => 'localhost' === window.location.host;
   </script>
 </html>
