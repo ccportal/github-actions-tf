@@ -186,7 +186,8 @@
    }
 
     const init = async () => {
-      console.log('init()');      
+      console.log('init()'); 
+      await log('Home');     
       const githubCode = getGithubCode();      
       githubToken = getGithubToken(githubCode);
 
@@ -202,7 +203,7 @@
       loadConfigurationItems();
     };
 
-    log('Home');
+    
     init();
   </script>
 </html>
