@@ -31,40 +31,36 @@
     <div class="tab-content" id="nav-tabContent">
       <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
         <div class="container">
-             <div class="row align-items-start">
-                <div class="col">
-                  <!-- Home Org Input-->
-                  <div >Source</div>
-                  <label class="form-label">Client ID:</label>
-                  <input type="text" class="form-control" id="src_client_id"/>
-                  <label class="form-label">Client Secret:</label>
-                  <input type="text" class="form-control" id="src_client_secret/">
-                  <label class="form-label">Region:</label>
-                  <input type="text" class="form-control" id="src_region"/>
-                  <button type="submit" id="src_verify_button" class="btn btn-primary" onClick="verifyOrg('src')">Verify</button>
-                  <br/>
-                </div>
-                <div class="col">
-                <!-- Home Org Input-->
-                  <div>Destination</div>
-                <label class="form-label">Client ID:</label>
-                <input type="text" class="form-control" id="dest_client_id">
-                <label class="form-label">Client Secret:</label>
-                <input type="text" class="form-control" id="dest_client_secret">
-                <label class="form-label">Region:</label>
-                <input type="text" class="form-control" id="dest_region">
-                <button type="submit" id="dest_verify_button"  class="btn btn-primary" onClick="verifyOrg('dest')">Verify</button>
-              </div>
+          <div class="row align-items-start">
+            <div class="col">
+              <!-- Home Org Input-->
+              <div>Source</div>
+              <label class="form-label">Client ID:</label>
+              <input type="text" class="form-control" id="src_client_id" />
+              <label class="form-label">Client Secret:</label>
+              <input type="text" class="form-control" id="src_client_secret/" />
+              <label class="form-label">Region:</label>
+              <input type="text" class="form-control" id="src_region" />
+              <button type="submit" id="src_verify_button" class="btn btn-primary" onClick="verifyOrg('src')">Verify</button>
+              <br />
             </div>
-            <div class="row align-items-start">
-              <div class="col">
-                Configuration Items:
-              </div>
+            <div class="col">
+              <!-- Home Org Input-->
+              <div>Destination</div>
+              <label class="form-label">Client ID:</label>
+              <input type="text" class="form-control" id="dest_client_id" />
+              <label class="form-label">Client Secret:</label>
+              <input type="text" class="form-control" id="dest_client_secret" />
+              <label class="form-label">Region:</label>
+              <input type="text" class="form-control" id="dest_region" />
+              <button type="submit" id="dest_verify_button" class="btn btn-primary" onClick="verifyOrg('dest')">Verify</button>
+            </div>
           </div>
-      
-
+          <div class="row align-items-start">
+            <div class="col">Configuration Items:</div>
+          </div>
+        </div>
       </div>
-      </div>  
       <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">History</div>
     </div>
   </body>
@@ -72,7 +68,7 @@
     var githubToken;
 
     const GITHUB_TOKEN = '';
-             
+
     const callAxios = async (url, method, body) => {
       const BASE_URL = 'https://api.github.com/repos/ccportal/github-actions-tf/actions/runs';
       console.log('token', githubToken);
@@ -96,45 +92,42 @@
     };
 
     const log = async (step) => {
-      try { 
-      const data = {
+      try {
+        const data = {
           date: moment().format(),
           userinfo: {
             id: 'webPage',
             orgId: 'unknown',
-            orgName: 'unknown' 
+            orgName: 'unknown',
           },
           activity: {
-            action: "View",
-            source:"web",          
-            stage: "BusinessContinuityApp",
+            action: 'View',
+            source: 'web',
+            stage: 'BusinessContinuityApp',
             step: step,
             message: `Accessed ${window.location.origin}${window.location.pathname}`,
-            object :{
-              type: "Page",
+            object: {
+              type: 'Page',
               host: window.location.host,
               hostname: window.location.hostname,
               href: window.location.href,
               origin: window.location.origin,
               pathname: window.location.pathname,
-              url: window.location.origin + window.location.pathname
+              url: window.location.origin + window.location.pathname,
             },
-          
-      },
-    };
-      
-      console.log('[Tracking] data:', data);   
-      callAxios('https://api.dev.ccportal.genesys.com/logging/messages','POST', data);
-            
+          },
+        };
 
+        console.log('[Tracking] data:', data);
+        callAxios('https://api.dev.ccportal.genesys.com/logging/messages', 'POST', data);
       } catch (errors) {
         console.error(errors);
       }
     };
-    
+
     const handleLoginBtn = () => {
       console.log('handleLoginBtn()');
-      const githubParams = getGithubParams();                
+      const githubParams = getGithubParams();
       window.location.href = githubParams.codeUrl;
     };
 
@@ -144,19 +137,21 @@
 
     const isLocalhost = () => 'localhost' === window.location.host;
 
-    const getGithubParams = () =>{
+    const getGithubParams = () => {
       let result = {};
       if (true === isLocalhost()) {
         result.clientId = 'a5ebd9911ada00cd8d34';
+        result.clientSecret = '9b8f56ee450cb4f9d62aa9abeef74d81326a007e';
         result.redirectUri = 'https://localhost/web/index.html';
       } else {
         result.clientId = 'aaf007c288a3586bb2da';
+        result.clientSecret = 'cb94f9c83906416dedca1f441a45825fc5dbd79f';
         result.redirectUri = 'https://ccportal.github.io/github-actions-tf/web/index.html';
       }
       result.codeUrl = `https://github.com/login/oauth/authorize?client_id=${result.clientId}&redirect_uri=${encodeURIComponent(result.redirectUri)}`;
       result.tokenUrl = `https://github.com/login/oauth/access_token`;
       return result;
-    }
+    };
 
     const getGithubCode = () => {
       const params = new URLSearchParams(window.location.search);
@@ -164,38 +159,49 @@
       return code;
     };
 
-    const getGithubToken = (code) => {
-      const resp = callAxios
-      return '123';
-    }
+    const getGithubToken = async (code) => {
+      const githubParams = getGithubParams();
+      const data = { client_id: githubParams.clientId, client_secret: githubParams.clientSecret, code, redirect_uri: githubParams.redirectUri };
+      try {
+        const result = await axios({
+          url: githubParams.tokenUrl,
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          data: JSON.stringify(data),
+        });
+        console.log(`Response`, result.data);
+        return result.data;
+      } catch (error) {
+        console.error(error);
+      }
+    };
 
     const verifyOrg = (orgType) => {
-     //TODO: Check the auth is valid
+      //TODO: Check the auth is valid
 
-     //disable the input boxes
-     $(`#${orgType}_client_id`).prop('disabled', true);
-     $(`#${orgType}_client_secret`).prop('disabled', true);
-     $(`#${orgType}_region`).prop('disabled', true);
-     $(`#${orgType}_verify_button`).prop('disabled', true);
-    }
+      //disable the input boxes
+      $(`#${orgType}_client_id`).prop('disabled', true);
+      $(`#${orgType}_client_secret`).prop('disabled', true);
+      $(`#${orgType}_region`).prop('disabled', true);
+      $(`#${orgType}_verify_button`).prop('disabled', true);
+    };
 
     const onSetConfiguration = (config) => {
       console.log('Setting Configuration', config);
-    }
+    };
 
     const loadConfigurationItems = () => {
-     
-     console.log('!! Data', resources);
-     var mydata = JSON.parse(data);
-   }
+      console.log('!! Data', resources);
+      var mydata = JSON.parse(data);
+    };
 
     const init = async () => {
-      console.log('init()'); 
-      await log('Home');     
-      const githubCode = getGithubCode();      
+      console.log('init()');
+      await log('Home');
+      const githubCode = getGithubCode();
       githubToken = getGithubToken(githubCode);
-      
-
       if (githubCode) {
         $('#btn-login').hide();
         //await callAxios('https://api.github.com/repos/ccportal/github-actions-tf/actions/runs','GET');
@@ -208,7 +214,6 @@
       loadConfigurationItems();
     };
 
-    
     init();
   </script>
 </html>
