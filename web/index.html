@@ -25,7 +25,35 @@
       </div>
     </nav>
     <div class="tab-content" id="nav-tabContent">
-      <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">Configuration</div>
+      <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+        <div class="container">
+             <div class="row align-items-start">
+              <div class="col">
+                  <!-- Home Org Input-->
+                  <div class="col">Source</div>
+                  <label class="form-label">Client ID:</label>
+                  <input type="text" class="form-control" id="src_client_id"/>
+                  <label class="form-label">Client Secret:</label>
+                  <input type="text" class="form-control" id="src_client_secret/">
+                  <label class="form-label">Region:</label>
+                  <input type="text" class="form-control" id="src_region"/>
+                  <button type="submit" id="src_verify_button" class="btn btn-primary" onClick="verifyOrg('src')">Verify</button>
+              </div>
+              <div class="col">
+                <!-- Home Org Input-->
+                <div class="col">Destination</div>
+                <label class="form-label">Client ID:</label>
+                <input type="text" class="form-control" id="dest_client_id">
+                <label class="form-label">Client Secret:</label>
+                <input type="text" class="form-control" id="dest_client_secret">
+                <label class="form-label">Region:</label>
+                <input type="text" class="form-control" id="dest_region">
+                <button type="submit" id="dest_verify_button"  class="btn btn-primary" onClick="verifyOrg('dest')">Verify</button>
+              </div>
+          </div>
+      
+
+      </div>
       <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">History</div>
     </div>
 
@@ -63,5 +91,20 @@
       console.log('handleLoginBtn()');
     };
 
+    const verifyOrg = (orgType) => {
+     alert(`Verifying org for ${orgType}`);
+
+     //TODO: Check the auth is valid
+
+     //disable the input boxes
+     document.getElementById(`${orgType}_client_id`).disabled = true;
+     document.getElementById(`${orgType}_client_secret`).disabled = true;
+     document.getElementById(`${orgType}_region`).disabled = true;
+     document.getElementById(`${orgType}_verify_button`).disabled = true;
+    }
+
+    const onSetConfiguration = (config) => {
+      console.log('Setting Configuration', config);
+    }
   </script>
 </html>
