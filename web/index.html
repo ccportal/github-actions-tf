@@ -42,13 +42,14 @@
 
     const callAxios = async (url, method, body) => {
       const BASE_URL = 'https://api.github.com/repos/ccportal/github-actions-tf/actions/runs';
+      console.log('token', githubCode);
       try {
         const result = await axios({
           url: url,
           method: method,
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${GITHUB_TOKEN}`, // PAT for now hardcoded, removed later
+            Authorization: `Bearer ${githubCode}`, // PAT for now hardcoded, removed later
           },
           data: body ? JSON.stringify(body) : null,
         });
@@ -98,7 +99,7 @@
       }
     };
 
-    //callAxios('https://api.github.com/repos/ccportal/github-actions-tf/actions/runs','GET');
+    
 
     const handleLoginBtn = () => {
       console.log('handleLoginBtn()');
@@ -128,11 +129,11 @@
     };
 
     const init = () => {
-      console.log('init()');
-      
-      githubCode = getGithubCode();
+      console.log('init()');      
+      githubCode = getGithubCode();      
       if (githubCode) {
         $('#btn-login').hide();
+        await callAxios('https://api.github.com/repos/ccportal/github-actions-tf/actions/runs','GET');
       } else {
         $('#btn-logout').hide();
       }
