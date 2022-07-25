@@ -16,8 +16,10 @@
           Business Continuity
         </a>
         <div class="d-flex">
-          <button id="btn-login" onclick="handleLoginBtn()" type="button" class="btn btn-primary"><i class="bi bi-box-arrow-in-right"></i> Login</button>
-          <button id="btn-logout" onclick="handleLogoutBtn()" type="button" class="btn btn-danger"><i class="bi bi-box-arrow-right"></i> Logout</button>
+          <div class="input-group">
+            <span class="input-group-text" id="basic-addon1">Github personal token</span>
+            <input id="github-personal-token" type="text" class="form-control" placeholder="Enter token" aria-label="Username" aria-describedby="basic-addon1" onchange="personalTokenOnChange()" >
+          </div>
         </div>
       </div>
     </nav>
@@ -73,6 +75,12 @@
     var githubToken;
 
     const GITHUB_TOKEN = '';
+
+    const personalTokenOnChange = () => {
+      console.log('personalTokenOnChange()');
+      githubToken = $("#github-personal-token").val();
+      //console.log('githubToken', githubToken);
+    }
 
     const callAxios = async (url, method, body) => {
       console.log('callAxios', url, method, body);
@@ -131,60 +139,8 @@
       }
     };
 
-    const handleLoginBtn = () => {
-      console.log('handleLoginBtn()');
-      const githubParams = getGithubParams();
-      window.location.href = githubParams.codeUrl;
-    };
-
-    const handleLogoutBtn = () => {
-      console.log('handleLogoutBtn()');
-    };
-
     const isLocalhost = () => 'localhost' === window.location.host;
     
-
-    const getGithubParams = () => {
-      let result = {};
-      if (true === isLocalhost()) {
-        result.clientId = 'a5ebd9911ada00cd8d34';
-        result.clientSecret = '9b8f56ee450cb4f9d62aa9abeef74d81326a007e';
-        result.redirectUri = 'https://localhost/web/index.html';
-      } else {
-        result.clientId = 'aaf007c288a3586bb2da';
-        result.clientSecret = 'cb94f9c83906416dedca1f441a45825fc5dbd79f';
-        result.redirectUri = 'https://ccportal.github.io/github-actions-tf/web/index.html';
-      }
-      result.codeUrl = `https://github.com/login/oauth/authorize?client_id=${result.clientId}&redirect_uri=${encodeURIComponent(result.redirectUri)}`;
-      result.tokenUrl = `https://github.com/login/oauth/access_token`;
-      return result;
-    };
-
-    const getGithubCode = () => {
-      const params = new URLSearchParams(window.location.search);
-      const code = params.get('code');
-      return code;
-    };
-
-    const getGithubToken = async (code) => {
-      const githubParams = getGithubParams();
-      const data = { client_id: githubParams.clientId, client_secret: githubParams.clientSecret, code, redirect_uri: githubParams.redirectUri };
-      try {
-        const result = await axios({
-          url: githubParams.tokenUrl,
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          data: JSON.stringify(data),
-        });
-        console.log(`Response`, result.data);
-        return result.data;
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
     const verifyOrg = (orgType) => {
       //TODO: Check the auth is valid
 
@@ -224,17 +180,7 @@
 
     const init = async () => {
       console.log('init()');
-      await log('Home');
-      const githubCode = getGithubCode();
-      githubToken = getGithubToken(githubCode);
-      if (githubCode) {
-        $('#btn-login').hide();
-        //await callAxios('https://api.github.com/repos/ccportal/github-actions-tf/actions/runs','GET');
-        await log('Logged in');
-      } else {
-        $('#btn-logout').hide();
-        await log('Logged out');
-      }
+      await log('Home');      
       loadConfigurationItems();
     };
 
