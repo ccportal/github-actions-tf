@@ -75,8 +75,7 @@
     const GITHUB_TOKEN = '';
              
     const callAxios = async (url, method, body) => {
-      const BASE_URL = 'https://api.github.com/repos/ccportal/github-actions-tf/actions/runs';
-      console.log('token', githubToken);
+      console.log('callAxios', url, method, body);
       try {
         const result = await axios({
           url: url,
@@ -96,58 +95,46 @@
       }
     };
 
-    const log = async (url, method, body) => {
+    const log = async (step) => {
       try { 
       const data = {
-          date: moment().format(),
-          userinfo: {
-            id: 'webPage',
-            orgId: 'unknown',
-            orgName: 'unknown' 
+        date: moment().format(),
+        userinfo: {
+          id: 'webPage',
+          orgId: 'unknown',
+          orgName: 'unknown' 
+        },
+        activity: {
+          action: "View",
+          source:"web",          
+          stage: "BusinessContinuityApp",
+          step: step,
+          message: `Accessed ${window.location.origin}${window.location.pathname}`,
+          object :{
+            type: "Page",
+            host: window.location.host,
+            hostname: window.location.hostname,
+            href: window.location.href,
+            origin: window.location.origin,
+            pathname: window.location.pathname,
+            url: window.location.origin + window.location.pathname
           },
-          activity: {
-            action: "View",
-            source:"web",          
-            stage: "MainPage",
-            step: "Home",
-            message: `Accessed ${window.location.origin}${window.location.pathname}`,
-            object :{
-              type: "Page",
-              host: window.location.host,
-              hostname: window.location.hostname,
-              href: window.location.href,
-              origin: window.location.origin,
-              pathname: window.location.pathname,
-              url: window.location.origin + window.location.pathname
-            },
-          
-      },
-    };
-      
-      console.log('[Tracking] data:', data);   
-      callAxios('https://api.dev.ccportal.genesys.com/logging/messages','POST', data);
+        
+        },
+      };      
+      //console.log('[Tracking] data:', data);
+      logUrl = isLocalhost ? 'api.dev.ccportal.genesys.com' : 'ccportal.genesys.com';   
+      callAxios(`https://${logUrl}/logging/messages`,'POST', data);
             
-
       } catch (errors) {
         console.error(errors);
       }
     };
-
     
-
     const handleLoginBtn = () => {
       console.log('handleLoginBtn()');
-      let redirectUri, clientId;
-      if (true === isLocalhost()) {
-        clientId = 'a5ebd9911ada00cd8d34';
-        redirectUri = 'https://localhost/web/index.html';
-      } else {
-        clientId = 'aaf007c288a3586bb2da';
-        redirectUri = 'https://ccportal.github.io/github-actions-tf/web/index.html';
-      }
-      const loginUrl = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}`;
-      console.log('loginUrl:', loginUrl);
-      window.location.href = loginUrl;
+      const githubParams = getGithubParams();                
+      window.location.href = githubParams.codeUrl;
     };
 
     const handleLogoutBtn = () => {
@@ -155,6 +142,21 @@
     };
 
     const isLocalhost = () => 'localhost' === window.location.host;
+    
+
+    const getGithubParams = () =>{
+      let result = {};
+      if (true === isLocalhost()) {
+        result.clientId = 'a5ebd9911ada00cd8d34';
+        result.redirectUri = 'https://localhost/web/index.html';
+      } else {
+        result.clientId = 'aaf007c288a3586bb2da';
+        result.redirectUri = 'https://ccportal.github.io/github-actions-tf/web/index.html';
+      }
+      result.codeUrl = `https://github.com/login/oauth/authorize?client_id=${result.clientId}&redirect_uri=${encodeURIComponent(result.redirectUri)}`;
+      result.tokenUrl = `https://github.com/login/oauth/access_token`;
+      return result;
+    }
 
     const getGithubCode = () => {
       const params = new URLSearchParams(window.location.search);
@@ -163,6 +165,7 @@
     };
 
     const getGithubToken = (code) => {
+      const resp = callAxios
       return '123';
     }
 
@@ -200,21 +203,23 @@
 
             slct.appendChild(label);
             slct.appendChild(document.createElement("br"));
-
-        
       }
     }
 
-    const init = () => {
-      console.log('init()');      
+    const init = async () => {
+      console.log('init()'); 
+      await log('Home');     
       const githubCode = getGithubCode();      
       githubToken = getGithubToken(githubCode);
+      
 
       if (githubCode) {
         $('#btn-login').hide();
         //await callAxios('https://api.github.com/repos/ccportal/github-actions-tf/actions/runs','GET');
+        await log('Logged in');
       } else {
         $('#btn-logout').hide();
+        await log('Logged out');
       }
 
       loadConfigurationItems();
