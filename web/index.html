@@ -186,7 +186,7 @@
       githubCode = getGithubCode();      
       if (githubCode) {
         $('#btn-login').hide();
-        await callAxios('https://api.github.com/repos/ccportal/github-actions-tf/actions/runs','GET');
+        //await callAxios('https://api.github.com/repos/ccportal/github-actions-tf/actions/runs','GET');
       } else {
         $('#btn-logout').hide();
       }
