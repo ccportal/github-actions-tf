@@ -57,8 +57,17 @@
 
     const handleLoginBtn = () => {
       console.log('handleLoginBtn()');
-      const redirectUri = isLocalhost() ? 'https://localhost/web/index.html' : 'https://ccportal.github.io/github-actions-tf/web/index.html';
-      console.log('redirectUri:', redirectUri);
+      let redirectUri, clientId;
+      if (true === isLocalhost()) {
+        clientId = 'a5ebd9911ada00cd8d34';
+        redirectUri = 'https://localhost/web/index.html';
+      } else {
+        clientId = 'aaf007c288a3586bb2da';
+        redirectUri = 'https://ccportal.github.io/github-actions-tf/web/index.html';
+      }
+      const loginUrl = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}`;
+      console.log('loginUrl:', loginUrl);
+      window.location.href = loginUrl;
     };
 
     const isLocalhost = () => 'localhost' === window.location.host;
