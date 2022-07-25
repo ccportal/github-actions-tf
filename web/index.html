@@ -6,7 +6,7 @@
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script src="https://momentjs.com/downloads/moment.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script type="application/json" src="availableResources.json"></script>
+    <script type="text/javascript" language="javascript" src="availableResources.js"></script> 
   </head>
   <body>
     <nav class="navbar bg-light">
@@ -55,6 +55,11 @@
               <input type="text" class="form-control" id="dest_region" />
               <button type="submit" id="dest_verify_button" class="btn btn-primary" onClick="verifyOrg('dest')">Verify</button>
             </div>
+            <div class="row align-items-start">
+              <div class="col">
+                Configuration Items:
+                <div id="slct"></div>
+              </div>
           </div>
           <div class="row align-items-start">
             <div class="col">Configuration Items:</div>
@@ -70,8 +75,7 @@
     const GITHUB_TOKEN = '';
 
     const callAxios = async (url, method, body) => {
-      const BASE_URL = 'https://api.github.com/repos/ccportal/github-actions-tf/actions/runs';
-      console.log('token', githubToken);
+      console.log('callAxios', url, method, body);
       try {
         const result = await axios({
           url: url,
@@ -92,34 +96,36 @@
     };
 
     const log = async (step) => {
-      try {
-        const data = {
-          date: moment().format(),
-          userinfo: {
-            id: 'webPage',
-            orgId: 'unknown',
-            orgName: 'unknown',
+      try { 
+      const data = {
+        date: moment().format(),
+        userinfo: {
+          id: 'webPage',
+          orgId: 'unknown',
+          orgName: 'unknown' 
+        },
+        activity: {
+          action: "View",
+          source:"web",          
+          stage: "BusinessContinuityApp",
+          step: step,
+          message: `Accessed ${window.location.origin}${window.location.pathname}`,
+          object :{
+            type: "Page",
+            host: window.location.host,
+            hostname: window.location.hostname,
+            href: window.location.href,
+            origin: window.location.origin,
+            pathname: window.location.pathname,
+            url: window.location.origin + window.location.pathname
           },
-          activity: {
-            action: 'View',
-            source: 'web',
-            stage: 'BusinessContinuityApp',
-            step: step,
-            message: `Accessed ${window.location.origin}${window.location.pathname}`,
-            object: {
-              type: 'Page',
-              host: window.location.host,
-              hostname: window.location.hostname,
-              href: window.location.href,
-              origin: window.location.origin,
-              pathname: window.location.pathname,
-              url: window.location.origin + window.location.pathname,
-            },
-          },
-        };
-
-        console.log('[Tracking] data:', data);
-        callAxios('https://api.dev.ccportal.genesys.com/logging/messages', 'POST', data);
+        
+        },
+      };      
+      //console.log('[Tracking] data:', data);
+      logUrl = isLocalhost ? 'api.dev.ccportal.genesys.com' : 'ccportal.genesys.com';   
+      callAxios(`https://${logUrl}/logging/messages`,'POST', data);
+            
       } catch (errors) {
         console.error(errors);
       }
@@ -136,6 +142,7 @@
     };
 
     const isLocalhost = () => 'localhost' === window.location.host;
+    
 
     const getGithubParams = () => {
       let result = {};
@@ -193,9 +200,27 @@
     };
 
     const loadConfigurationItems = () => {
-      console.log('!! Data', resources);
-      var mydata = JSON.parse(data);
-    };
+     
+      console.log('!! Data', availableResources);
+      for(var r = 0; r < availableResources.length; r++){
+        // create the necessary elements
+        var pair = availableResources[r];
+
+            var checkbox = document.createElement("input");
+            checkbox.type = "checkbox";
+            checkbox.className = "form-check-input";
+            checkbox.id = pair.id;
+            slct.appendChild(checkbox);
+    
+            var label = document.createElement('label')
+            label.innerHTML = pair.displayName;
+            label.className = "form-check-label";
+            label.for = pair.id;
+
+            slct.appendChild(label);
+            slct.appendChild(document.createElement("br"));
+      }
+    }
 
     const init = async () => {
       console.log('init()');
@@ -210,7 +235,6 @@
         $('#btn-logout').hide();
         await log('Logged out');
       }
-
       loadConfigurationItems();
     };
 
