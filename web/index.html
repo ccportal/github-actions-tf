@@ -95,7 +95,7 @@
       }
     };
 
-    const log = async (url, method, body) => {
+    const log = async (step) => {
       try { 
       const data = {
           date: moment().format(),
@@ -107,8 +107,8 @@
           activity: {
             action: "View",
             source:"web",          
-            stage: "MainPage",
-            step: "Home",
+            stage: "BusinessContinuityApp",
+            step: step,
             message: `Accessed ${window.location.origin}${window.location.pathname}`,
             object :{
               type: "Page",
@@ -181,18 +181,20 @@
       console.log('Setting Configuration', config);
     }
 
-    const init = () => {
+    const init = async () => {
       console.log('init()');      
       githubCode = getGithubCode();      
       if (githubCode) {
         $('#btn-login').hide();
         //await callAxios('https://api.github.com/repos/ccportal/github-actions-tf/actions/runs','GET');
+        await log('Logged in');
       } else {
         $('#btn-logout').hide();
+        await log('Logged out');
       }
     };
 
-    
+    log('Home');
     init();
   </script>
 </html>
