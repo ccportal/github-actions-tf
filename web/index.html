@@ -6,6 +6,7 @@
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script src="https://momentjs.com/downloads/moment.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script type="application/json" src="availableResources.json"></script>
   </head>
   <body>
     <nav class="navbar bg-light">
@@ -31,9 +32,9 @@
       <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
         <div class="container">
              <div class="row align-items-start">
-              <div class="col">
+                <div class="col">
                   <!-- Home Org Input-->
-                  <div class="col">Source</div>
+                  <div >Source</div>
                   <label class="form-label">Client ID:</label>
                   <input type="text" class="form-control" id="src_client_id"/>
                   <label class="form-label">Client Secret:</label>
@@ -43,9 +44,9 @@
                   <button type="submit" id="src_verify_button" class="btn btn-primary" onClick="verifyOrg('src')">Verify</button>
                   <br/>
                 </div>
-              <div class="col">
+                <div class="col">
                 <!-- Home Org Input-->
-                <div class="col">Destination</div>
+                  <div>Destination</div>
                 <label class="form-label">Client ID:</label>
                 <input type="text" class="form-control" id="dest_client_id">
                 <label class="form-label">Client Secret:</label>
@@ -54,35 +55,34 @@
                 <input type="text" class="form-control" id="dest_region">
                 <button type="submit" id="dest_verify_button"  class="btn btn-primary" onClick="verifyOrg('dest')">Verify</button>
               </div>
-              <div class="row align-items-start">
-                <div class="col">
-                  Configuration Items:
-                </div>
             </div>
+            <div class="row align-items-start">
+              <div class="col">
+                Configuration Items:
+              </div>
+          </div>
       
 
       </div>
+      </div>  
       <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">History</div>
     </div>
   </body>
   <script>
-    var githubCode;
+    var githubToken;
 
     const GITHUB_TOKEN = '';
-    
-     
-    
-
+             
     const callAxios = async (url, method, body) => {
       const BASE_URL = 'https://api.github.com/repos/ccportal/github-actions-tf/actions/runs';
-      console.log('token', githubCode);
+      console.log('token', githubToken);
       try {
         const result = await axios({
           url: url,
           method: method,
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${githubCode}`, // PAT for now hardcoded, removed later
+            Authorization: `Bearer ${githubToken}`, // PAT for now hardcoded, removed later
           },
           data: body ? JSON.stringify(body) : null,
         });
@@ -161,6 +161,9 @@
       return code;
     };
 
+    const getGithubToken = (code) => {
+      return '123';
+    }
 
     const verifyOrg = (orgType) => {
      //TODO: Check the auth is valid
@@ -170,20 +173,23 @@
      $(`#${orgType}_client_secret`).prop('disabled', true);
      $(`#${orgType}_region`).prop('disabled', true);
      $(`#${orgType}_verify_button`).prop('disabled', true);
-
-     //document.getElementById(`${orgType}_client_id`).disabled = true;
-     //document.getElementById(`${orgType}_client_secret`).disabled = true;
-    // document.getElementById(`${orgType}_region`).disabled = true;
-    // document.getElementById(`${orgType}_verify_button`).disabled = true;
     }
 
     const onSetConfiguration = (config) => {
       console.log('Setting Configuration', config);
     }
 
+    const loadConfigurationItems = () => {
+     
+     console.log('!! Data', resources);
+     var mydata = JSON.parse(data);
+   }
+
     const init = async () => {
       console.log('init()');      
-      githubCode = getGithubCode();      
+      const githubCode = getGithubCode();      
+      githubToken = getGithubToken(githubCode);
+
       if (githubCode) {
         $('#btn-login').hide();
         //await callAxios('https://api.github.com/repos/ccportal/github-actions-tf/actions/runs','GET');
@@ -192,6 +198,8 @@
         $('#btn-logout').hide();
         await log('Logged out');
       }
+
+      loadConfigurationItems();
     };
 
     log('Home');
