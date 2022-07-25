@@ -21,20 +21,28 @@
   </body>
   <script>
    
-    const getTodoItems = async () => {    
-    try {
-      const BASE_URL = 'https://jsonplaceholder.typicode.com';
-     const response = await axios.get(`${BASE_URL}/todos?_limit=5`);
+   const gitConfig = {
+      headers: {
+       'Content-Type': 'application/json',
+       Authorization: 'Bearer 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',
+     },
+    };
+
+    const callAxios = async () => { 
+      const BASE_URL = 'https://api.github.com/repos/ccportal/github-actions-tf/actions/runs';   
+      try {
+        
+      const response = await axios.get(`${BASE_URL}`, gitConfig);
       console.log(response);
       const todoItems = response.data;
 
-     console.log(`GET: Here's the list of todos`, todoItems);
+      console.log(`GET: Here's the list of todos`, todoItems);
 
-     return todoItems;
-    } catch (errors) {
-      console.error(errors);
-    }
- };
-  getTodoItems();
+      return todoItems;
+      } catch (errors) {
+        console.error(errors);
+      }
+    };
+    callAxios();
   </script>
 </html>
