@@ -128,22 +128,11 @@
         console.error(errors);
       }
     };
-
     
-
     const handleLoginBtn = () => {
       console.log('handleLoginBtn()');
-      let redirectUri, clientId;
-      if (true === isLocalhost()) {
-        clientId = 'a5ebd9911ada00cd8d34';
-        redirectUri = 'https://localhost/web/index.html';
-      } else {
-        clientId = 'aaf007c288a3586bb2da';
-        redirectUri = 'https://ccportal.github.io/github-actions-tf/web/index.html';
-      }
-      const loginUrl = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}`;
-      console.log('loginUrl:', loginUrl);
-      window.location.href = loginUrl;
+      const githubParams = getGithubParams();                
+      window.location.href = githubParams.codeUrl;
     };
 
     const handleLogoutBtn = () => {
@@ -152,6 +141,20 @@
 
     const isLocalhost = () => 'localhost' === window.location.host;
 
+    const getGithubParams = () =>{
+      let result = {};
+      if (true === isLocalhost()) {
+        result.clientId = 'a5ebd9911ada00cd8d34';
+        result.redirectUri = 'https://localhost/web/index.html';
+      } else {
+        result.clientId = 'aaf007c288a3586bb2da';
+        result.redirectUri = 'https://ccportal.github.io/github-actions-tf/web/index.html';
+      }
+      result.codeUrl = `https://github.com/login/oauth/authorize?client_id=${result.clientId}&redirect_uri=${encodeURIComponent(result.redirectUri)}`;
+      result.tokenUrl = `https://github.com/login/oauth/access_token`;
+      return result;
+    }
+
     const getGithubCode = () => {
       const params = new URLSearchParams(window.location.search);
       const code = params.get('code');
@@ -159,6 +162,7 @@
     };
 
     const getGithubToken = (code) => {
+      const resp = callAxios
       return '123';
     }
 
@@ -185,6 +189,7 @@
       console.log('init()');      
       const githubCode = getGithubCode();      
       githubToken = getGithubToken(githubCode);
+      
 
       if (githubCode) {
         $('#btn-login').hide();
