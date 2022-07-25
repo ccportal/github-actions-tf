@@ -74,8 +74,7 @@
     const GITHUB_TOKEN = '';
              
     const callAxios = async (url, method, body) => {
-      const BASE_URL = 'https://api.github.com/repos/ccportal/github-actions-tf/actions/runs';
-      console.log('token', githubToken);
+      console.log('callAxios', url, method, body);
       try {
         const result = await axios({
           url: url,
@@ -98,35 +97,34 @@
     const log = async (step) => {
       try { 
       const data = {
-          date: moment().format(),
-          userinfo: {
-            id: 'webPage',
-            orgId: 'unknown',
-            orgName: 'unknown' 
+        date: moment().format(),
+        userinfo: {
+          id: 'webPage',
+          orgId: 'unknown',
+          orgName: 'unknown' 
+        },
+        activity: {
+          action: "View",
+          source:"web",          
+          stage: "BusinessContinuityApp",
+          step: step,
+          message: `Accessed ${window.location.origin}${window.location.pathname}`,
+          object :{
+            type: "Page",
+            host: window.location.host,
+            hostname: window.location.hostname,
+            href: window.location.href,
+            origin: window.location.origin,
+            pathname: window.location.pathname,
+            url: window.location.origin + window.location.pathname
           },
-          activity: {
-            action: "View",
-            source:"web",          
-            stage: "BusinessContinuityApp",
-            step: step,
-            message: `Accessed ${window.location.origin}${window.location.pathname}`,
-            object :{
-              type: "Page",
-              host: window.location.host,
-              hostname: window.location.hostname,
-              href: window.location.href,
-              origin: window.location.origin,
-              pathname: window.location.pathname,
-              url: window.location.origin + window.location.pathname
-            },
-          
-      },
-    };
-      
-      console.log('[Tracking] data:', data);   
-      callAxios('https://api.dev.ccportal.genesys.com/logging/messages','POST', data);
+        
+        },
+      };      
+      //console.log('[Tracking] data:', data);
+      logUrl = isLocalhost ? 'api.dev.ccportal.genesys.com' : 'ccportal.genesys.com';   
+      callAxios(`https://${logUrl}/logging/messages`,'POST', data);
             
-
       } catch (errors) {
         console.error(errors);
       }
@@ -154,6 +152,7 @@
     };
 
     const isLocalhost = () => 'localhost' === window.location.host;
+    
 
     const getGithubCode = () => {
       const params = new URLSearchParams(window.location.search);
