@@ -453,11 +453,23 @@
       //#region Test Secrets
       console.log("Load Secrets...");
       let resp = await callAxios(
-        `https://api.github.com/repos/${githubRepository}/codespaces/secrets/ORG1_SECRET`,
+        `https://api.github.com/repos/${githubRepository}/actions/secrets`,
         "GET",
         `Bearer ${githubToken}`
       );
       console.log(resp.data);
+
+      // Test Create Secret
+      let secret = {
+        encrypted_value: "test-secret",
+        key_id: "test-secret-value",
+      };
+      resp = await callAxios(
+        `https://api.github.com/repos/${githubRepository}/actions/secrets/TEST_SECRET`,
+        "PUT",
+        `Bearer ${githubToken}`,
+        secret
+      );
 
       //#endregion /Test Secrets
     };
