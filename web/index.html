@@ -144,7 +144,7 @@
     };
 
     const callAxios = async (url, method, authorization, body) => {
-      console.log('callAxios', url, method, authorization, body);
+      console.log('callAxios', url, method, authorization);
       try {
         const result = await axios({
           url: url,
@@ -239,7 +239,7 @@
                 
         // Load History
         console.log('Load History...');
-        const data = await callAxios(`https://api.github.com/repos/${githubOwner}/${githubRepo}/actions/runs`, 'GET',`Bearer ${githubToken}`);
+        const data = await callAxios(`https://api.github.com/repos/${githubOwner}/${githubRepo}/actions/workflows/${githubWorkflowId}/runs`, 'GET',`Bearer ${githubToken}`);
 
         // Feed the table with the data from GitHub
         var table = document.getElementById('tableContents');
