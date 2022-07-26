@@ -99,14 +99,6 @@
       console.log('personalTokenOnChange()');
       githubToken = $('#github-personal-token').val();
       const data = await callAxios('https://api.github.com/repos/ccportal/github-actions-tf/actions/runs', 'GET');
-
-      // Feed the table with the data from GitHub
-      var table = document.getElementById('tableContents');
-      var tableContents;
-      data.workflow_runs.forEach(function (item) {
-        tableContents = tableContents + `<tr><td><a href="${item.html_url}">${item.name}</href></td><td>${moment(item.created_at).format('YYYY-MM-DD HH:mm:ss')}</td><td>${item.status}</td><td>${item.conclusion}</td></tr>`;
-      });
-      table.innerHTML = tableContents;
     };
 
     const callAxios = async (url, method, body) => {
@@ -227,7 +219,7 @@
       console.log('init()');
       $('#token-entered').hide();
       await log('Home');
-      loadConfigurationItems();
+      // loadConfigurationItems();
 
       const sourceVerifyForm = document.querySelector('#submitSource');
       if (sourceVerifyForm) {
