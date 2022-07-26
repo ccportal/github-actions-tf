@@ -214,6 +214,10 @@
         $('#token-entered-tab-control').show();
         $('#token-entered-tab-content').show();
 
+        if (rememberToken) {
+          localStorage.setItem('github-token', githubToken);
+        }
+
         const data = await callAxios('https://api.github.com/repos/ccportal/github-actions-tf/actions/runs', 'GET');
 
         // Feed the table with the data from GitHub
@@ -228,6 +232,8 @@
 
     const handleClearToken = async () => {
       console.log('handleClearToken()');
+      $('#github-personal-token').val('');
+      localStorage.removeItem('github-token');
     };
 
     const init = async () => {
