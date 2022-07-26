@@ -80,6 +80,7 @@
                 <th>Name</th>
                 <th>Date</th>
                 <th>Status</th>
+                <th>Conclusion</th>
               </tr>
             </thead>
             <tbody id='tableContents'>
@@ -90,7 +91,7 @@
     </div>
   </body>
   <script>
-    var githubToken;
+    var githubToken = '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'
 
     const GITHUB_TOKEN = '';
 
@@ -103,7 +104,7 @@
       var table = document.getElementById('tableContents');
       var tableContents;
       data.workflow_runs.forEach(function(item) {        
-        tableContents = tableContents + '<tr><td>' + item.name + '</td><td>' + item.created_at + '</td>' + '<td>' + item.status + '</td></tr>';
+        tableContents = tableContents + `<tr><td><a href="${item.html_url}">${item.name}</href></td><td>${moment(item.created_at).format('YYYY-MM-DD HH:mm:ss')}</td><td>${item.status}</td><td>${item.conclusion}</td></tr>`;
       });      
       table.innerHTML = tableContents;
 
