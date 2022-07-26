@@ -98,12 +98,10 @@
             <div class="card">
               <div class="card-header">History</div>
               <div class="card-body">
-                <table class="table table-striped table-sm">
+                <table class="table table-striped table-sm clickable-row">
                   <thead class="thead-light">
-                    <tr>
-                      <th>Name</th>                      
-                      <th>Date</th>
-                      <th>Status</th>
+                    <tr>                                         
+                      <th>Date</th>                      
                       <th>Conclusion</th>
                     </tr>
                   </thead>
@@ -245,8 +243,8 @@
             } else {
               conclusion = '';
             }
-
-            tableContents = tableContents + `<tr><td><a target="_blank" href="${item.html_url}">${item.name}</href></td><td>${moment(item.run_started_at).format('YYYY-MM-DD HH:mm:ss')}</td><td>${item.status}</td><td>${conclusion}</td></tr>`;
+            //<td><a target="_blank" href="${item.html_url}">${item.name}</href></td>
+            tableContents = tableContents + `<tr><td><a target="_blank" href="${item.html_url}">${moment(item.run_started_at).format('YYYY-MM-DD HH:mm:ss')}</href></td><td>${conclusion}</td></tr>`;
           }
         });
         table.innerHTML = tableContents;
