@@ -61,6 +61,9 @@
                 Configuration Items:
                 <div id="slct"></div>
               </div>
+              <div class="row align-items-start">
+                <button type="submit" id="src_verify_button" class="btn btn-primary" onClick="onSetConfiguration()">Save Configuration</button>
+              </div>
           </div>
       
 
@@ -137,6 +140,8 @@
       window.location.href = githubParams.codeUrl;
     };
 
+    
+
     const handleLogoutBtn = () => {
       console.log('handleLogoutBtn()');
     };
@@ -176,16 +181,29 @@
      $(`#${orgType}_client_id`).prop('disabled', true);
      $(`#${orgType}_client_secret`).prop('disabled', true);
      $(`#${orgType}_region`).prop('disabled', true);
-     $(`#${orgType}_verify_button`).prop('disabled', true);
+     $(`#${orgType}_verify_button`).prop('disabled', false);
     }
 
     const onSetConfiguration = (config) => {
-      console.log('Setting Configuration', config);
+      console.log(!$("#src_client_id").val());
+      
+
+      //if source and destination has not been verified do not enabled return
+      if(!$("#src_verify_button").is(":disabled") || !$("#dest_verify_button").is(":disabled"))
+        return alert('Source and Destination organizations must be verified before continuing.');
+      
+      if(!$("#src_client_id").val() || !$("#src_client_secret").val() || !$("#src_region").val()) return alert('Source organization must be inputted and verified before continuing');
+      if(!$("#dest_client_id").val() || !$("#dest_client_secret").val() || !$("#dest_region").val()) return alert('Detination organization must be inputted and verified before continuing');
+
+ 
+      
     }
 
     const loadConfigurationItems = () => {
      
       console.log('!! Data', availableResources);
+        var inputGroup = document.createElement("resource_group");
+
       for(var r = 0; r < availableResources.length; r++){
         // create the necessary elements
         var pair = availableResources[r];
