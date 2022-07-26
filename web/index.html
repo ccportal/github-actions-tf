@@ -18,7 +18,7 @@
             Business Continuity
           </a>
           <div class="d-flex">
-            <button id="manual-run-btn" type="button" class="btn btn-primary" onclick="handleApplyManualRun()">Manual run</button>
+            <button id="manual-run-btn" type="button" class="btn btn-primary" disabled onclick="handleApplyManualRun()" >Manual run</button>
           </div>
         </div>
       </nav>
@@ -196,11 +196,14 @@
       console.log("handleSelectedRepository()");
       githubRepository = $("#select-repository option:selected")[0].innerText;
 
-      console.log("Set Repository:", githubRepository);
+      console.log('Set Repository:', githubRepository);
+      
+      // Clean vars / tables
       githubWorkflowId = undefined;
       var table = document.getElementById("tableContents");
       var tableContents = "";
       table.innerHTML = tableContents;
+      document.getElementById('manual-run-btn').disabled = true;
       // Get WorkflowId
       console.log("Find workflowId...");
       try {
@@ -217,6 +220,10 @@
           console.log("GitHubWorkflowId not set.");
           return;
         }
+
+        // Enable ManualRun Button
+        document.getElementById('manual-run-btn').disabled = false;
+        
 
         // Load History
         console.log("Load History...");
