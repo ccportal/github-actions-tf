@@ -1,18 +1,17 @@
 terraform {
   required_version = "~> 1.2.1"
- 
 }
 
 variable "TF_VAR_ID" {
-  type = string  
+  type = string
 }
 
 variable "TF_VAR_SECRET" {
-  type = string  
+  type = string
 }
 
 variable "TF_VAR_REGION" {
-  type = string  
+  type = string
 }
 
 
