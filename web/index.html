@@ -168,7 +168,6 @@
     var githubToken = "";
     var githubActionName = "";
     var githubRepository = "";
-    var githubOwner = "ccportal";
     var githubWorkflowId = undefined;
     var rememberToken = true;
     var githubRepositories = [];
@@ -208,8 +207,8 @@
     };
 
     const handleSelectedRepository = async () => {
-      console.log("handleSelectedRepository()");
-      githubRepository = $("#select-repository option:selected")[0].innerText;
+      console.log("handleSelectedRepository()", $("#select-repository option:selected")[0]);
+      githubRepository = $("#select-repository option:selected").text();
 
       console.log("Set Repository:", githubRepository);
 
@@ -219,7 +218,7 @@
       // Get WorkflowId
       console.log("Find workflowId...");
       try {
-        const workflow_Ids = await callAxios(`https://api.github.com/repos/${githubOwner}/${githubRepository}/actions/workflows`, "GET", `Bearer ${githubToken}`);
+        const workflow_Ids = await callAxios(`https://api.github.com/repos/${githubRepository}/actions/workflows`, "GET", `Bearer ${githubToken}`);
         if (!workflow_Ids?.workflows) {
           console.log("No workflows found");
           return;
@@ -238,7 +237,7 @@
 
         // Load History
         console.log("Load History...");
-        const data = await callAxios(`https://api.github.com/repos/${githubOwner}/${githubRepository}/actions/workflows/${githubWorkflowId}/runs?per_page=10`, "GET", `Bearer ${githubToken}`);
+        const data = await callAxios(`https://api.github.com/repos/${githubRepository}/actions/workflows/${githubWorkflowId}/runs?per_page=10`, "GET", `Bearer ${githubToken}`);
         // Feed the table with the data from GitHub
 
         var table = document.getElementById("tableContents");
@@ -309,28 +308,21 @@
     const isLocalhost = () => "localhost" === window.location.host;
 
     const handleSetConfiguration = async (config) => {
-    //Validation:
+      //Validation:
       // if (!$("#src_client_id").val() || !$("#src_client_secret").val() || $("#src_region option:selected")[0].innerText === "") return alert("Source organization must be inputted before continuing");
-    // if (!$("#dest_client_id").val() || !$("#dest_client_secret").val() || $("#dest_region option:selected")[0].innerText === "") return alert("Destination organization must be inputted before continuing");
-     // if ($("#select-repository option:selected")[0].innerText === "") return alert("Repository must be selected");
+      // if (!$("#dest_client_id").val() || !$("#dest_client_secret").val() || $("#dest_region option:selected")[0].innerText === "") return alert("Destination organization must be inputted before continuing");
+      // if ($("#select-repository option:selected")[0].innerText === "") return alert("Repository must be selected");
 
-     await updateConfigurationItems();
-     await updateGitSecrets();
-     await saveDeploymentDetails();
-
+      await updateConfigurationItems();
+      await updateGitSecrets();
+      await saveDeploymentDetails();
     };
 
-    const updateConfigurationItems = async () => {
-      
-    };
+    const updateConfigurationItems = async () => {};
 
-    const updateGitSecrets = async () => {
+    const updateGitSecrets = async () => {};
 
-    };
-
-    const saveDeploymentDetails = async () => {
-
-    };
+    const saveDeploymentDetails = async () => {};
 
     const handleApplyToken = async () => {
       console.log("handleApplyToken()");
@@ -350,13 +342,13 @@
 
     const handleApplyManualRun = async () => {
       console.log("handleApplyManualRun()");
-      await callAxios(`https://api.github.com/repos/${githubOwner}/${githubRepository}/actions/workflows/${githubWorkflowId}/dispatches`, "POST", `Bearer ${githubToken}`, { ref: "master" });
+      await callAxios(`https://api.github.com/repos/${githubRepository}/actions/workflows/${githubWorkflowId}/dispatches`, "POST", `Bearer ${githubToken}`, { ref: "master" });
     };
 
     const loadRepositories = async (githubToken) => {
       console.log("Loading Repositories...");
       let repositories = await callAxios("https://api.github.com/user/repos", "GET", `Bearer ${githubToken}`);
-      repositories = repositories.sort((a, b) => a.name.localeCompare(b.name));
+      repositories = repositories.sort((a, b) => a.full_name.localeCompare(b.full_name));
       githubRepositories = repositories;
       console.log("repositories:", repositories);
       //Update the select with the repositories
@@ -364,7 +356,7 @@
         $("#select-repository").append(
           $("<option>", {
             value: repositories[i].name,
-            text: repositories[i].name,
+            text: repositories[i].full_name,
           })
         );
       }
