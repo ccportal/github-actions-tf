@@ -165,27 +165,27 @@
   </body>
 
   <script>
-    var githubToken = "";
-    var githubActionName = "";
-    var githubRepository = "";
-    var githubOwner = "ccportal";
+    var githubToken = '';
+    var githubActionName = '';
+    var githubRepository = '';
+    var githubOwner = 'ccportal';
     var githubWorkflowId = undefined;
     var rememberToken = true;
     var githubRepositories = [];
 
     const personalTokenOnChange = async () => {
-      console.log("personalTokenOnChange()");
-      githubToken = $("#github-personal-token").val();
+      console.log('personalTokenOnChange()');
+      githubToken = $('#github-personal-token').val();
     };
 
-    const callAxios = async (url, method, authorization, body) => {
-      console.log("callAxios", url, method, authorization);
+    const callAxios = async (url, method, authorization, body, suppressExceptions = false) => {
+      console.log('callAxios', url, method, authorization);
       try {
         const result = await axios({
           url: url,
           method: method,
           headers: {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
             Authorization: authorization, // PAT for now hardcoded, removed later
           },
           data: body ? JSON.stringify(body) : null,
@@ -196,74 +196,75 @@
         return result.data;
       } catch (errors) {
         console.error(errors);
+        if (!suppressExceptions) throw errors;
       }
     };
 
     const clearUI = () => {
-      console.log("clearUI()");
+      console.log('clearUI()');
 
       githubWorkflowId = undefined;
-      document.getElementById("tableContents").innerHTML = "";
-      document.getElementById("manual-run-btn").disabled = true;
+      document.getElementById('tableContents').innerHTML = '';
+      document.getElementById('manual-run-btn').disabled = true;
     };
 
     const handleSelectedRepository = async () => {
-      console.log("handleSelectedRepository()");
-      githubRepository = $("#select-repository option:selected")[0].innerText;
+      console.log('handleSelectedRepository()');
+      githubRepository = $('#select-repository option:selected')[0].innerText;
 
-      console.log("Set Repository:", githubRepository);
+      console.log('Set Repository:', githubRepository);
 
       // Clean vars / tables
       clearUI();
-      document.getElementById("spinnerHistory").hidden = false;
+      document.getElementById('spinnerHistory').hidden = false;
       // Get WorkflowId
-      console.log("Find workflowId...");
+      console.log('Find workflowId...');
       try {
-        const workflow_Ids = await callAxios(`https://api.github.com/repos/${githubOwner}/${githubRepository}/actions/workflows`, "GET", `Bearer ${githubToken}`);
+        const workflow_Ids = await callAxios(`https://api.github.com/repos/${githubOwner}/${githubRepository}/actions/workflows`, 'GET', `Bearer ${githubToken}`);
         if (!workflow_Ids?.workflows) {
-          console.log("No workflows found");
+          console.log('No workflows found');
           return;
         }
         workflow_Ids.workflows.forEach((item) => {
           if (item.name === githubActionName) githubWorkflowId = item.id;
         });
-        console.log("githubWorkflowId:", githubWorkflowId);
+        console.log('githubWorkflowId:', githubWorkflowId);
         if (!githubWorkflowId) {
-          console.log("GitHubWorkflowId not set.");
+          console.log('GitHubWorkflowId not set.');
           return;
         }
 
         // Enable ManualRun Button
-        document.getElementById("manual-run-btn").disabled = false;
+        document.getElementById('manual-run-btn').disabled = false;
 
         // Load History
-        console.log("Load History...");
-        const data = await callAxios(`https://api.github.com/repos/${githubOwner}/${githubRepository}/actions/workflows/${githubWorkflowId}/runs?per_page=10`, "GET", `Bearer ${githubToken}`);
+        console.log('Load History...');
+        const data = await callAxios(`https://api.github.com/repos/${githubOwner}/${githubRepository}/actions/workflows/${githubWorkflowId}/runs?per_page=10`, 'GET', `Bearer ${githubToken}`);
         // Feed the table with the data from GitHub
 
-        var table = document.getElementById("tableContents");
-        var tableContents = "";
+        var table = document.getElementById('tableContents');
+        var tableContents = '';
 
         data.workflow_runs.forEach(function (item) {
           if (item.name === githubActionName) {
-            let conclusion = "";
+            let conclusion = '';
             if (item.conclusion) {
-              conclusion = item.conclusion === "success" ? '<i class="bi bi-check-circle-fill" style="color:green" data-toggle="tooltip" data-placement="right" title="Success"></i>' : item.conclusion === "cancelled" ? '<i class="bi bi-exclamation-circle-fill"  style="color:gray" data-toggle="tooltip" data-placement="right" title="Cancelled"></i>' : '<i class="bi bi-x-circle-fill"  style="color:red" data-toggle="tooltip" data-placement="right" title="Failed"></i>';
+              conclusion = item.conclusion === 'success' ? '<i class="bi bi-check-circle-fill" style="color:green" data-toggle="tooltip" data-placement="right" title="Success"></i>' : item.conclusion === 'cancelled' ? '<i class="bi bi-exclamation-circle-fill"  style="color:gray" data-toggle="tooltip" data-placement="right" title="Cancelled"></i>' : '<i class="bi bi-x-circle-fill"  style="color:red" data-toggle="tooltip" data-placement="right" title="Failed"></i>';
             } else {
-              conclusion = "";
+              conclusion = '';
             }
-            tableContents = tableContents + `<tr><td><a target="_blank" href="${item.html_url}">${moment(item.run_started_at).format("YYYY-MM-DD HH:mm:ss")}</href></td><td class="text-center">${conclusion}</td></tr>`;
+            tableContents = tableContents + `<tr><td><a target="_blank" href="${item.html_url}">${moment(item.run_started_at).format('YYYY-MM-DD HH:mm:ss')}</href></td><td class="text-center">${conclusion}</td></tr>`;
           }
         });
         table.innerHTML = tableContents;
       } catch (error) {
         console.error(error);
       } finally {
-        document.getElementById("spinnerHistory").hidden = true;
+        document.getElementById('spinnerHistory').hidden = true;
       }
 
       if (rememberToken) {
-        localStorage.setItem("github-repository", githubRepository);
+        localStorage.setItem('github-repository', githubRepository);
       }
     };
 
@@ -272,18 +273,18 @@
         const data = {
           date: moment().format(),
           userinfo: {
-            id: "webPage",
-            orgId: "unknown",
-            orgName: "unknown",
+            id: 'webPage',
+            orgId: 'unknown',
+            orgName: 'unknown',
           },
           activity: {
-            action: "View",
-            source: "web",
-            stage: "BusinessContinuityApp",
+            action: 'View',
+            source: 'web',
+            stage: 'BusinessContinuityApp',
             step: step,
             message: `Accessed ${window.location.origin}${window.location.pathname}`,
             object: {
-              type: "Page",
+              type: 'Page',
               host: window.location.host,
               hostname: window.location.hostname,
               href: window.location.href,
@@ -294,53 +295,53 @@
           },
         };
         //console.log('[Tracking] data:', data);
-        logUrl = isLocalhost ? "api.dev.ccportal.genesys.com" : "ccportal.genesys.com";
-        callAxios(`https://${logUrl}/logging/messages`, "POST", `Bearer ${githubToken}`, data);
+        logUrl = isLocalhost ? 'api.dev.ccportal.genesys.com' : 'ccportal.genesys.com';
+        callAxios(`https://${logUrl}/logging/messages`, 'POST', `Bearer ${githubToken}`, data);
       } catch (errors) {
         console.error(errors);
       }
     };
 
     const handleRememberCheck = (e) => {
-      console.log("handleRememberCheck()");
-      rememberToken = $("#remember-token").prop("checked");
+      console.log('handleRememberCheck()');
+      rememberToken = $('#remember-token').prop('checked');
     };
 
-    const isLocalhost = () => "localhost" === window.location.host;
+    const isLocalhost = () => 'localhost' === window.location.host;
 
     const handleSetConfiguration = async (config) => {
-    //Validation:
+      //Validation:
       // if (!$("#src_client_id").val() || !$("#src_client_secret").val() || $("#src_region option:selected")[0].innerText === "") return alert("Source organization must be inputted before continuing");
-    // if (!$("#dest_client_id").val() || !$("#dest_client_secret").val() || $("#dest_region option:selected")[0].innerText === "") return alert("Destination organization must be inputted before continuing");
-     // if ($("#select-repository option:selected")[0].innerText === "") return alert("Repository must be selected");
+      // if (!$("#dest_client_id").val() || !$("#dest_client_secret").val() || $("#dest_region option:selected")[0].innerText === "") return alert("Destination organization must be inputted before continuing");
+      // if ($("#select-repository option:selected")[0].innerText === "") return alert("Repository must be selected");
 
-     await updateConfigurationItems();
-     await updateGitSecrets();
-     await saveDeploymentDetails();
-
+      await updateConfigurationItems();
+      await updateGitSecrets();
+      await saveDeploymentDetails();
     };
 
-    const updateConfigurationItems = async () => {
-      
-    };
+    const updateConfigurationItems = async () => {};
 
-    const updateGitSecrets = async () => {
+    const updateGitSecrets = async () => {};
 
-    };
-
-    const saveDeploymentDetails = async () => {
-
-    };
+    const saveDeploymentDetails = async () => {};
 
     const handleApplyToken = async () => {
-      console.log("handleApplyToken()");
+      console.log('handleApplyToken()');
       if (githubToken?.length > 1) {
-        $("#no-token-entered").hide();
-        $("#token-entered-columns").show();
-        $("#save-btn").show();
-        $("#manual-run-btn").show();
         if (rememberToken) {
-          localStorage.setItem("github-token", githubToken);
+          localStorage.setItem('github-token', githubToken);
+        }
+        await log('Logged-In');
+        try {
+          await loadRepositories(githubToken);
+          $('#no-token-entered').hide();
+          $('#token-entered-columns').show();
+          $('#save-btn').show();
+          $('#manual-run-btn').show();
+        } catch (err) {
+          console.log(err);
+          alert('Invalid token');
         }
         await log("Logged-In");
 
@@ -354,43 +355,43 @@
     };
 
     const handleApplyManualRun = async () => {
-      console.log("handleApplyManualRun()");
-      await callAxios(`https://api.github.com/repos/${githubOwner}/${githubRepository}/actions/workflows/${githubWorkflowId}/dispatches`, "POST", `Bearer ${githubToken}`, { ref: "master" });
+      console.log('handleApplyManualRun()');
+      await callAxios(`https://api.github.com/repos/${githubOwner}/${githubRepository}/actions/workflows/${githubWorkflowId}/dispatches`, 'POST', `Bearer ${githubToken}`, { ref: 'master' });
     };
 
     const loadRepositories = async (githubToken) => {
-      console.log("Loading Repositories...");
-      let repositories = await callAxios("https://api.github.com/user/repos", "GET", `Bearer ${githubToken}`);
+      console.log('Loading Repositories...');
+      let repositories = await callAxios('https://api.github.com/user/repos', 'GET', `Bearer ${githubToken}`, true);
       repositories = repositories.sort((a, b) => a.name.localeCompare(b.name));
       githubRepositories = repositories;
-      console.log("repositories:", repositories);
+      console.log('repositories:', repositories);
       //Update the select with the repositories
       for (let i = 0; i < repositories.length; i++) {
-        $("#select-repository").append(
-          $("<option>", {
+        $('#select-repository').append(
+          $('<option>', {
             value: repositories[i].name,
             text: repositories[i].name,
           })
         );
       }
 
-      console.log("Repositories found:", repositories);
+      console.log('Repositories found:', repositories);
     };
 
     const handleClearToken = async () => {
-      console.log("handleClearToken()");
-      $("#github-personal-token").val("");
-      localStorage.removeItem("github-token");
+      console.log('handleClearToken()');
+      $('#github-personal-token').val('');
+      localStorage.removeItem('github-token');
     };
 
     const init = async () => {
-      console.log("init()");
-      githubToken = localStorage.getItem("github-token") ?? "";
-      $("#github-personal-token").val(githubToken);
-      $("#token-entered-columns").hide();
-      $("#save-btn").hide();
-      $("#manual-run-btn").hide();
-      await log("Home");
+      console.log('init()');
+      githubToken = localStorage.getItem('github-token') ?? '';
+      $('#github-personal-token').val(githubToken);
+      $('#token-entered-columns').hide();
+      $('#save-btn').hide();
+      $('#manual-run-btn').hide();
+      await log('Home');
       // loadConfigurationItems();
     };
 
@@ -398,10 +399,10 @@
 
     $(document).ready(function () {
       try {
-        $.get("/.github/workflows/terraform.yml").done(function (data) {
-          console.log("File load complete");
+        $.get('/.github/workflows/terraform.yml').done(function (data) {
+          console.log('File load complete');
           githubActionName = jsyaml.load(data).name;
-          console.log("githubActionName:", githubActionName);
+          console.log('githubActionName:', githubActionName);
         });
       } catch (error) {
         console.error(error);
