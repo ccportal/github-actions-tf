@@ -1,0 +1,6 @@
+{
+  "javascript.preferences.quoteStyle": "single",
+  "editor.formatOnPaste": true,
+  "editor.formatOnSave": true,
+  "yaml.format.singleQuote": true
+}
