@@ -31,6 +31,12 @@
         <span class="input-group-text" id="basic-addon1">Github Personal Token</span>
         <input id="github-personal-token" type="text" class="form-control" placeholder="enter a valid token" aria-label="Username" aria-describedby="basic-addon1" onchange="personalTokenOnChange()" >
       </div>
+      <div class="form-check mt-3">
+        <input class="form-check-input" type="checkbox" id="remember-token" onchange="handleRememberCheck()" checked>
+        <label class="form-check-label" for="remember-token">
+          Remember the token
+        </label>
+      </div>
       <button type="button" class="btn btn-primary mt-3" onclick="handleApplyToken()">Apply</button>
     </div>
     
@@ -94,6 +100,7 @@
     </div>
   </body>
   <script>
+    var rememberToken = true;
     var githubToken = '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'
 
     const GITHUB_TOKEN = '';
@@ -114,7 +121,6 @@
 
     }
     
-
     const callAxios = async (url, method, body) => {
       console.log('callAxios', url, method, body);
       try {
@@ -172,16 +178,9 @@
       }
     };
     
-    const handleLoginBtn = () => {
-      console.log('handleLoginBtn()');
-      const githubParams = getGithubParams();                
-      window.location.href = githubParams.codeUrl;
-    };
-
-    
-
-    const handleLogoutBtn = () => {
-      console.log('handleLogoutBtn()');
+    const handleRememberCheck = (e) =>{
+      console.log("handleRememberCheck()");
+      rememberToken = $('#remember-token').prop('checked');      
     };
 
     const isLocalhost = () => 'localhost' === window.location.host;
