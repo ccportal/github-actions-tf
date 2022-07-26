@@ -36,11 +36,9 @@
         <label class="form-check-label" for="select-repository"> Repository:</label>
         <select class="form-select"  id="select-repository" onchange="handleSelectedRepository()">
           <option selected>Open this select menu</option>
-          <option value="1">One</option>
-          <option value="2">Two</option>
-          <option value="3">Three</option></select>
+        </select>
       </div>
-      
+
       <nav id="token-entered-tab-control">
         <div class="nav nav-tabs" id="nav-tab" role="tablist">
           <button class="nav-link active" id="nav-config-tab" data-bs-toggle="tab" data-bs-target="#nav-config" type="button" role="tab" aria-controls="nav-config" aria-selected="true">Configuration</button>
@@ -127,6 +125,7 @@
 
   <script>
     var githubToken = "";
+    var githubRepository = "";
     var githubActionName = "";
     var rememberToken = true;
 
@@ -158,6 +157,14 @@
 
     const handleSelectedRepository = async() => {
       console.log('handleSelectedRepository()');
+      githubRepository = $("#select-repository option:selected")[0].innerText;
+     
+      console.log('Set Repository:', githubRepository);
+      
+      if (rememberToken) {
+          localStorage.setItem("github-repository", githubRepository);
+        }
+
     }
 
     const log = async (step) => {
@@ -233,12 +240,30 @@
           }
         });
         table.innerHTML = tableContents;
+
+        await loadRepositories(githubToken);
       }
     };
 
     const handleApplyManualRun = async () => {
       console.log('handleApplyManualRun()');
 
+    }
+
+    const loadRepositories = async(githubToken) => {
+
+      console.log('Loading Repositories...')
+      let repositories = await callAxios('https://api.github.com/user/repos', 'GET',`Bearer ${githubToken}`);
+      
+      //Update the select with the repositories
+      for(let i = 0; i < repositories.length; i++){
+        $('#select-repository').append($('<option>', {
+            value: repositories[i].name,
+            text: repositories[i].name
+          }));
+      }
+   
+      console.log('Repositories found:', repositories);
     }
 
     const handleClearToken = async () => {
