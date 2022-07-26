@@ -23,7 +23,9 @@ This repository contains a set of Github actions and a web frontend to democase 
   - Required scopes
     - All `repo`
     - `workflow`
-- Copy the generated token. It won't appear again
+- Copy the generated token. It won't appear again!
+- Create a new OAuth Client id/secret pair in your `HOME` org. Make sure it has sufficient permissions to read configuration objects listed in the [Limitations](#limitations) section.
+- Create a new OAuth Client id/secret pair in your `TARGET` orgs. Make sure it has sufficient permissions to read **and write** configuration objects listed in the [Limitations](#limitations) section.
 - Get the pages URL (i.e. https://GITHUBREPO.github.io/github-actions-tf/web/)
 - Enter your personal access token
 - Enter the credentials for your `HOME` org. This is the org that will be used to synchronize configuration objects from.
