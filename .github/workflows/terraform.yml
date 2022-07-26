@@ -83,7 +83,7 @@ jobs:
       run: terraform init
 
     - name: Terraform Apply      
-      run: terraform apply -auto-approve -input=false -var=TF_VAR_REGION="eu-central-1" -var=TF_VAR_ID=${{ secrets.ORG1_USER_ID }} -var=TF_VAR_SECRET=${{ secrets.ORG1_SECRET }}
+      run: terraform apply -auto-approve -input=false -var=TF_VAR_REGION="eu-central-1" -var=TF_VAR_ID=${{ secrets.ORG1_USER_ID1 }} -var=TF_VAR_SECRET=${{ secrets.ORG1_SECRET }}
     
     # - name: Save TFState file
     #   run: mv terraform.tfstate ./${{github.job}}/terraform.tfstate
