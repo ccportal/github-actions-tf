@@ -78,25 +78,26 @@
             <div class="card">
               <div class="card-header">Source</div>
               <div class="card-body">
-                <label class="form-label">Client ID:</label>
-                <input type="text" class="form-control" id="src_client_id" value="304bd193-4dd0-453b-858a-02ca6b64eb2d" />
-                <label class="form-label">Client Secret:</label>
-                <input type="text" class="form-control" id="src_client_secret/" value="jbnmSZTIMlHIxjY9LZ0YYlVrVYiAa6gDih30tk16ELY" />
-                <label class="form-label">Region:</label>
-                <input type="text" class="form-control" id="src_region" value="mypurecloud.ie" />
+                <label class="form-label">Client Id</label>
+                <input type="text" class="form-control input--style" id="src_client_id" value="304bd193-4dd0-453b-858a-02ca6b64eb2d" />
+                <label class="form-label">Client Secret</label>
+                <input type="password" class="form-control input--style" id="src_client_secret/" value="jbnmSZTIMlHIxjY9LZ0YYlVrVYiAa6gDih30tk16ELY" />
+                <label class="form-label">Region</label>
+                <input type="text" class="form-control input--style" id="src_region" value="mypurecloud.ie" />
               </div>
             </div>
 
             <div class="card mt-4">
               <div class="card-header">Destination</div>
               <div class="card-body">
-                <div>Destination</div>
-                <label class="form-label">Client ID:</label>
-                <input type="text" class="form-control" id="dest_client_id" />
-                <label class="form-label">Client Secret:</label>
-                <input type="text" class="form-control" id="dest_client_secret" />
-                <label class="form-label">Region:</label>
-                <input type="text" class="form-control" id="dest_region" />
+                <div class="input-group-desc">
+                  <label class="form-label">Client Id</label>
+                  <input type="text" class="form-control input--style" id="dest_client_id" />
+                  <label class="form-label">Client Secret</label>
+                  <input type="password" class="form-control input--style" id="dest_client_secret" />
+                  <label class="form-label">Region</label>
+                  <input type="text" class="form-control input--style" id="dest_region" />
+                </div>
               </div>
             </div>
           </div>
@@ -161,34 +162,34 @@
 
       console.log("Set Repository:", githubRepo);
 
-       // Get WorkflowId
-       console.log("Find workflowId...");
-        const workflow_Ids = await callAxios(`https://api.github.com/repos/${githubOwner}/${githubRepo}/actions/workflows`, "GET", `Bearer ${githubToken}`);
-        workflow_Ids.workflows.forEach((item) => {
-          if (item.name === githubActionName) githubWorkflowId = item.id;
-        });
-        console.log("githubWorkflowId:", githubWorkflowId);
+      // Get WorkflowId
+      console.log("Find workflowId...");
+      const workflow_Ids = await callAxios(`https://api.github.com/repos/${githubOwner}/${githubRepo}/actions/workflows`, "GET", `Bearer ${githubToken}`);
+      workflow_Ids.workflows.forEach((item) => {
+        if (item.name === githubActionName) githubWorkflowId = item.id;
+      });
+      console.log("githubWorkflowId:", githubWorkflowId);
 
-        // Load History
-        console.log("Load History...");
-        const data = await callAxios(`https://api.github.com/repos/${githubOwner}/${githubRepo}/actions/workflows/${githubWorkflowId}/runs`, "GET", `Bearer ${githubToken}`);
+      // Load History
+      console.log("Load History...");
+      const data = await callAxios(`https://api.github.com/repos/${githubOwner}/${githubRepo}/actions/workflows/${githubWorkflowId}/runs`, "GET", `Bearer ${githubToken}`);
 
-        // Feed the table with the data from GitHub
-        var table = document.getElementById("tableContents");
-        var tableContents = "";
-        data.workflow_runs.forEach(function (item) {
-          if (item.name === githubActionName) {
-            let conclusion = "";
-            if (item.conclusion) {
-              conclusion = item.conclusion === "success" ? '<i class="bi bi-check-circle-fill" style="color:green"></i>' : item.conclusion === "cancelled" ? '<i class="bi bi-exclamation-circle-fill"  style="color:gray"></i>' : '<i class="bi bi-x-circle-fill"  style="color:red"></i>';
-            } else {
-              conclusion = "";
-            }
-            //<td><a target="_blank" href="${item.html_url}">${item.name}</href></td>
-            tableContents = tableContents + `<tr><td><a target="_blank" href="${item.html_url}">${moment(item.run_started_at).format("YYYY-MM-DD HH:mm:ss")}</href></td><td>${conclusion}</td></tr>`;
+      // Feed the table with the data from GitHub
+      var table = document.getElementById("tableContents");
+      var tableContents = "";
+      data.workflow_runs.forEach(function (item) {
+        if (item.name === githubActionName) {
+          let conclusion = "";
+          if (item.conclusion) {
+            conclusion = item.conclusion === "success" ? '<i class="bi bi-check-circle-fill" style="color:green"></i>' : item.conclusion === "cancelled" ? '<i class="bi bi-exclamation-circle-fill"  style="color:gray"></i>' : '<i class="bi bi-x-circle-fill"  style="color:red"></i>';
+          } else {
+            conclusion = "";
           }
-        });
-        table.innerHTML = tableContents;
+          //<td><a target="_blank" href="${item.html_url}">${item.name}</href></td>
+          tableContents = tableContents + `<tr><td><a target="_blank" href="${item.html_url}">${moment(item.run_started_at).format("YYYY-MM-DD HH:mm:ss")}</href></td><td>${conclusion}</td></tr>`;
+        }
+      });
+      table.innerHTML = tableContents;
 
       if (rememberToken) {
         localStorage.setItem("github-repository", githubRepo);
@@ -253,8 +254,6 @@
           localStorage.setItem("github-token", githubToken);
         }
         await log("Logged-In");
-
-       
 
         await loadRepositories(githubToken);
       }
