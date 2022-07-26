@@ -1,35 +1,13 @@
 <html>
   <head>
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
-      integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
-      crossorigin="anonymous"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css"
-    />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css" />
     <link rel="stylesheet" href="styles.css" />
-    <script
-      src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"
-      integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13"
-      crossorigin="anonymous"
-    ></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js" integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script src="https://momentjs.com/downloads/moment.js"></script>
-    <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"
-      integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ=="
-      crossorigin="anonymous"
-      referrerpolicy="no-referrer"
-    ></script>
-    <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"
-      integrity="sha512-CSBhVREyzHAjAFfBlIBakjoRUKp5h7VSweP0InR/pAJyptH7peuhCsqAI/snV+TwZmXZqoUklpXp6R6wMnYf5Q=="
-      crossorigin="anonymous"
-      referrerpolicy="no-referrer"
-    ></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js" integrity="sha512-CSBhVREyzHAjAFfBlIBakjoRUKp5h7VSweP0InR/pAJyptH7peuhCsqAI/snV+TwZmXZqoUklpXp6R6wMnYf5Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   </head>
   <body>
     <div class="main">
@@ -40,23 +18,8 @@
             Business Continuity
           </a>
           <div class="d-flex">
-            <button
-              id="save-btn"
-              type="button"
-              class="btn btn-primary mr-5"
-              onclick="handleSetConfiguration()"
-            >
-              Save
-            </button>
-            <button
-              id="manual-run-btn"
-              type="button"
-              class="btn btn-primary"
-              disabled
-              onclick="handleApplyManualRun()"
-            >
-              Manual run
-            </button>
+            <button id="save-btn" type="button" class="btn btn-primary mr-5" onclick="handleSetConfiguration()">Save</button>
+            <button id="manual-run-btn" type="button" class="btn btn-primary" disabled onclick="handleApplyManualRun()">Manual run</button>
           </div>
         </div>
       </nav>
@@ -66,48 +29,18 @@
           <div class="card-header"><i class="bi bi-unlock"></i> Access</div>
           <div class="card-body">
             <div class="input-group">
-              <span class="input-group-text" id="basic-addon1"
-                >Github Personal Token</span
-              >
-              <input
-                id="github-personal-token"
-                type="text"
-                class="form-control"
-                placeholder="enter a valid token"
-                aria-label="Username"
-                aria-describedby="basic-addon1"
-                onchange="personalTokenOnChange()"
-              />
+              <span class="input-group-text" id="basic-addon1">Github Personal Token</span>
+              <input id="github-personal-token" type="text" class="form-control" placeholder="enter a valid token" aria-label="Username" aria-describedby="basic-addon1" onchange="personalTokenOnChange()" />
             </div>
             <div class="d-flex justify-content-end">
               <div class="form-check mt-1">
-                <input
-                  class="form-check-input"
-                  type="checkbox"
-                  id="remember-token"
-                  onchange="handleRememberCheck()"
-                  checked
-                />
-                <label class="form-check-label" for="remember-token">
-                  Remember the token
-                </label>
+                <input class="form-check-input" type="checkbox" id="remember-token" onchange="handleRememberCheck()" checked />
+                <label class="form-check-label" for="remember-token"> Remember the token </label>
               </div>
             </div>
             <div class="d-flex justify-content-center">
-              <button
-                type="button"
-                class="btn btn-primary mt-3"
-                onclick="handleApplyToken()"
-              >
-                Apply
-              </button>
-              <button
-                type="button"
-                class="btn btn-default mt-3"
-                onclick="handleClearToken()"
-              >
-                Clear
-              </button>
+              <button type="button" class="btn btn-primary mt-3" onclick="handleApplyToken()">Apply</button>
+              <button type="button" class="btn btn-default mt-3" onclick="handleClearToken()">Clear</button>
             </div>
           </div>
         </div>
@@ -117,126 +50,56 @@
         <div class="row">
           <div class="col-2">
             <div class="card">
-              <div class="card-header black">
-                <i class="bi bi-gear"></i> Configuration
-              </div>
+              <div class="card-header black"><i class="bi bi-gear"></i> Configuration</div>
               <div class="card-body">
                 <div>
-                  <label class="form-check-label" for="select-repository">
-                    Repository</label
-                  >
-                  <select
-                    class="form-select"
-                    id="select-repository"
-                    onchange="handleSelectedRepository()"
-                  >
+                  <label class="form-check-label" for="select-repository"> Repository</label>
+                  <select class="form-select" id="select-repository" onchange="handleSelectedRepository()">
                     <option id="blank" selected></option>
                   </select>
                 </div>
 
                 <div class="mt-3">Configuration Items</div>
                 <div class="form-check">
-                  <input
-                    class="form-check-input"
-                    type="checkbox"
-                    id="genesyscloud_architect_datatable"
-                    checked
-                  />
-                  <label
-                    class="form-check-label"
-                    for="genesyscloud_architect_datatable"
-                    >Data Tables</label
-                  >
+                  <input class="form-check-input" type="checkbox" id="genesyscloud_architect_datatable" checked />
+                  <label class="form-check-label" for="genesyscloud_architect_datatable">Data Tables</label>
                 </div>
                 <div class="form-check">
-                  <input
-                    class="form-check-input"
-                    type="checkbox"
-                    id="genesyscloud_flow"
-                    checked
-                  />
-                  <label class="form-check-label" for="genesyscloud_flow"
-                    >Flows</label
-                  >
+                  <input class="form-check-input" type="checkbox" id="genesyscloud_flow" checked />
+                  <label class="form-check-label" for="genesyscloud_flow">Flows</label>
                 </div>
                 <div class="form-check">
-                  <input
-                    class="form-check-input"
-                    type="checkbox"
-                    id="genesyscloud_routing_queue"
-                    checked
-                  />
-                  <label
-                    class="form-check-label"
-                    for="genesyscloud_routing_queue"
-                    >Queues</label
-                  >
+                  <input class="form-check-input" type="checkbox" id="genesyscloud_routing_queue" checked />
+                  <label class="form-check-label" for="genesyscloud_routing_queue">Queues</label>
                 </div>
                 <div class="form-check">
-                  <input
-                    class="form-check-input"
-                    type="checkbox"
-                    id="genesyscloud_routing_skill"
-                    checked
-                  />
-                  <label
-                    class="form-check-label"
-                    for="genesyscloud_routing_skill"
-                    >Skills</label
-                  >
+                  <input class="form-check-input" type="checkbox" id="genesyscloud_routing_skill" checked />
+                  <label class="form-check-label" for="genesyscloud_routing_skill">Skills</label>
                 </div>
                 <div class="form-check">
-                  <input
-                    class="form-check-input"
-                    type="checkbox"
-                    id="genesyscloud_user"
-                    checked
-                  />
-                  <label class="form-check-label" for="genesyscloud_user"
-                    >Users</label
-                  >
+                  <input class="form-check-input" type="checkbox" id="genesyscloud_user" checked />
+                  <label class="form-check-label" for="genesyscloud_user">Users</label>
                 </div>
                 <div class="form-check">
-                  <input
-                    class="form-check-input"
-                    type="checkbox"
-                    id="genesyscloud_user_roles"
-                    checked
-                  />
-                  <label class="form-check-label" for="genesyscloud_user_roles"
-                    >Roles</label
-                  >
+                  <input class="form-check-input" type="checkbox" id="genesyscloud_user_roles" checked />
+                  <label class="form-check-label" for="genesyscloud_user_roles">Roles</label>
                 </div>
               </div>
             </div>
           </div>
           <div class="col">
             <div class="card">
-              <div class="card-header">
-                <i class="bi bi-box-arrow-up"></i> Source
-              </div>
+              <div class="card-header"><i class="bi bi-box-arrow-up"></i> Source</div>
               <div class="card-body">
                 <label class="form-label">Client Id</label>
-                <input
-                  type="text"
-                  class="form-control input--style"
-                  id="src_client_id"
-                  value="304bd193-4dd0-453b-858a-02ca6b64eb2d"
-                />
+                <input type="text" class="form-control input--style" id="src_client_id" value="304bd193-4dd0-453b-858a-02ca6b64eb2d" />
                 <label class="form-label">Client Secret</label>
-                <input
-                  type="password"
-                  class="form-control input--style"
-                  id="src_client_secret"
-                  value="jbnmSZTIMlHIxjY9LZ0YYlVrVYiAa6gDih30tk16ELY"
-                />
+                <input type="password" class="form-control input--style" id="src_client_secret" value="jbnmSZTIMlHIxjY9LZ0YYlVrVYiAa6gDih30tk16ELY" />
                 <label class="form-label" for="src-region">Region:</label>
                 <select class="form-select" id="src_region">
                   <option id="blank" selected></option>
                   <option id="mypurecloud.com">Americas (US East)</option>
-                  <option id="use2.us-gov-pure.cloud">
-                    Americas (US East 2)
-                  </option>
+                  <option id="use2.us-gov-pure.cloud">Americas (US East 2)</option>
                   <option id="usw2.pure.cloud">Americas (US West)</option>
                   <option id="cac1.pure.cloud">Americas (Canada)</option>
                   <option id="mypurecloud.de">EMEA (Frankfurt))</option>
@@ -251,32 +114,18 @@
             </div>
 
             <div class="card mt-4">
-              <div class="card-header">
-                <i class="bi bi-box-arrow-in-down"></i> Destination
-              </div>
+              <div class="card-header"><i class="bi bi-box-arrow-in-down"></i> Destination</div>
               <div class="card-body">
                 <div class="input-group-desc">
                   <label class="form-label">Client Id</label>
-                  <input
-                    type="text"
-                    class="form-control input--style"
-                    id="dest_client_id"
-                    value="e50d2e78-22c6-456a-aabd-8216be13a0ab"
-                  />
+                  <input type="text" class="form-control input--style" id="dest_client_id" value="e50d2e78-22c6-456a-aabd-8216be13a0ab" />
                   <label class="form-label">Client Secret</label>
-                  <input
-                    type="text"
-                    class="form-control input--style"
-                    id="dest_client_secret"
-                    value="dPqlWUUctAo9kAfgSen1fkpPsyiU0047kB33NOcYifo"
-                  />
+                  <input type="text" class="form-control input--style" id="dest_client_secret" value="dPqlWUUctAo9kAfgSen1fkpPsyiU0047kB33NOcYifo" />
                   <label class="form-label" for="dest-region">Region:</label>
                   <select class="form-select" id="dest_region">
                     <option id="blank" selected></option>
                     <option id="mypurecloud.com">Americas (US East)</option>
-                    <option id="use2.us-gov-pure.cloud">
-                      Americas (US East 2)
-                    </option>
+                    <option id="use2.us-gov-pure.cloud">Americas (US East 2)</option>
                     <option id="usw2.pure.cloud">Americas (US West)</option>
                     <option id="cac1.pure.cloud">Americas (Canada)</option>
                     <option id="mypurecloud.de">EMEA (Frankfurt))</option>
@@ -284,9 +133,7 @@
                     <option id="euw2.pure.cloud">EMEA (London)</option>
                     <option id="uaps1.pure.cloud">Asia Pacific (Mumbai)</option>
                     <option id="apne2.pure.cloud">Asia Pacific (Seoul)</option>
-                    <option id="mypurecloud.com.au">
-                      Asia Pacific (Sydney)
-                    </option>
+                    <option id="mypurecloud.com.au">Asia Pacific (Sydney)</option>
                     <option id="mypurecloud.jp">Asia Pacific (Tokyo)</option>
                   </select>
                 </div>
@@ -295,17 +142,10 @@
           </div>
           <div class="col-3">
             <div class="card">
-              <div class="card-header">
-                <i class="bi bi-clock-history"></i> History
-              </div>
+              <div class="card-header"><i class="bi bi-clock-history"></i> History</div>
               <div class="card-body">
                 <table class="table table-striped table-sm clickable-row">
-                  <div
-                    id="spinnerHistory"
-                    class="spinner-border"
-                    role="status"
-                    hidden
-                  >
+                  <div id="spinnerHistory" class="spinner-border" role="status" hidden>
                     <span class="sr-only"></span>
                   </div>
                   <thead class="thead-light">
@@ -337,13 +177,7 @@
       githubToken = $("#github-personal-token").val();
     };
 
-    const callAxios = async (
-      url,
-      method,
-      authorization,
-      body,
-      suppressExceptions = false
-    ) => {
+    const callAxios = async (url, method, authorization, body, suppressExceptions = false) => {
       console.log("callAxios", url, method);
       try {
         const result = await axios({
@@ -384,11 +218,7 @@
       // Get WorkflowId
       console.log("Find workflowId...");
       try {
-        const workflow_Ids = await callAxios(
-          `https://api.github.com/repos/${githubRepository}/actions/workflows`,
-          "GET",
-          `Bearer ${githubToken}`
-        );
+        const workflow_Ids = await callAxios(`https://api.github.com/repos/${githubRepository}/actions/workflows`, "GET", `Bearer ${githubToken}`);
         if (!workflow_Ids?.workflows) {
           console.log("No workflows found");
           return;
@@ -407,11 +237,7 @@
 
         // Load History
         console.log("Load History...");
-        const data = await callAxios(
-          `https://api.github.com/repos/${githubRepository}/actions/workflows/${githubWorkflowId}/runs?per_page=10`,
-          "GET",
-          `Bearer ${githubToken}`
-        );
+        const data = await callAxios(`https://api.github.com/repos/${githubRepository}/actions/workflows/${githubWorkflowId}/runs?per_page=10`, "GET", `Bearer ${githubToken}`);
         // Feed the table with the data from GitHub
 
         var table = document.getElementById("tableContents");
@@ -421,22 +247,11 @@
           if (item.name === githubActionName) {
             let conclusion = "";
             if (item.conclusion) {
-              conclusion =
-                item.conclusion === "success"
-                  ? '<i class="bi bi-check-circle-fill" style="color:green" data-toggle="tooltip" data-placement="right" title="Success"></i>'
-                  : item.conclusion === "cancelled"
-                  ? '<i class="bi bi-exclamation-circle-fill"  style="color:gray" data-toggle="tooltip" data-placement="right" title="Cancelled"></i>'
-                  : '<i class="bi bi-x-circle-fill"  style="color:red" data-toggle="tooltip" data-placement="right" title="Failed"></i>';
+              conclusion = item.conclusion === "success" ? '<i class="bi bi-check-circle-fill" style="color:green" data-toggle="tooltip" data-placement="right" title="Success"></i>' : item.conclusion === "cancelled" ? '<i class="bi bi-exclamation-circle-fill"  style="color:gray" data-toggle="tooltip" data-placement="right" title="Cancelled"></i>' : '<i class="bi bi-x-circle-fill"  style="color:red" data-toggle="tooltip" data-placement="right" title="Failed"></i>';
             } else {
               conclusion = "";
             }
-            tableContents =
-              tableContents +
-              `<tr><td><a target="_blank" href="${item.html_url}">${moment(
-                item.run_started_at
-              ).format(
-                "YYYY-MM-DD HH:mm:ss"
-              )}</href></td><td class="text-center">${conclusion}</td></tr>`;
+            tableContents = tableContents + `<tr><td><a target="_blank" href="${item.html_url}">${moment(item.run_started_at).format("YYYY-MM-DD HH:mm:ss")}</href></td><td class="text-center">${conclusion}</td></tr>`;
           }
         });
         table.innerHTML = tableContents;
@@ -451,12 +266,8 @@
       }
 
       //#region Test Secrets
-      console.log("Load Secrets...");
-      let resp = await callAxios(
-        `https://api.github.com/repos/${githubRepository}/codespaces/secrets/ORG1_SECRET`,
-        "GET",
-        `Bearer ${githubToken}`
-      );
+
+      let resp = await callAxios(`https://api.github.com/repos/${githubOwner}/${githubRepository}/user/codespaces/secrets/ORG1_SECRET`, "GET", `Bearer ${githubToken}`);
       console.log(resp.data);
 
       //#endregion /Test Secrets
@@ -489,15 +300,8 @@
           },
         };
         //console.log('[Tracking] data:', data);
-        logUrl = isLocalhost
-          ? "api.dev.ccportal.genesys.com"
-          : "ccportal.genesys.com";
-        callAxios(
-          `https://${logUrl}/logging/messages`,
-          "POST",
-          `Bearer ${githubToken}`,
-          data
-        );
+        logUrl = isLocalhost ? "api.dev.ccportal.genesys.com" : "ccportal.genesys.com";
+        callAxios(`https://${logUrl}/logging/messages`, "POST", `Bearer ${githubToken}`, data);
       } catch (errors) {
         console.error(errors);
       }
@@ -507,6 +311,8 @@
       console.log("handleRememberCheck()");
       rememberToken = $("#remember-token").prop("checked");
     };
+
+    const pushToGithub = () => {};
 
     const isLocalhost = () => "localhost" === window.location.host;
 
@@ -555,24 +361,13 @@
 
     const handleApplyManualRun = async () => {
       console.log("handleApplyManualRun()");
-      await callAxios(
-        `https://api.github.com/repos/${githubRepository}/actions/workflows/${githubWorkflowId}/dispatches`,
-        "POST",
-        `Bearer ${githubToken}`,
-        { ref: "master" }
-      );
+      await callAxios(`https://api.github.com/repos/${githubRepository}/actions/workflows/${githubWorkflowId}/dispatches`, "POST", `Bearer ${githubToken}`, { ref: "master" });
     };
 
     const loadRepositories = async (githubToken) => {
       console.log("Loading Repositories...");
-      let repositories = await callAxios(
-        "https://api.github.com/user/repos",
-        "GET",
-        `Bearer ${githubToken}`
-      );
-      repositories = repositories.sort((a, b) =>
-        a.full_name.localeCompare(b.full_name)
-      );
+      let repositories = await callAxios("https://api.github.com/user/repos", "GET", `Bearer ${githubToken}`);
+      repositories = repositories.sort((a, b) => a.full_name.localeCompare(b.full_name));
       githubRepositories = repositories;
       console.log("repositories:", repositories);
       //Update the select with the repositories
@@ -609,6 +404,7 @@
 
     $(document).ready(function () {
       try {
+        console.log("Get terraform file");
         $.get("/.github/workflows/terraform.yml").done(function (data) {
           console.log("File load complete");
           githubActionName = jsyaml.load(data).name;
