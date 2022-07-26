@@ -68,7 +68,21 @@
           </div>
         </div>
       </div>
-      <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">History</div>
+      <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+        <div class="container-fluid">        
+          <table class="table-striped">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Date</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id='tableContents'>
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   </body>
   <script>
@@ -80,9 +94,21 @@
       console.log('personalTokenOnChange()');
       githubToken = $("#github-personal-token").val();
       //console.log('githubToken', githubToken);
-      await callAxios('https://api.github.com/repos/ccportal/github-actions-tf/actions/runs', 'GET');
+      const data = await callAxios('https://api.github.com/repos/ccportal/github-actions-tf/actions/runs', 'GET');
+
+
+      var table = document.getElementById('tableContents');
+      var tableContents;
+      data.workflow_runs.forEach(function(item) {        
+        tableContents = tableContents + '<tr><td>' + item.name + '</td><td>' + item.created_at + '</td>' + '<td>' + item.status + '</td></tr>';
+      });
+
+      
+      table.innerHTML = tableContents;
+
 
     }
+    
 
     const callAxios = async (url, method, body) => {
       console.log('callAxios', url, method, body);
