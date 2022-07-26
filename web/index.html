@@ -333,16 +333,15 @@
           localStorage.setItem('github-token', githubToken);
         }
         await log('Logged-In');
-        await loadRepositories(githubToken);
-        $('#no-token-entered').hide();
-        $('#token-entered-columns').show();
-        $('#save-btn').show();
-        $('#manual-run-btn').show();
         try {
           await loadRepositories(githubToken);
+          $('#no-token-entered').hide();
+          $('#token-entered-columns').show();
+          $('#save-btn').show();
+          $('#manual-run-btn').show();
         } catch (err) {
           console.log(err);
-          alert(error.toString());
+          alert('Invalid token');
         }
       }
     };
