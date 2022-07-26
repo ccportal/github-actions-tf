@@ -1,5 +1,5 @@
 body {
-  font-family: 'Open Sans', 'Arial', 'Helvetica Neue', sans-serif;
+  font-family: "Open Sans", "Arial", "Helvetica Neue", sans-serif;
   font-weight: 400;
   font-size: 16px;
   background: -webkit-gradient(linear, left bottom, right top, from(#08aeea), to(#b721ff));
@@ -7,6 +7,11 @@ body {
   background: -moz-linear-gradient(bottom left, #08aeea 0%, #b721ff 100%);
   background: -o-linear-gradient(bottom left, #08aeea 0%, #b721ff 100%);
   background: linear-gradient(to top right, #08aeea 0%, #b721ff 100%);
+}
+
+#spinnerHistory {
+  margin: 0 auto;
+  display: block;
 }
 
 .row-space {
