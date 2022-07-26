@@ -163,15 +163,23 @@
       githubWorkflowId = undefined;
       var table = document.getElementById("tableContents");
       var tableContents = "";
+      table.innerHTML = tableContents;
        // Get WorkflowId      
        console.log("Find workflowId...");
        try {
         const workflow_Ids = await callAxios(`https://api.github.com/repos/${githubOwner}/${githubRepository}/actions/workflows`, "GET", `Bearer ${githubToken}`);
+        if (!workflow_Ids?.workflows) {
+          console.log("No workflows found");
+          return;
+        }
         workflow_Ids.workflows.forEach((item) => {
           if (item.name === githubActionName) githubWorkflowId = item.id;
         });
         console.log("githubWorkflowId:", githubWorkflowId);
-        if (!githubWorkflowId) return;
+        if (!githubWorkflowId) {
+          console.log("GitHubWorkflowId not set.");
+          return
+        }
 
         // Load History
         console.log("Load History...");
