@@ -54,7 +54,7 @@
                 <div>
                   <label class="form-check-label" for="select-repository"> Repository</label>
                   <select class="form-select" id="select-repository" onchange="handleSelectedRepository()">
-                    <option selected>Select a repository</option>
+                    <option id="blank" selected ></option>
                   </select>
                 </div>
 
@@ -93,21 +93,22 @@
                 <label class="form-label">Client Id</label>
                 <input type="text" class="form-control input--style" id="src_client_id" value="304bd193-4dd0-453b-858a-02ca6b64eb2d" />
                 <label class="form-label">Client Secret</label>
-                <input type="password" class="form-control input--style" id="src_client_secret/" value="jbnmSZTIMlHIxjY9LZ0YYlVrVYiAa6gDih30tk16ELY" />
-                <label class="form-label" for="src-region">Region</label>
+                <input type="password" class="form-control input--style" id="src_client_secret" value="jbnmSZTIMlHIxjY9LZ0YYlVrVYiAa6gDih30tk16ELY" />
+                <label class="form-label" for="src-region">Region:</label>
                 <select class="form-select" id="src_region">
-                  <option id="mypurecloud.com">Americas (US East)</option>
-                  <option id="use2.us-gov-pure.cloud">Americas (US East 2)</option>
-                  <option id="usw2.pure.cloud">Americas (US West)</option>
-                  <option id="cac1.pure.cloud">Americas (Canada)</option>
-                  <option id="mypurecloud.de ">EMEA (Frankfurt))</option>
-                  <option id="mypurecloud.ie" selected>EMEA (Dublin)</option>
-                  <option id="euw2.pure.cloud ">EMEA (London)</option>
-                  <option id="uaps1.pure.cloud">Asia Pacific (Mumbai)</option>
-                  <option id="apne2.pure.cloud">Asia Pacific (Seoul)</option>
-                  <option id="mypurecloud.com.au">Asia Pacific (Sydney)</option>
-                  <option id="mypurecloud.jp">Asia Pacific (Tokyo)</option>
-                </select>
+                  <option id="blank"selected ></option>
+                <option id="mypurecloud.com" >Americas (US East)</option>
+                <option id="use2.us-gov-pure.cloud" >Americas (US East 2)</option>
+                <option id="usw2.pure.cloud" >Americas (US West)</option>
+                <option id="cac1.pure.cloud" >Americas (Canada)</option>
+                <option id="mypurecloud.de" >EMEA (Frankfurt))</option>
+                <option id="mypurecloud.ie" >EMEA (Dublin)</option>
+                <option id="euw2.pure.cloud" >EMEA (London)</option>
+                <option id="uaps1.pure.cloud" >Asia Pacific (Mumbai)</option>
+                <option id="apne2.pure.cloud" >Asia Pacific (Seoul)</option>
+                <option id="mypurecloud.com.au" >Asia Pacific (Sydney)</option>
+                <option id="mypurecloud.jp" >Asia Pacific (Tokyo)</option>
+              </select>
               </div>
             </div>
 
@@ -119,20 +120,21 @@
                   <input type="text" class="form-control input--style" id="dest_client_id" value="e50d2e78-22c6-456a-aabd-8216be13a0ab" />
                   <label class="form-label">Client Secret</label>
                   <input type="text" class="form-control input--style" id="dest_client_secret" value="dPqlWUUctAo9kAfgSen1fkpPsyiU0047kB33NOcYifo" />
-                  <label class="form-label" for="dest-region">Region</label>
+                  <label class="form-label" for="dest-region">Region:</label>
                   <select class="form-select" id="dest_region">
-                    <option id="mypurecloud.com">Americas (US East)</option>
-                    <option id="use2.us-gov-pure.cloud">Americas (US East 2)</option>
-                    <option id="usw2.pure.cloud">Americas (US West)</option>
-                    <option id="cac1.pure.cloud">Americas (Canada)</option>
-                    <option id="mypurecloud.de " selected>EMEA (Frankfurt))</option>
-                    <option id="umypurecloud.ie">EMEA (Dublin)</option>
-                    <option id="euw2.pure.cloud ">EMEA (London)</option>
-                    <option id="uaps1.pure.cloud">Asia Pacific (Mumbai)</option>
-                    <option id="apne2.pure.cloud">Asia Pacific (Seoul)</option>
-                    <option id="mypurecloud.com.au">Asia Pacific (Sydney)</option>
-                    <option id="mypurecloud.jp">Asia Pacific (Tokyo)</option>
-                  </select>
+                    <option id="blank"selected ></option>
+                  <option id="mypurecloud.com" >Americas (US East)</option>
+                  <option id="use2.us-gov-pure.cloud" >Americas (US East 2)</option>
+                  <option id="usw2.pure.cloud" >Americas (US West)</option>
+                  <option id="cac1.pure.cloud" >Americas (Canada)</option>
+                  <option id="mypurecloud.de">EMEA (Frankfurt))</option>
+                  <option id="umypurecloud.ie" >EMEA (Dublin)</option>
+                  <option id="euw2.pure.cloud" >EMEA (London)</option>
+                  <option id="uaps1.pure.cloud" >Asia Pacific (Mumbai)</option>
+                  <option id="apne2.pure.cloud" >Asia Pacific (Seoul)</option>
+                  <option id="mypurecloud.com.au" >Asia Pacific (Sydney)</option>
+                  <option id="mypurecloud.jp" >Asia Pacific (Tokyo)</option>
+                </select>
                 </div>
               </div>
             </div>
@@ -156,6 +158,9 @@
               </div>
             </div>
           </div>
+        </div>
+        <div class="row">
+          <button id="manual-run-btn" type="button" class="btn btn-primary" onclick="handleSetConfiguration()">Apply Configuration</button>
         </div>
       </div>
     </div>
@@ -304,11 +309,11 @@
 
     const isLocalhost = () => 'localhost' === window.location.host;
 
-    const onSetConfiguration = (config) => {
-      console.log(!$('#src_client_id').val());
+    const handleSetConfiguration = (config) => {
 
-      if (!$('#src_client_id').val() || !$('#src_client_secret').val() || !$('#src_region').val()) return alert('Source organization must be inputted and verified before continuing');
-      if (!$('#dest_client_id').val() || !$('#dest_client_secret').val() || !$('#dest_region').val()) return alert('Detination organization must be inputted and verified before continuing');
+     if (!$('#src_client_id').val() || !$('#src_client_secret').val() || $('#src_region option:selected')[0].innerText === '') return alert('Source organization must be inputted before continuing')
+      if (!$('#dest_client_id').val() || !$('#dest_client_secret').val() || $('#dest_region option:selected')[0].innerText === '') return alert('Destination organization must be inputted before continuing');
+      if($('#select-repository option:selected')[0].innerText === '')return alert('Repository must be selected');
     };
 
     const handleApplyToken = async () => {
