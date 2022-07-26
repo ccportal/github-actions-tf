@@ -9,43 +9,46 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js" integrity="sha512-CSBhVREyzHAjAFfBlIBakjoRUKp5h7VSweP0InR/pAJyptH7peuhCsqAI/snV+TwZmXZqoUklpXp6R6wMnYf5Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   </head>
   <body>
-    <nav class="navbar bg-light">
+    <div class="main">
+      <nav class="navbar bg-light">
       <div class="container-fluid">
         <a class="navbar-brand" href="#">
           <i class="bi bi-activity"></i>
           Business Continuity
         </a>
       </div>
-    </nav>
+      </nav>
 
-    <div id="no-token-entered" class="container mt-3">
-      <div class="input-group">
-        <span class="input-group-text" id="basic-addon1">Github Personal Token</span>
-        <input id="github-personal-token" type="text" class="form-control" placeholder="enter a valid token" aria-label="Username" aria-describedby="basic-addon1" onchange="personalTokenOnChange()" />
+      <div id="no-token-entered" class="container mt-3">
+        <div class="input-group">
+          <span class="input-group-text" id="basic-addon1">Github Personal Token</span>
+          <input id="github-personal-token" type="text" class="form-control" placeholder="enter a valid token" aria-label="Username" aria-describedby="basic-addon1" onchange="personalTokenOnChange()" />
+        </div>
+        <div class="form-check mt-3">
+          <input class="form-check-input" type="checkbox" id="remember-token" onchange="handleRememberCheck()" checked />
+          <label class="form-check-label" for="remember-token"> Remember the token </label>
+        </div>
+        <button type="button" class="btn btn-primary mt-3" onclick="handleApplyToken()">Apply</button>
+        <button type="button" class="btn btn-default mt-3" onclick="handleClearToken()">Clear</button>
       </div>
-      <div class="form-check mt-3">
-        <input class="form-check-input" type="checkbox" id="remember-token" onchange="handleRememberCheck()" checked />
-        <label class="form-check-label" for="remember-token"> Remember the token </label>
-      </div>
-      <button type="button" class="btn btn-primary mt-3" onclick="handleApplyToken()">Apply</button>
-      <button type="button" class="btn btn-default mt-3" onclick="handleClearToken()">Clear</button>
-    </div>
-    <div>
-      <label class="form-check-label" for="select-repository"> Repository:</label>
-      <select class="form-select"  id="select-repository" onchange="handleSelectedRepository()">
-        <option selected>Open this select menu</option>
-        <option value="1">One</option>
-        <option value="2">Two</option>
-        <option value="3">Three</option></select>
-    </div>
-    <nav id="token-entered-tab-control">
-      <div class="nav nav-tabs" id="nav-tab" role="tablist">
-        <button class="nav-link active" id="nav-config-tab" data-bs-toggle="tab" data-bs-target="#nav-config" type="button" role="tab" aria-controls="nav-config" aria-selected="true">Configuration</button>
-        <button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">History</button>
-      </div>
-    </nav>
 
-    <div id="token-entered-tab-content" class="tab-content" id="nav-tabContent">
+      <div>
+        <label class="form-check-label" for="select-repository"> Repository:</label>
+        <select class="form-select"  id="select-repository" onchange="handleSelectedRepository()">
+          <option selected>Open this select menu</option>
+          <option value="1">One</option>
+          <option value="2">Two</option>
+          <option value="3">Three</option></select>
+      </div>
+      
+      <nav id="token-entered-tab-control">
+        <div class="nav nav-tabs" id="nav-tab" role="tablist">
+          <button class="nav-link active" id="nav-config-tab" data-bs-toggle="tab" data-bs-target="#nav-config" type="button" role="tab" aria-controls="nav-config" aria-selected="true">Configuration</button>
+          <button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">History</button>
+        </div>
+      </nav>
+
+      <div id="token-entered-tab-content" class="tab-content" id="nav-tabContent">
       <div class="tab-pane fade show active" id="nav-config" role="tabpanel" aria-labelledby="nav-config-tab">
         <div class="container">
           <div class="row align-items-start">
@@ -68,7 +71,6 @@
               <label class="form-label">Region:</label>
               <input type="text" class="form-control" id="dest_region" />
             </div>
-          </div>
 
           <div class="row align-items-start">
             <div class="col">
@@ -102,7 +104,6 @@
 
           <button id="manualRun" class="btn btn-primary" onClick="handleApplyManualRun()">Manual Run</button>
         </div>
-      </div>
 
       <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
         <div class="container-fluid">
@@ -120,17 +121,18 @@
           </table>
         </div>
       </div>
+      </div>
     </div>
   </body>
 
   <script>
-    var githubToken = '';
-    var githubActionName = '';
+    var githubToken = "";
+    var githubActionName = "";
     var rememberToken = true;
 
     const personalTokenOnChange = async () => {
-      console.log('personalTokenOnChange()');
-      githubToken = $('#github-personal-token').val();
+      console.log("personalTokenOnChange()");
+      githubToken = $("#github-personal-token").val();
     };
 
     const callAxios = async (url, method, authorization, body) => {
@@ -163,18 +165,18 @@
         const data = {
           date: moment().format(),
           userinfo: {
-            id: 'webPage',
-            orgId: 'unknown',
-            orgName: 'unknown',
+            id: "webPage",
+            orgId: "unknown",
+            orgName: "unknown",
           },
           activity: {
-            action: 'View',
-            source: 'web',
-            stage: 'BusinessContinuityApp',
+            action: "View",
+            source: "web",
+            stage: "BusinessContinuityApp",
             step: step,
             message: `Accessed ${window.location.origin}${window.location.pathname}`,
             object: {
-              type: 'Page',
+              type: "Page",
               host: window.location.host,
               hostname: window.location.hostname,
               href: window.location.href,
@@ -193,29 +195,29 @@
     };
 
     const handleRememberCheck = (e) => {
-      console.log('handleRememberCheck()');
-      rememberToken = $('#remember-token').prop('checked');
+      console.log("handleRememberCheck()");
+      rememberToken = $("#remember-token").prop("checked");
     };
 
-    const isLocalhost = () => 'localhost' === window.location.host;
+    const isLocalhost = () => "localhost" === window.location.host;
 
     const onSetConfiguration = (config) => {
-      console.log(!$('#src_client_id').val());
+      console.log(!$("#src_client_id").val());
 
       if (!$('#src_client_id').val() || !$('#src_client_secret').val() || !$('#src_region').val()) return alert('Source organization must be inputted and verified before continuing');
       if (!$('#dest_client_id').val() || !$('#dest_client_secret').val() || !$('#dest_region').val()) return alert('Detination organization must be inputted and verified before continuing');
     };
 
     const handleApplyToken = async () => {
-      console.log('handleApplyToken()');
+      console.log("handleApplyToken()");
       if (githubToken?.length > 1) {
-        $('#no-token-entered').hide();
-        $('#token-entered-tab-control').show();
-        $('#token-entered-tab-content').show();
+        $("#no-token-entered").hide();
+        $("#token-entered-tab-control").show();
+        $("#token-entered-tab-content").show();
 
- 
+
         if (rememberToken) {
-          localStorage.setItem('github-token', githubToken);
+          localStorage.setItem("github-token", githubToken);
         }
         await log('Logged-In');
         const data = await callAxios('https://api.github.com/repos/ccportal/github-actions-tf/actions/runs', 'GET',`Bearer ${githubToken}`);
@@ -225,7 +227,7 @@
         var tableContents = '';
         data.workflow_runs.forEach(function (item) {
           if (item.name === githubActionName) {
-            let conclusion = item.conclusion === 'success' ? '<i class="bi bi-check-circle-fill" style="color:green"></i>' : item.conclusion === 'cancelled' ? '<i class="bi bi-exclamation-circle-fill"  style="color:gray"></i>' : '<i class="bi bi-x-circle-fill"  style="color:red"></i>';
+            let conclusion = item.conclusion === "success" ? '<i class="bi bi-check-circle-fill" style="color:green"></i>' : item.conclusion === "cancelled" ? '<i class="bi bi-exclamation-circle-fill"  style="color:gray"></i>' : '<i class="bi bi-x-circle-fill"  style="color:red"></i>';
 
             tableContents = tableContents + `<tr><td><a target="_blank" href="${item.html_url}">${item.name}</href></td><td>${item.event}</td><td>${moment(item.run_started_at).format('YYYY-MM-DD HH:mm:ss')}</td><td>${item.status}</td><td>${conclusion}</td></tr>`;
           }
@@ -235,25 +237,23 @@
     };
 
     const handleApplyManualRun = async () => {
-      console.log('handleApplyManualRun()');   
-      
-      //save configuration items
-     
+      console.log('handleApplyManualRun()');
+
     }
 
     const handleClearToken = async () => {
-      console.log('handleClearToken()');
-      $('#github-personal-token').val('');
-      localStorage.removeItem('github-token');
+      console.log("handleClearToken()");
+      $("#github-personal-token").val("");
+      localStorage.removeItem("github-token");
     };
 
     const init = async () => {
-      console.log('init()');
-      githubToken = localStorage.getItem('github-token') ?? '';
-      $('#github-personal-token').val(githubToken);
-      $('#token-entered-tab-control').hide();
-      $('#token-entered-tab-content').hide();
-      await log('Home');
+      console.log("init()");
+      githubToken = localStorage.getItem("github-token") ?? "";
+      $("#github-personal-token").val(githubToken);
+      $("#token-entered-tab-control").hide();
+      $("#token-entered-tab-content").hide();
+      await log("Home");
       // loadConfigurationItems();
     };
 
@@ -261,10 +261,10 @@
 
     $(document).ready(function () {
       try {
-        $.get('/.github/workflows/terraform.yml').done(function (data) {
-          console.log('File load complete');
+        $.get("/.github/workflows/terraform.yml").done(function (data) {
+          console.log("File load complete");
           githubActionName = jsyaml.load(data).name;
-          console.log('githubActionName:', githubActionName);
+          console.log("githubActionName:", githubActionName);
         });
       } catch (error) {
         console.error(error);
