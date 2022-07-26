@@ -338,7 +338,8 @@
     const loadRepositories = async (githubToken) => {
       console.log("Loading Repositories...");
       let repositories = await callAxios("https://api.github.com/user/repos", "GET", `Bearer ${githubToken}`);
-
+      repositories = repositories.sort((a, b) => a.name.localeCompare(b.name));
+      console.log("repositories:", repositories);
       //Update the select with the repositories
       for (let i = 0; i < repositories.length; i++) {
         $("#select-repository").append(
