@@ -246,7 +246,7 @@
             } else {
               conclusion = "";
             }
-            tableContents = tableContents + `<tr><td><a target="_blank" href="${item.html_url}">${moment(item.run_started_at).format("YYYY-MM-DD HH:mm:ss")}</href></td><td>${conclusion}</td></tr>`;
+            tableContents = tableContents + `<tr><td><a target="_blank" href="${item.html_url}">${moment(item.run_started_at).format("YYYY-MM-DD HH:mm:ss")}</href></td><td class="text-center">${conclusion}</td></tr>`;
           }
         });
         table.innerHTML = tableContents;
