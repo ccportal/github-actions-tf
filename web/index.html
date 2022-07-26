@@ -207,6 +207,44 @@
                     >Roles</label
                   >
                 </div>
+
+                <div class="mt-3">Schedule</div>
+                <select class="form-select">
+                  <option value="everyday" selected>Everyday</option>
+                  <option value="monday">Monday</option>
+                  <option value="tuesday">Tuesday</option>
+                  <option value="wednesday">Wednesday</option>
+                  <option value="thursday">Thursday</option>
+                  <option value="friday">Friday</option>
+                  <option value="saturday">Saturday</option>
+                  <option value="sunday">Sunday</option>
+                </select>
+                <select class="form-select">
+                  <option value="00:00" selected>at 00:00</option>
+                  <option value="01:00" selected>at 01:00</option>
+                  <option value="02:00" selected>at 02:00</option>
+                  <option value="03:00" selected>at 03:00</option>
+                  <option value="04:00" selected>at 04:00</option>
+                  <option value="05:00" selected>at 05:00</option>
+                  <option value="06:00" selected>at 06:00</option>
+                  <option value="07:00" selected>at 07:00</option>
+                  <option value="08:00" selected>at 08:00</option>
+                  <option value="09:00" selected>at 09:00</option>
+                  <option value="10:00" selected>at 10:00</option>
+                  <option value="11:00" selected>at 11:00</option>
+                  <option value="12:00" selected>at 12:00</option>
+                  <option value="13:00" selected>at 13:00</option>
+                  <option value="14:00" selected>at 14:00</option>
+                  <option value="15:00" selected>at 15:00</option>
+                  <option value="16:00" selected>at 16:00</option>
+                  <option value="17:00" selected>at 17:00</option>
+                  <option value="18:00" selected>at 18:00</option>
+                  <option value="19:00" selected>at 19:00</option>
+                  <option value="20:00" selected>at 20:00</option>
+                  <option value="21:00" selected>at 21:00</option>
+                  <option value="22:00" selected>at 22:00</option>
+                  <option value="23:00" selected>at 23:00</option>
+                </select>
               </div>
             </div>
           </div>
@@ -520,6 +558,8 @@
       rememberToken = $("#remember-token").prop("checked");
     };
 
+    const pushToGithub = () => {};
+
     const isLocalhost = () => "localhost" === window.location.host;
 
     const handleSetConfiguration = async (config) => {
@@ -533,7 +573,42 @@
       await saveDeploymentDetails();
     };
 
-    const updateConfigurationItems = async () => {};
+    const updateConfigurationItems = async () => {
+      //Get the existing Configuration file:
+      const existingExportFile = await callAxios(
+        `https://api.github.com/repos/${githubRepository}/contents/source/export.tf`,
+        "GET",
+        `Bearer ${githubToken}`
+      );
+      console.log("File Found:", existingExportFile);
+
+      $.get("/web/export.tf").done(async function (data) {
+        console.log("File load complete", data);
+        //[ "genesyscloud_routing_language"]
+        var newData =
+          '["genesyscloud_routing_language", "genesyscloud_routing_skills"]';
+        let updatedData = data.toString().replace("###RESOURCES###", newData);
+        let amendedData = btoa(updatedData);
+        console.log("Updated Data:", amendedData);
+
+        const body = {
+          owner: githubRepository.split("/")[0],
+          repo: githubRepository.split("/")[1],
+          path: "/source/export.tf",
+          message: "Updated Resources for export",
+          content: amendedData,
+          sha: existingExportFile.sha,
+        };
+        console.log("Updating content with body:", body);
+        const updateDoc = await callAxios(
+          `https://api.github.com/repos/${githubRepository}/contents/source/export.tf`,
+          "PUT",
+          `Bearer ${githubToken}`,
+          body
+        );
+        console.log("Updated Data", updateDoc);
+      });
+    };
 
     const updateGitSecrets = async () => {};
 
@@ -617,10 +692,19 @@
       // loadConfigurationItems();
     };
 
+    const getSchedule = () => {
+      console.log("getSchedule()");
+    };
+
+    const setSchedule = () => {
+      console.log("setSchedule()");
+    };
+
     init();
 
     $(document).ready(function () {
       try {
+        console.log("Get terraform file");
         $.get("/.github/workflows/terraform.yml").done(function (data) {
           console.log("File load complete");
           githubActionName = jsyaml.load(data).name;

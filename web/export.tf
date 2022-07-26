@@ -29,6 +29,6 @@ provider "genesyscloud" {
 
 resource "genesyscloud_tf_export" "export" { 
   directory          = "./export" 
-  resource_types     = ["genesyscloud_routing_language", "genesyscloud_routing_skills"]
+  resource_types     = ###RESOURCES###
   include_state_file = false 
  }
