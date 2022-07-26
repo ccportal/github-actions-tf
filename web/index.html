@@ -84,6 +84,44 @@
                   <input class="form-check-input" type="checkbox" id="genesyscloud_user_roles" checked />
                   <label class="form-check-label" for="genesyscloud_user_roles">Roles</label>
                 </div>
+
+                <div class="mt-3">Schedule</div>
+                <select class="form-select">
+                  <option value="everyday" selected>Everyday</option>
+                  <option value="monday">Monday</option>
+                  <option value="tuesday">Tuesday</option>
+                  <option value="wednesday">Wednesday</option>
+                  <option value="thursday">Thursday</option>
+                  <option value="friday">Friday</option>
+                  <option value="saturday">Saturday</option>
+                  <option value="sunday">Sunday</option>
+                </select>
+                <select class="form-select">
+                  <option value="00:00" selected>at 00:00</option>
+                  <option value="01:00" selected>at 01:00</option>
+                  <option value="02:00" selected>at 02:00</option>
+                  <option value="03:00" selected>at 03:00</option>
+                  <option value="04:00" selected>at 04:00</option>
+                  <option value="05:00" selected>at 05:00</option>
+                  <option value="06:00" selected>at 06:00</option>
+                  <option value="07:00" selected>at 07:00</option>
+                  <option value="08:00" selected>at 08:00</option>
+                  <option value="09:00" selected>at 09:00</option>
+                  <option value="10:00" selected>at 10:00</option>
+                  <option value="11:00" selected>at 11:00</option>
+                  <option value="12:00" selected>at 12:00</option>
+                  <option value="13:00" selected>at 13:00</option>
+                  <option value="14:00" selected>at 14:00</option>
+                  <option value="15:00" selected>at 15:00</option>
+                  <option value="16:00" selected>at 16:00</option>
+                  <option value="17:00" selected>at 17:00</option>
+                  <option value="18:00" selected>at 18:00</option>
+                  <option value="19:00" selected>at 19:00</option>
+                  <option value="20:00" selected>at 20:00</option>
+                  <option value="21:00" selected>at 21:00</option>
+                  <option value="22:00" selected>at 22:00</option>
+                  <option value="23:00" selected>at 23:00</option>
+                </select>
               </div>
             </div>
           </div>
@@ -165,26 +203,26 @@
   </body>
 
   <script>
-    var githubToken = "";
-    var githubActionName = "";
-    var githubRepository = "";
+    var githubToken = '';
+    var githubActionName = '';
+    var githubRepository = '';
     var githubWorkflowId = undefined;
     var rememberToken = true;
     var githubRepositories = [];
 
     const personalTokenOnChange = async () => {
-      console.log("personalTokenOnChange()");
-      githubToken = $("#github-personal-token").val();
+      console.log('personalTokenOnChange()');
+      githubToken = $('#github-personal-token').val();
     };
 
     const callAxios = async (url, method, authorization, body, suppressExceptions = false) => {
-      console.log("callAxios", url, method);
+      console.log('callAxios', url, method);
       try {
         const result = await axios({
           url: url,
           method: method,
           headers: {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
             Authorization: authorization, // PAT for now hardcoded, removed later
           },
           data: body ? JSON.stringify(body) : null,
@@ -200,74 +238,74 @@
     };
 
     const clearUI = () => {
-      console.log("clearUI()");
+      console.log('clearUI()');
 
       githubWorkflowId = undefined;
-      document.getElementById("tableContents").innerHTML = "";
-      document.getElementById("manual-run-btn").disabled = true;
+      document.getElementById('tableContents').innerHTML = '';
+      document.getElementById('manual-run-btn').disabled = true;
     };
 
     const handleSelectedRepository = async () => {
-      githubRepository = $("#select-repository option:selected").text();
+      githubRepository = $('#select-repository option:selected').text();
 
-      console.log("Set Repository:", githubRepository);
+      console.log('Set Repository:', githubRepository);
 
       // Clean vars / tables
       clearUI();
-      document.getElementById("spinnerHistory").hidden = false;
+      document.getElementById('spinnerHistory').hidden = false;
       // Get WorkflowId
-      console.log("Find workflowId...");
+      console.log('Find workflowId...');
       try {
-        const workflow_Ids = await callAxios(`https://api.github.com/repos/${githubRepository}/actions/workflows`, "GET", `Bearer ${githubToken}`);
+        const workflow_Ids = await callAxios(`https://api.github.com/repos/${githubRepository}/actions/workflows`, 'GET', `Bearer ${githubToken}`);
         if (!workflow_Ids?.workflows) {
-          console.log("No workflows found");
+          console.log('No workflows found');
           return;
         }
         workflow_Ids.workflows.forEach((item) => {
           if (item.name === githubActionName) githubWorkflowId = item.id;
         });
-        console.log("githubWorkflowId:", githubWorkflowId);
+        console.log('githubWorkflowId:', githubWorkflowId);
         if (!githubWorkflowId) {
-          console.log("GitHubWorkflowId not set.");
+          console.log('GitHubWorkflowId not set.');
           return;
         }
 
         // Enable ManualRun Button
-        document.getElementById("manual-run-btn").disabled = false;
+        document.getElementById('manual-run-btn').disabled = false;
 
         // Load History
-        console.log("Load History...");
-        const data = await callAxios(`https://api.github.com/repos/${githubRepository}/actions/workflows/${githubWorkflowId}/runs?per_page=10`, "GET", `Bearer ${githubToken}`);
+        console.log('Load History...');
+        const data = await callAxios(`https://api.github.com/repos/${githubRepository}/actions/workflows/${githubWorkflowId}/runs?per_page=10`, 'GET', `Bearer ${githubToken}`);
         // Feed the table with the data from GitHub
 
-        var table = document.getElementById("tableContents");
-        var tableContents = "";
+        var table = document.getElementById('tableContents');
+        var tableContents = '';
 
         data.workflow_runs.forEach(function (item) {
           if (item.name === githubActionName) {
-            let conclusion = "";
+            let conclusion = '';
             if (item.conclusion) {
-              conclusion = item.conclusion === "success" ? '<i class="bi bi-check-circle-fill" style="color:green" data-toggle="tooltip" data-placement="right" title="Success"></i>' : item.conclusion === "cancelled" ? '<i class="bi bi-exclamation-circle-fill"  style="color:gray" data-toggle="tooltip" data-placement="right" title="Cancelled"></i>' : '<i class="bi bi-x-circle-fill"  style="color:red" data-toggle="tooltip" data-placement="right" title="Failed"></i>';
+              conclusion = item.conclusion === 'success' ? '<i class="bi bi-check-circle-fill" style="color:green" data-toggle="tooltip" data-placement="right" title="Success"></i>' : item.conclusion === 'cancelled' ? '<i class="bi bi-exclamation-circle-fill"  style="color:gray" data-toggle="tooltip" data-placement="right" title="Cancelled"></i>' : '<i class="bi bi-x-circle-fill"  style="color:red" data-toggle="tooltip" data-placement="right" title="Failed"></i>';
             } else {
-              conclusion = "";
+              conclusion = '';
             }
-            tableContents = tableContents + `<tr><td><a target="_blank" href="${item.html_url}">${moment(item.run_started_at).format("YYYY-MM-DD HH:mm:ss")}</href></td><td class="text-center">${conclusion}</td></tr>`;
+            tableContents = tableContents + `<tr><td><a target="_blank" href="${item.html_url}">${moment(item.run_started_at).format('YYYY-MM-DD HH:mm:ss')}</href></td><td class="text-center">${conclusion}</td></tr>`;
           }
         });
         table.innerHTML = tableContents;
       } catch (error) {
         console.error(error);
       } finally {
-        document.getElementById("spinnerHistory").hidden = true;
+        document.getElementById('spinnerHistory').hidden = true;
       }
 
       if (rememberToken) {
-        localStorage.setItem("github-repository", githubRepository);
+        localStorage.setItem('github-repository', githubRepository);
       }
 
       //#region Test Secrets
 
-      let resp = await callAxios(`https://api.github.com/repos/${githubOwner}/${githubRepository}/user/codespaces/secrets/ORG1_SECRET`, "GET", `Bearer ${githubToken}`);
+      let resp = await callAxios(`https://api.github.com/repos/${githubOwner}/${githubRepository}/user/codespaces/secrets/ORG1_SECRET`, 'GET', `Bearer ${githubToken}`);
       console.log(resp.data);
 
       //#endregion /Test Secrets
@@ -278,18 +316,18 @@
         const data = {
           date: moment().format(),
           userinfo: {
-            id: "webPage",
-            orgId: "unknown",
-            orgName: "unknown",
+            id: 'webPage',
+            orgId: 'unknown',
+            orgName: 'unknown',
           },
           activity: {
-            action: "View",
-            source: "web",
-            stage: "BusinessContinuityApp",
+            action: 'View',
+            source: 'web',
+            stage: 'BusinessContinuityApp',
             step: step,
             message: `Accessed ${window.location.origin}${window.location.pathname}`,
             object: {
-              type: "Page",
+              type: 'Page',
               host: window.location.host,
               hostname: window.location.hostname,
               href: window.location.href,
@@ -300,21 +338,21 @@
           },
         };
         //console.log('[Tracking] data:', data);
-        logUrl = isLocalhost ? "api.dev.ccportal.genesys.com" : "ccportal.genesys.com";
-        callAxios(`https://${logUrl}/logging/messages`, "POST", `Bearer ${githubToken}`, data);
+        logUrl = isLocalhost ? 'api.dev.ccportal.genesys.com' : 'ccportal.genesys.com';
+        callAxios(`https://${logUrl}/logging/messages`, 'POST', `Bearer ${githubToken}`, data);
       } catch (errors) {
         console.error(errors);
       }
     };
 
     const handleRememberCheck = (e) => {
-      console.log("handleRememberCheck()");
-      rememberToken = $("#remember-token").prop("checked");
+      console.log('handleRememberCheck()');
+      rememberToken = $('#remember-token').prop('checked');
     };
 
     const pushToGithub = () => {};
 
-    const isLocalhost = () => "localhost" === window.location.host;
+    const isLocalhost = () => 'localhost' === window.location.host;
 
     const handleSetConfiguration = async (config) => {
       //Validation:
@@ -334,23 +372,23 @@
     const saveDeploymentDetails = async () => {};
 
     const handleApplyToken = async () => {
-      console.log("handleApplyToken()");
+      console.log('handleApplyToken()');
       if (githubToken?.length > 1) {
         if (rememberToken) {
-          localStorage.setItem("github-token", githubToken);
+          localStorage.setItem('github-token', githubToken);
         }
-        await log("Logged-In");
+        await log('Logged-In');
         try {
           await loadRepositories(githubToken);
-          $("#no-token-entered").hide();
-          $("#token-entered-columns").show();
-          $("#save-btn").show();
-          $("#manual-run-btn").show();
+          $('#no-token-entered').hide();
+          $('#token-entered-columns').show();
+          $('#save-btn').show();
+          $('#manual-run-btn').show();
         } catch (err) {
           console.log(err);
-          alert("Invalid token");
+          alert('Invalid token');
         }
-        await log("Logged-In");
+        await log('Logged-In');
         //#region Test Secrets
 
         //#endregion /Test Secrets
@@ -360,43 +398,43 @@
     };
 
     const handleApplyManualRun = async () => {
-      console.log("handleApplyManualRun()");
-      await callAxios(`https://api.github.com/repos/${githubRepository}/actions/workflows/${githubWorkflowId}/dispatches`, "POST", `Bearer ${githubToken}`, { ref: "master" });
+      console.log('handleApplyManualRun()');
+      await callAxios(`https://api.github.com/repos/${githubRepository}/actions/workflows/${githubWorkflowId}/dispatches`, 'POST', `Bearer ${githubToken}`, { ref: 'master' });
     };
 
     const loadRepositories = async (githubToken) => {
-      console.log("Loading Repositories...");
-      let repositories = await callAxios("https://api.github.com/user/repos", "GET", `Bearer ${githubToken}`);
+      console.log('Loading Repositories...');
+      let repositories = await callAxios('https://api.github.com/user/repos', 'GET', `Bearer ${githubToken}`);
       repositories = repositories.sort((a, b) => a.full_name.localeCompare(b.full_name));
       githubRepositories = repositories;
-      console.log("repositories:", repositories);
+      console.log('repositories:', repositories);
       //Update the select with the repositories
       for (let i = 0; i < repositories.length; i++) {
-        $("#select-repository").append(
-          $("<option>", {
+        $('#select-repository').append(
+          $('<option>', {
             value: repositories[i].name,
             text: repositories[i].full_name,
           })
         );
       }
 
-      console.log("Repositories found:", repositories);
+      console.log('Repositories found:', repositories);
     };
 
     const handleClearToken = async () => {
-      console.log("handleClearToken()");
-      $("#github-personal-token").val("");
-      localStorage.removeItem("github-token");
+      console.log('handleClearToken()');
+      $('#github-personal-token').val('');
+      localStorage.removeItem('github-token');
     };
 
     const init = async () => {
-      console.log("init()");
-      githubToken = localStorage.getItem("github-token") ?? "";
-      $("#github-personal-token").val(githubToken);
-      $("#token-entered-columns").hide();
-      $("#save-btn").hide();
-      $("#manual-run-btn").hide();
-      await log("Home");
+      console.log('init()');
+      githubToken = localStorage.getItem('github-token') ?? '';
+      $('#github-personal-token').val(githubToken);
+      $('#token-entered-columns').hide();
+      $('#save-btn').hide();
+      $('#manual-run-btn').hide();
+      await log('Home');
       // loadConfigurationItems();
     };
 
@@ -404,11 +442,11 @@
 
     $(document).ready(function () {
       try {
-        console.log("Get terraform file");
-        $.get("/.github/workflows/terraform.yml").done(function (data) {
-          console.log("File load complete");
+        console.log('Get terraform file');
+        $.get('/.github/workflows/terraform.yml').done(function (data) {
+          console.log('File load complete');
           githubActionName = jsyaml.load(data).name;
-          console.log("githubActionName:", githubActionName);
+          console.log('githubActionName:', githubActionName);
         });
       } catch (error) {
         console.error(error);
