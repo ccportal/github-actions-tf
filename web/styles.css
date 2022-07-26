@@ -71,6 +71,12 @@ body {
   padding: 22px 25px;
   padding-bottom: 23px;
   background-color: #f5f5ff !important;
+  -webkit-border-bottom-left-radius: 10px !important;
+  -moz-border-radius-bottomleft: 10px !important;
+  border-bottom-left-radius: 10px !important;
+  -webkit-border-bottom-right-radius: 10px !important;
+  -moz-border-radius-bottomright: 10px !important;
+  border-bottom-right-radius: 10px !important;
 }
 
 @media (max-width: 767px) {
