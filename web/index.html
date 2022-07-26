@@ -31,12 +31,16 @@
               <span class="input-group-text" id="basic-addon1">Github Personal Token</span>
               <input id="github-personal-token" type="text" class="form-control" placeholder="enter a valid token" aria-label="Username" aria-describedby="basic-addon1" onchange="personalTokenOnChange()" />
             </div>
-            <div class="form-check mt-3">
-              <input class="form-check-input" type="checkbox" id="remember-token" onchange="handleRememberCheck()" checked />
-              <label class="form-check-label" for="remember-token"> Remember the token </label>
+            <div class="d-flex justify-content-end">
+              <div class="form-check mt-1">
+                <input class="form-check-input" type="checkbox" id="remember-token" onchange="handleRememberCheck()" checked />
+                <label class="form-check-label" for="remember-token"> Remember the token </label>
+              </div>
             </div>
-            <button type="button" class="btn btn-primary mt-3" onclick="handleApplyToken()">Apply</button>
-            <button type="button" class="btn btn-default mt-3" onclick="handleClearToken()">Clear</button>
+            <div class="d-flex justify-content-center">
+              <button type="button" class="btn btn-primary mt-3" onclick="handleApplyToken()">Apply</button>
+              <button type="button" class="btn btn-default mt-3" onclick="handleClearToken()">Clear</button>
+            </div>
           </div>
         </div>
       </div>
