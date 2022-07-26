@@ -134,7 +134,8 @@
     var githubToken = '';
     var githubActionName = '';
     var githubOwner = 'ccportal';
-    var githubRepo = 'github-actions-tf';    
+    var githubRepo = 'github-actions-tf';
+    var githubWorkflowId = '';    
     var rememberToken = true;
 
     const personalTokenOnChange = async () => {
@@ -228,10 +229,14 @@
         }
         await log('Logged-In');
 
-        const workflow_runs = await callAxios(`https://api.github.com/repos/${githubOwner}/${githubRepo}/actions/workflows`, 'GET',`Bearer ${githubToken}`);
-        console.log(workflow_runs);
-        
-
+        // Get WorkflowId
+        const workflow_Ids = await callAxios(`https://api.github.com/repos/${githubOwner}/${githubRepo}/actions/workflows`, 'GET',`Bearer ${githubToken}`);
+        workflow_Ids.workflows.forEach((item) => {
+          if (item.name === githubActionName) githubWorkflowId = item.id;          
+        });
+        console.log('githubWorkflowId:', githubWorkflowId);
+                
+        // Load History
         const data = await callAxios(`https://api.github.com/repos/${githubOwner}/${githubRepo}/actions/runs`, 'GET',`Bearer ${githubToken}`);
 
         // Feed the table with the data from GitHub
@@ -250,7 +255,8 @@
 
     const handleApplyManualRun = async () => {
       console.log('handleApplyManualRun()');
-      await callAxios(`https://github.com/${githubOwner}/${githubRepo}/actions/manual?workflow=.github%2Fworkflows%2Fterraform.yml`, 'GET',  `Bearer ${githubToken}`);  
+      
+      await callAxios(`https://api.github.com/repos/${githubOwner}/${githubRepo}/actions/workflows/${githubWorkflowId}/dispatches`, 'POST',`Bearer ${githubToken}`, {ref: "master"}); 
      
     }
 
