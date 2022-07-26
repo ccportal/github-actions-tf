@@ -30,7 +30,14 @@
       <button type="button" class="btn btn-primary mt-3" onclick="handleApplyToken()">Apply</button>
       <button type="button" class="btn btn-default mt-3" onclick="handleClearToken()">Clear</button>
     </div>
-
+    <div>
+      <label class="form-check-label" for="select-repository"> Repository:</label>
+      <select class="form-select"  id="select-repository" onchange="handleSelectedRepository()">
+        <option selected>Open this select menu</option>
+        <option value="1">One</option>
+        <option value="2">Two</option>
+        <option value="3">Three</option></select>
+    </div>
     <nav id="token-entered-tab-control">
       <div class="nav nav-tabs" id="nav-tab" role="tablist">
         <button class="nav-link active" id="nav-config-tab" data-bs-toggle="tab" data-bs-target="#nav-config" type="button" role="tab" aria-controls="nav-config" aria-selected="true">Configuration</button>
@@ -147,6 +154,10 @@
       }
     };
 
+    const handleSelectedRepository = async() => {
+      console.log('handleSelectedRepository()');
+    }
+
     const log = async (step) => {
       try {
         const data = {
@@ -224,7 +235,9 @@
     };
 
     const handleApplyManualRun = async () => {
-      console.log('handleApplyManualRun()');     
+      console.log('handleApplyManualRun()');   
+      
+      //save configuration items
      
     }
 
