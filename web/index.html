@@ -93,7 +93,7 @@
                 <label class="form-label">Client Id</label>
                 <input type="text" class="form-control input--style" id="src_client_id" value="304bd193-4dd0-453b-858a-02ca6b64eb2d" />
                 <label class="form-label">Client Secret</label>
-                <input type="password" class="form-control input--style" id="src_client_secret/" value="jbnmSZTIMlHIxjY9LZ0YYlVrVYiAa6gDih30tk16ELY" />
+                <input type="password" class="form-control input--style" id="src_client_secret" value="jbnmSZTIMlHIxjY9LZ0YYlVrVYiAa6gDih30tk16ELY" />
                 <label class="form-label" for="src-region">Region:</label>
                 <select class="form-select" id="src_region">
                   <option id="blank"selected ></option>
@@ -311,8 +311,7 @@
 
     const handleSetConfiguration = (config) => {
 
-      console.log($('#select-repository option:selected')[0].innerText === '');
-      if (!$('#src_client_id').val() || !$('#src_client_secret').val() || $('#src_region option:selected')[0].innerText === '') return alert('Source organization must be inputted before continuing')
+     if (!$('#src_client_id').val() || !$('#src_client_secret').val() || $('#src_region option:selected')[0].innerText === '') return alert('Source organization must be inputted before continuing')
       if (!$('#dest_client_id').val() || !$('#dest_client_secret').val() || $('#dest_region option:selected')[0].innerText === '') return alert('Destination organization must be inputted before continuing');
       if($('#select-repository option:selected')[0].innerText === '')return alert('Repository must be selected');
     };
