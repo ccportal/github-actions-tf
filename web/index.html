@@ -125,9 +125,8 @@
     var githubToken = "";
     var githubActionName = "";
     var githubRepository = "";
-    var githubOwner = "ccportal";
-    var githubRepo = "github-actions-tf";
-    var githubWorkflowId = "";
+    var githubOwner = "ccportal";    
+    var githubWorkflowId = undefined;
     var rememberToken = true;
 
     const personalTokenOnChange = async () => {
@@ -161,35 +160,41 @@
       githubRepository = $("#select-repository option:selected")[0].innerText;
 
       console.log("Set Repository:", githubRepository);
-
-       // Get WorkflowId
+      githubWorkflowId = undefined;
+      var table = document.getElementById("tableContents");
+      var tableContents = "";
+       // Get WorkflowId      
        console.log("Find workflowId...");
-        const workflow_Ids = await callAxios(`https://api.github.com/repos/${githubOwner}/${githubRepo}/actions/workflows`, "GET", `Bearer ${githubToken}`);
+       try {
+        const workflow_Ids = await callAxios(`https://api.github.com/repos/${githubOwner}/${githubRepository}/actions/workflows`, "GET", `Bearer ${githubToken}`);
         workflow_Ids.workflows.forEach((item) => {
           if (item.name === githubActionName) githubWorkflowId = item.id;
         });
         console.log("githubWorkflowId:", githubWorkflowId);
+        if (!githubWorkflowId) return;
 
         // Load History
         console.log("Load History...");
-        const data = await callAxios(`https://api.github.com/repos/${githubOwner}/${githubRepo}/actions/workflows/${githubWorkflowId}/runs`, "GET", `Bearer ${githubToken}`);
-
-        // Feed the table with the data from GitHub
-        var table = document.getElementById("tableContents");
-        var tableContents = "";
-        data.workflow_runs.forEach(function (item) {
-          if (item.name === githubActionName) {
-            let conclusion = "";
-            if (item.conclusion) {
-              conclusion = item.conclusion === "success" ? '<i class="bi bi-check-circle-fill" style="color:green"></i>' : item.conclusion === "cancelled" ? '<i class="bi bi-exclamation-circle-fill"  style="color:gray"></i>' : '<i class="bi bi-x-circle-fill"  style="color:red"></i>';
-            } else {
-              conclusion = "";
+        const data = await callAxios(`https://api.github.com/repos/${githubOwner}/${githubRepository}/actions/workflows/${githubWorkflowId}/runs?per_page=10`, "GET", `Bearer ${githubToken}`);
+          // Feed the table with the data from GitHub
+         
+          data.workflow_runs.forEach(function (item) {
+            if (item.name === githubActionName) {
+              let conclusion = "";
+              if (item.conclusion) {
+                conclusion = item.conclusion === "success" ? '<i class="bi bi-check-circle-fill" style="color:green" data-toggle="tooltip" data-placement="right" title="Success"></i>' : item.conclusion === "cancelled" ? '<i class="bi bi-exclamation-circle-fill"  style="color:gray" data-toggle="tooltip" data-placement="right" title="Cancelled"></i>' : '<i class="bi bi-x-circle-fill"  style="color:red" data-toggle="tooltip" data-placement="right" title="Failed"></i>';
+              } else {
+                conclusion = "";
+              }            
+              tableContents = tableContents + `<tr><td><a target="_blank" href="${item.html_url}">${moment(item.run_started_at).format("YYYY-MM-DD HH:mm:ss")}</href></td><td>${conclusion}</td></tr>`;
             }
-            //<td><a target="_blank" href="${item.html_url}">${item.name}</href></td>
-            tableContents = tableContents + `<tr><td><a target="_blank" href="${item.html_url}">${moment(item.run_started_at).format("YYYY-MM-DD HH:mm:ss")}</href></td><td>${conclusion}</td></tr>`;
-          }
-        });
-        table.innerHTML = tableContents;
+          });
+          table.innerHTML = tableContents;
+      } catch (error) {
+          console.error(error);
+       }
+       
+      
 
       if (rememberToken) {
         localStorage.setItem("github-repository", githubRepository);
@@ -264,7 +269,7 @@
     const handleApplyManualRun = async () => {
       console.log("handleApplyManualRun()");
 
-      await callAxios(`https://api.github.com/repos/${githubOwner}/${githubRepo}/actions/workflows/${githubWorkflowId}/dispatches`, "POST", `Bearer ${githubToken}`, { ref: "master" });
+      await callAxios(`https://api.github.com/repos/${githubOwner}/${githubRepository}/actions/workflows/${githubWorkflowId}/dispatches`, "POST", `Bearer ${githubToken}`, { ref: "master" });
     };
 
     const loadRepositories = async (githubToken) => {
