@@ -107,7 +107,7 @@
     
     const personalTokenOnChange = async () => {
       console.log('personalTokenOnChange()');
-      githubToken = $("#github-personal-token").val();      
+      githubToken = $("#github-personal-token").val();          
       const data = await callAxios('https://api.github.com/repos/ccportal/github-actions-tf/actions/runs', 'GET');
 
       // Feed the table with the data from GitHub
