@@ -73,7 +73,7 @@
           </div>
         </div>
       </div>
-
+      
       <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
         <div class="container-fluid">
           <table class="table-striped">
@@ -224,7 +224,11 @@
         var table = document.getElementById('tableContents');
         var tableContents;
         data.workflow_runs.forEach(function (item) {
-          if (item.name === githubActionName) tableContents = tableContents + `<tr><td><a href="${item.html_url}">${item.name}</href></td><td>${moment(item.created_at).format('YYYY-MM-DD HH:mm:ss')}</td><td>${item.status}</td><td>${item.conclusion}</td></tr>`;
+          if (item.name === githubActionName) {
+            let conclusion = item.conclusion === 'success' ? '<i class="bi bi-check-circle-fill" style="color:green"></i>' : item.conclusion === 'cancelled' ? '<i class="bi bi-exclamation-circle-fill"  style="color:gray"></i>' : '<i class="bi bi-x-circle-fill"  style="color:red"></i>';
+
+            tableContents = tableContents + `<tr><td><a href="${item.html_url}">${item.name}</href></td><td>${moment(item.created_at).format('YYYY-MM-DD HH:mm:ss')}</td><td>${item.status}</td><td>${conclusion}</td></tr>`;
+            }
         });
         table.innerHTML = tableContents;
       }
