@@ -70,6 +70,8 @@
           <div class="row align-items-start">
             <div class="col">Configuration Items:</div>
           </div>
+
+          <button id="manualRun" class="btn btn-primary" onClick="handleApplyManualRun()">Manual Run</button>
         </div>
       </div>
 
@@ -209,6 +211,11 @@
         table.innerHTML = tableContents;
       }
     };
+
+    const handleApplyManualRun = async () => {
+      console.log('handleApplyManualRun()');     
+     
+    }
 
     const handleClearToken = async () => {
       console.log('handleClearToken()');
