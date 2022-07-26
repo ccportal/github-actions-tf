@@ -18,6 +18,7 @@
             Business Continuity
           </a>
           <div class="d-flex">
+            <button id="save-btn" type="button" class="btn btn-primary mr-5" onclick="handleSetConfiguration()">Save</button>
             <button id="manual-run-btn" type="button" class="btn btn-primary" disabled onclick="handleApplyManualRun()">Manual run</button>
           </div>
         </div>
@@ -158,9 +159,6 @@
               </div>
             </div>
           </div>
-        </div>
-        <div class="row">
-          <button id="manual-run-btn" type="button" class="btn btn-primary" onclick="handleSetConfiguration()">Apply Configuration</button>
         </div>
       </div>
     </div>
@@ -320,6 +318,7 @@
       if (githubToken?.length > 1) {
         $("#no-token-entered").hide();
         $("#token-entered-columns").show();
+        $("#save-btn").show();
         $("#manual-run-btn").show();
         if (rememberToken) {
           localStorage.setItem("github-token", githubToken);
@@ -365,6 +364,7 @@
       githubToken = localStorage.getItem("github-token") ?? "";
       $("#github-personal-token").val(githubToken);
       $("#token-entered-columns").hide();
+      $("#save-btn").hide();
       $("#manual-run-btn").hide();
       await log("Home");
       // loadConfigurationItems();
