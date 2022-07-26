@@ -29,6 +29,7 @@
         <label class="form-check-label" for="remember-token"> Remember the token </label>
       </div>
       <button type="button" class="btn btn-primary mt-3" onclick="handleApplyToken()">Apply</button>
+      <button type="button" class="btn btn-default mt-3" onclick="handleClearToken()">Clear</button>
     </div>
 
     <nav id="token-entered-tab-control">
@@ -223,6 +224,10 @@
         });
         table.innerHTML = tableContents;
       }
+    };
+
+    const handleClearToken = async () => {
+      console.log('handleClearToken()');
     };
 
     const init = async () => {
