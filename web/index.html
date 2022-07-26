@@ -258,6 +258,7 @@
 
     init();
 
+    // Read Terraform Name from YML FileName
     $(document).ready(function () {
         $.get('/.github/workflows/terraform.yml')
         .done(function (data) {
