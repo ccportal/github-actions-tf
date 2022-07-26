@@ -6,7 +6,6 @@
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script src="https://momentjs.com/downloads/moment.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script type="text/javascript" language="javascript" src="availableResources.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js" integrity="sha512-CSBhVREyzHAjAFfBlIBakjoRUKp5h7VSweP0InR/pAJyptH7peuhCsqAI/snV+TwZmXZqoUklpXp6R6wMnYf5Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   </head>
   <body>
@@ -29,6 +28,7 @@
         <label class="form-check-label" for="remember-token"> Remember the token </label>
       </div>
       <button type="button" class="btn btn-primary mt-3" onclick="handleApplyToken()">Apply</button>
+      <button type="button" class="btn btn-default mt-3" onclick="handleClearToken()">Clear</button>
     </div>
 
     <nav id="token-entered-tab-control">
@@ -64,17 +64,46 @@
           </div>
 
           <div class="row align-items-start">
-            <div class="col">Configuration Items:</div>
+            <div class="col">
+              Configuration Items
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="genesyscloud_architect_datatable" checked />
+                <label class="form-check-label" for="genesyscloud_architect_datatable">Data Tables</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="genesyscloud_flow" checked />
+                <label class="form-check-label" for="genesyscloud_flow">Flows</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="genesyscloud_routing_queue" checked />
+                <label class="form-check-label" for="genesyscloud_routing_queue">Queues</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="genesyscloud_routing_skill" checked />
+                <label class="form-check-label" for="genesyscloud_routing_skill">Skills</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="genesyscloud_user" checked />
+                <label class="form-check-label" for="genesyscloud_user">Users</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="genesyscloud_user_roles" checked />
+                <label class="form-check-label" for="genesyscloud_user_roles">Roles</label>
+              </div>
+            </div>
           </div>
+
+          <button id="manualRun" class="btn btn-primary" onClick="handleApplyManualRun()">Manual Run</button>
         </div>
       </div>
-      
+
       <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
         <div class="container-fluid">
-          <table class="table-striped">
-            <thead>
+          <table class="table table-striped table-sm">
+            <thead class="thead-light">
               <tr>
                 <th>Name</th>
+                <th>Event</th>
                 <th>Date</th>
                 <th>Status</th>
                 <th>Conclusion</th>
@@ -166,30 +195,6 @@
       if (!$('#dest_client_id').val() || !$('#dest_client_secret').val() || !$('#dest_region').val()) return alert('Detination organization must be inputted and verified before continuing');
     };
 
-    const loadConfigurationItems = () => {
-      console.log('!! Data', availableResources);
-      var inputGroup = document.createElement('resource_group');
-
-      for (var r = 0; r < availableResources.length; r++) {
-        // create the necessary elements
-        var pair = availableResources[r];
-
-        var checkbox = document.createElement('input');
-        checkbox.type = 'checkbox';
-        checkbox.className = 'form-check-input';
-        checkbox.id = pair.id;
-        slct.appendChild(checkbox);
-
-        var label = document.createElement('label');
-        label.innerHTML = pair.displayName;
-        label.className = 'form-check-label';
-        label.for = pair.id;
-
-        slct.appendChild(label);
-        slct.appendChild(document.createElement('br'));
-      }
-    };
-
     const handleApplyToken = async () => {
       console.log('handleApplyToken()');
       if (githubToken?.length > 1) {
@@ -197,24 +202,42 @@
         $('#token-entered-tab-control').show();
         $('#token-entered-tab-content').show();
 
+ 
+        if (rememberToken) {
+          localStorage.setItem('github-token', githubToken);
+        }
+        await log('Logged-In');
         const data = await callAxios('https://api.github.com/repos/ccportal/github-actions-tf/actions/runs', 'GET',`Bearer ${githubToken}`);
 
         // Feed the table with the data from GitHub
         var table = document.getElementById('tableContents');
-        var tableContents;
+        var tableContents = '';
         data.workflow_runs.forEach(function (item) {
           if (item.name === githubActionName) {
-            let conclusion = item.conclusion === 'success' ? '<i class="bi bi-check-circle-fill"></i>' : '<i class="bi bi-exclamation-triangle"></i>';
+            let conclusion = item.conclusion === 'success' ? '<i class="bi bi-check-circle-fill" style="color:green"></i>' : item.conclusion === 'cancelled' ? '<i class="bi bi-exclamation-circle-fill"  style="color:gray"></i>' : '<i class="bi bi-x-circle-fill"  style="color:red"></i>';
 
-            tableContents = tableContents + `<tr><td><a href="${item.html_url}">${item.name}</href></td><td>${moment(item.created_at).format('YYYY-MM-DD HH:mm:ss')}</td><td>${item.status}</td><td>${conclusion}</td></tr>`;
-            }
+            tableContents = tableContents + `<tr><td><a target="_blank" href="${item.html_url}">${item.name}</href></td><td>${item.event}</td><td>${moment(item.run_started_at).format('YYYY-MM-DD HH:mm:ss')}</td><td>${item.status}</td><td>${conclusion}</td></tr>`;
+          }
         });
         table.innerHTML = tableContents;
       }
     };
 
+    const handleApplyManualRun = async () => {
+      console.log('handleApplyManualRun()');     
+     
+    }
+
+    const handleClearToken = async () => {
+      console.log('handleClearToken()');
+      $('#github-personal-token').val('');
+      localStorage.removeItem('github-token');
+    };
+
     const init = async () => {
       console.log('init()');
+      githubToken = localStorage.getItem('github-token') ?? '';
+      $('#github-personal-token').val(githubToken);
       $('#token-entered-tab-control').hide();
       $('#token-entered-tab-content').hide();
       await log('Home');
