@@ -97,8 +97,8 @@
 
     const personalTokenOnChange = async () => {
       console.log('personalTokenOnChange()');
-      githubToken = $("#github-personal-token").val();
-    }
+      githubToken = $('#github-personal-token').val();
+    };
 
     const callAxios = async (url, method, body) => {
       console.log('callAxios', url, method, body);
@@ -206,7 +206,7 @@
       }
     };
 
-    const handleApplyToken = () => {
+    const handleApplyToken = async () => {
       console.log('handleApplyToken()');
       if (githubToken?.length > 1) {
         $('#no-token-entered').hide();
@@ -217,9 +217,8 @@
         // Feed the table with the data from GitHub
         var table = document.getElementById('tableContents');
         var tableContents;
-        data.workflow_runs.forEach(function(item) {
-          if (item.name === githubActionName)
-            tableContents = tableContents + `<tr><td><a href="${item.html_url}">${item.name}</href></td><td>${moment(item.created_at).format('YYYY-MM-DD HH:mm:ss')}</td><td>${item.status}</td><td>${item.conclusion}</td></tr>`;
+        data.workflow_runs.forEach(function (item) {
+          if (item.name === githubActionName) tableContents = tableContents + `<tr><td><a href="${item.html_url}">${item.name}</href></td><td>${moment(item.created_at).format('YYYY-MM-DD HH:mm:ss')}</td><td>${item.status}</td><td>${item.conclusion}</td></tr>`;
         });
         table.innerHTML = tableContents;
       }
