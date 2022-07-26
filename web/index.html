@@ -82,8 +82,21 @@
                 <input type="text" class="form-control" id="src_client_id" value="304bd193-4dd0-453b-858a-02ca6b64eb2d" />
                 <label class="form-label">Client Secret:</label>
                 <input type="text" class="form-control" id="src_client_secret/" value="jbnmSZTIMlHIxjY9LZ0YYlVrVYiAa6gDih30tk16ELY" />
-                <label class="form-label">Region:</label>
-                <input type="text" class="form-control" id="src_region" value="mypurecloud.ie" />
+               
+                <label class="form-label" for="src-region">Region:</label>
+                <select class="form-select" id="src_region">
+                <option id="mypurecloud.com" >Americas (US East)</option>
+                <option id="use2.us-gov-pure.cloud" >Americas (US East 2)</option>
+                <option id="usw2.pure.cloud" >Americas (US West)</option>
+                <option id="cac1.pure.cloud" >Americas (Canada)</option>
+                <option id="mypurecloud.de " >EMEA (Frankfurt))</option>
+                <option id="mypurecloud.ie" selected>EMEA (Dublin)</option>
+                <option id="euw2.pure.cloud " >EMEA (London)</option>
+                <option id="uaps1.pure.cloud" >Asia Pacific (Mumbai)</option>
+                <option id="apne2.pure.cloud" >Asia Pacific (Seoul)</option>
+                <option id="mypurecloud.com.au" >Asia Pacific (Sydney)</option>
+                <option id="mypurecloud.jp" >Asia Pacific (Tokyo)</option>
+              </select>
               </div>
             </div>
 
@@ -92,11 +105,23 @@
               <div class="card-body">
                 <div>Destination</div>
                 <label class="form-label">Client ID:</label>
-                <input type="text" class="form-control" id="dest_client_id" />
+                <input type="text" class="form-control" id="dest_client_id"  value="e50d2e78-22c6-456a-aabd-8216be13a0ab"/>
                 <label class="form-label">Client Secret:</label>
-                <input type="text" class="form-control" id="dest_client_secret" />
-                <label class="form-label">Region:</label>
-                <input type="text" class="form-control" id="dest_region" />
+                <input type="text" class="form-control" id="dest_client_secret" value="dPqlWUUctAo9kAfgSen1fkpPsyiU0047kB33NOcYifo" />
+                <label class="form-label" for="dest-region">Region:</label>
+                <select class="form-select" id="dest_region">
+                <option id="mypurecloud.com" >Americas (US East)</option>
+                <option id="use2.us-gov-pure.cloud" >Americas (US East 2)</option>
+                <option id="usw2.pure.cloud" >Americas (US West)</option>
+                <option id="cac1.pure.cloud" >Americas (Canada)</option>
+                <option id="mypurecloud.de " selected>EMEA (Frankfurt))</option>
+                <option id="umypurecloud.ie" >EMEA (Dublin)</option>
+                <option id="euw2.pure.cloud " >EMEA (London)</option>
+                <option id="uaps1.pure.cloud" >Asia Pacific (Mumbai)</option>
+                <option id="apne2.pure.cloud" >Asia Pacific (Seoul)</option>
+                <option id="mypurecloud.com.au" >Asia Pacific (Sydney)</option>
+                <option id="mypurecloud.jp" >Asia Pacific (Tokyo)</option>
+              </select>
               </div>
             </div>
           </div>
