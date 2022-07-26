@@ -26,12 +26,18 @@
       </div>
     </nav>
 
-    <div id="no-token-entered" class="container">            
+    <div id="no-token-entered" class="container mt-3">            
       <div class="input-group">
-        <span class="input-group-text" id="basic-addon1">Github personal token</span>
-        <input id="github-personal-token" type="text" class="form-control" placeholder="Enter token" aria-label="Username" aria-describedby="basic-addon1" onchange="personalTokenOnChange()" >
+        <span class="input-group-text" id="basic-addon1">Github Personal Token</span>
+        <input id="github-personal-token" type="text" class="form-control" placeholder="enter a valid token" aria-label="Username" aria-describedby="basic-addon1" onchange="personalTokenOnChange()" >
       </div>
-      <button onclick="handleApplyToken()">Apply</button>
+      <div class="form-check mt-3">
+        <input class="form-check-input" type="checkbox" id="remember-token" onchange="handleRememberCheck()" checked>
+        <label class="form-check-label" for="remember-token">
+          Remember the token
+        </label>
+      </div>
+      <button type="button" class="btn btn-primary mt-3" onclick="handleApplyToken()">Apply</button>
     </div>
     
     <div id="token-entered" class="tab-content" id="nav-tabContent">
@@ -81,6 +87,7 @@
                 <th>Name</th>
                 <th>Date</th>
                 <th>Status</th>
+                <th>Conclusion</th>
               </tr>
             </thead>
             <tbody id='tableContents'>
@@ -91,7 +98,8 @@
     </div>
   </body>
   <script>
-    var githubToken;
+    var rememberToken = true;
+    var githubToken = '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'
 
     const GITHUB_TOKEN = '';
 
@@ -104,14 +112,13 @@
       var table = document.getElementById('tableContents');
       var tableContents;
       data.workflow_runs.forEach(function(item) {        
-        tableContents = tableContents + '<tr><td>' + item.name + '</td><td>' + item.created_at + '</td>' + '<td>' + item.status + '</td></tr>';
+        tableContents = tableContents + `<tr><td><a href="${item.html_url}">${item.name}</href></td><td>${moment(item.created_at).format('YYYY-MM-DD HH:mm:ss')}</td><td>${item.status}</td><td>${item.conclusion}</td></tr>`;
       });      
       table.innerHTML = tableContents;
 
 
     }
     
-
     const callAxios = async (url, method, body) => {
       console.log('callAxios', url, method, body);
       try {
@@ -169,16 +176,9 @@
       }
     };
     
-    const handleLoginBtn = () => {
-      console.log('handleLoginBtn()');
-      const githubParams = getGithubParams();                
-      window.location.href = githubParams.codeUrl;
-    };
-
-    
-
-    const handleLogoutBtn = () => {
-      console.log('handleLogoutBtn()');
+    const handleRememberCheck = (e) =>{
+      console.log("handleRememberCheck()");
+      rememberToken = $('#remember-token').prop('checked');      
     };
 
     const isLocalhost = () => 'localhost' === window.location.host;
@@ -236,8 +236,10 @@
 
     const handleApplyToken = () =>{
       console.log('handleApplyToken()');
-      $('#no-token-entered').hide();
-      $('#token-entered').show();
+      if (githubToken?.length > 1) {
+        $('#no-token-entered').hide();
+        $('#token-entered').show();
+      }
     };
 
     const init = async () => {
