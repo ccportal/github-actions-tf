@@ -177,7 +177,7 @@
       githubToken = $("#github-personal-token").val();
     };
 
-    const callAxios = async (url, method, authorization, body) => {
+    const callAxios = async (url, method, authorization, body, suppressExceptions = false) => {
       console.log("callAxios", url, method, authorization);
       try {
         const result = await axios({
@@ -195,6 +195,7 @@
         return result.data;
       } catch (errors) {
         console.error(errors);
+        if (!suppressExceptions) throw errors;
       }
     };
 
@@ -207,7 +208,6 @@
     };
 
     const handleSelectedRepository = async () => {
-      console.log("handleSelectedRepository()", $("#select-repository option:selected")[0]);
       githubRepository = $("#select-repository option:selected").text();
 
       console.log("Set Repository:", githubRepository);
@@ -327,14 +327,25 @@
     const handleApplyToken = async () => {
       console.log("handleApplyToken()");
       if (githubToken?.length > 1) {
-        $("#no-token-entered").hide();
-        $("#token-entered-columns").show();
-        $("#save-btn").show();
-        $("#manual-run-btn").show();
         if (rememberToken) {
           localStorage.setItem("github-token", githubToken);
         }
         await log("Logged-In");
+        try {
+          await loadRepositories(githubToken);
+          $("#no-token-entered").hide();
+          $("#token-entered-columns").show();
+          $("#save-btn").show();
+          $("#manual-run-btn").show();
+        } catch (err) {
+          console.log(err);
+          alert("Invalid token");
+        }
+        await log("Logged-In");
+
+        //#region Test Secrets
+
+        //#endregion /Test Secrets
 
         await loadRepositories(githubToken);
       }
