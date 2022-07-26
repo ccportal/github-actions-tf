@@ -6,10 +6,8 @@
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script src="https://momentjs.com/downloads/moment.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script type="text/javascript" language="javascript" src="availableResources.js"></script> 
+    <script type="text/javascript" language="javascript" src="availableResources.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js" integrity="sha512-CSBhVREyzHAjAFfBlIBakjoRUKp5h7VSweP0InR/pAJyptH7peuhCsqAI/snV+TwZmXZqoUklpXp6R6wMnYf5Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    
-
   </head>
   <body>
     <nav class="navbar bg-light">
@@ -18,7 +16,6 @@
           <i class="bi bi-activity"></i>
           Business Continuity
         </a>
-        
       </div>
     </nav>
 
@@ -29,34 +26,32 @@
       </div>
     </nav>
 
-    <div id="no-token-entered" class="container mt-3">            
+    <div id="no-token-entered" class="container mt-3">
       <div class="input-group">
         <span class="input-group-text" id="basic-addon1">Github Personal Token</span>
-        <input id="github-personal-token" type="text" class="form-control" placeholder="enter a valid token" aria-label="Username" aria-describedby="basic-addon1" onchange="personalTokenOnChange()" >
+        <input id="github-personal-token" type="text" class="form-control" placeholder="enter a valid token" aria-label="Username" aria-describedby="basic-addon1" onchange="personalTokenOnChange()" />
       </div>
       <div class="form-check mt-3">
-        <input class="form-check-input" type="checkbox" id="remember-token" onchange="handleRememberCheck()" checked>
-        <label class="form-check-label" for="remember-token">
-          Remember the token
-        </label>
+        <input class="form-check-input" type="checkbox" id="remember-token" onchange="handleRememberCheck()" checked />
+        <label class="form-check-label" for="remember-token"> Remember the token </label>
       </div>
       <button type="button" class="btn btn-primary mt-3" onclick="handleApplyToken()">Apply</button>
     </div>
-    
+
     <div id="token-entered" class="tab-content" id="nav-tabContent">
       <div class="tab-pane fade show active" id="nav-config" role="tabpanel" aria-labelledby="nav-config-tab">
         <div class="container">
           <div class="row align-items-start">
             <div class="col">
               <form id="submitSource">
-              <div>Source</div>
-              <label class="form-label">Client ID:</label>
-              <input type="text" class="form-control" id="src_client_id" />
-              <label class="form-label">Client Secret:</label>
-              <input type="text" class="form-control" id="src_client_secret/" />
-              <label class="form-label">Region:</label>
-              <input type="text" class="form-control" id="src_region" />
-              <button type="submit" id="src_verify_button" class="btn btn-primary">Verify</button>
+                <div>Source</div>
+                <label class="form-label">Client ID:</label>
+                <input type="text" class="form-control" id="src_client_id" />
+                <label class="form-label">Client Secret:</label>
+                <input type="text" class="form-control" id="src_client_secret/" />
+                <label class="form-label">Region:</label>
+                <input type="text" class="form-control" id="src_region" />
+                <button type="submit" id="src_verify_button" class="btn btn-primary">Verify</button>
               </form>
               <br />
             </div>
@@ -69,21 +64,17 @@
               <label class="form-label">Region:</label>
               <input type="text" class="form-control" id="dest_region" />
               <button type="submit" id="dest_verify_button" class="btn btn-primary" onClick="verifyOrg('dest')">Verify</button>
-            </div> 
-          </div>
-
-          <div class="row align-items-start">
-            <div class="col">
-              Configuration Items: 
-
             </div>
           </div>
 
+          <div class="row align-items-start">
+            <div class="col">Configuration Items:</div>
+          </div>
         </div>
       </div>
 
       <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
-        <div class="container-fluid">        
+        <div class="container-fluid">
           <table class="table-striped">
             <thead>
               <tr>
@@ -93,34 +84,31 @@
                 <th>Conclusion</th>
               </tr>
             </thead>
-            <tbody id='tableContents'>
-            </tbody>
+            <tbody id="tableContents"></tbody>
           </table>
         </div>
       </div>
     </div>
   </body>
   <script>
-    var githubToken = ''
-    var githubActionName = ''    
+    var githubToken = '';
+    var githubActionName = '';
     var rememberToken = true;
-    
+
     const personalTokenOnChange = async () => {
       console.log('personalTokenOnChange()');
-      githubToken = $("#github-personal-token").val();      
+      githubToken = $('#github-personal-token').val();
       const data = await callAxios('https://api.github.com/repos/ccportal/github-actions-tf/actions/runs', 'GET');
 
       // Feed the table with the data from GitHub
       var table = document.getElementById('tableContents');
       var tableContents;
-      data.workflow_runs.forEach(function(item) {        
+      data.workflow_runs.forEach(function (item) {
         tableContents = tableContents + `<tr><td><a href="${item.html_url}">${item.name}</href></td><td>${moment(item.created_at).format('YYYY-MM-DD HH:mm:ss')}</td><td>${item.status}</td><td>${item.conclusion}</td></tr>`;
-      });      
+      });
       table.innerHTML = tableContents;
+    };
 
-
-    }
-    
     const callAxios = async (url, method, body) => {
       console.log('callAxios', url, method, body);
       try {
@@ -143,100 +131,91 @@
     };
 
     const log = async (step) => {
-      try { 
-      const data = {
-        date: moment().format(),
-        userinfo: {
-          id: 'webPage',
-          orgId: 'unknown',
-          orgName: 'unknown' 
-        },
-        activity: {
-          action: "View",
-          source:"web",          
-          stage: "BusinessContinuityApp",
-          step: step,
-          message: `Accessed ${window.location.origin}${window.location.pathname}`,
-          object :{
-            type: "Page",
-            host: window.location.host,
-            hostname: window.location.hostname,
-            href: window.location.href,
-            origin: window.location.origin,
-            pathname: window.location.pathname,
-            url: window.location.origin + window.location.pathname
+      try {
+        const data = {
+          date: moment().format(),
+          userinfo: {
+            id: 'webPage',
+            orgId: 'unknown',
+            orgName: 'unknown',
           },
-        
-        },
-      };      
-      //console.log('[Tracking] data:', data);
-      logUrl = isLocalhost ? 'api.dev.ccportal.genesys.com' : 'ccportal.genesys.com';   
-      callAxios(`https://${logUrl}/logging/messages`,'POST', data);
-            
+          activity: {
+            action: 'View',
+            source: 'web',
+            stage: 'BusinessContinuityApp',
+            step: step,
+            message: `Accessed ${window.location.origin}${window.location.pathname}`,
+            object: {
+              type: 'Page',
+              host: window.location.host,
+              hostname: window.location.hostname,
+              href: window.location.href,
+              origin: window.location.origin,
+              pathname: window.location.pathname,
+              url: window.location.origin + window.location.pathname,
+            },
+          },
+        };
+        //console.log('[Tracking] data:', data);
+        logUrl = isLocalhost ? 'api.dev.ccportal.genesys.com' : 'ccportal.genesys.com';
+        callAxios(`https://${logUrl}/logging/messages`, 'POST', data);
       } catch (errors) {
         console.error(errors);
       }
     };
-    
-    const handleRememberCheck = (e) =>{
-      console.log("handleRememberCheck()");
-      rememberToken = $('#remember-token').prop('checked');      
+
+    const handleRememberCheck = (e) => {
+      console.log('handleRememberCheck()');
+      rememberToken = $('#remember-token').prop('checked');
     };
 
     const isLocalhost = () => 'localhost' === window.location.host;
-    
+
     const verifyOrg = (e, orgType) => {
       //TODO: Check the au h is valid
       console.log('Verifying Org', e);
-     //disable the input boxes
-     $(`#${orgType}_client_id`).prop('disabled', true);
-     $(`#${orgType}_client_secret`).prop('disabled', true);
-     $(`#${orgType}_region`).prop('disabled', true);
-     $(`#${orgType}_verify_button`).prop('disabled', false);
-    }
+      //disable the input boxes
+      $(`#${orgType}_client_id`).prop('disabled', true);
+      $(`#${orgType}_client_secret`).prop('disabled', true);
+      $(`#${orgType}_region`).prop('disabled', true);
+      $(`#${orgType}_verify_button`).prop('disabled', false);
+    };
 
     const onSetConfiguration = (config) => {
-      console.log(!$("#src_client_id").val());
-      
+      console.log(!$('#src_client_id').val());
 
       //if source and destination has not been verified do not enabled return
-      if(!$("#src_verify_button").is(":disabled") || !$("#dest_verify_button").is(":disabled"))
-        return alert('Source and Destination organizations must be verified before continuing.');
-      
-      if(!$("#src_client_id").val() || !$("#src_client_secret").val() || !$("#src_region").val()) return alert('Source organization must be inputted and verified before continuing');
-      if(!$("#dest_client_id").val() || !$("#dest_client_secret").val() || !$("#dest_region").val()) return alert('Detination organization must be inputted and verified before continuing');
+      if (!$('#src_verify_button').is(':disabled') || !$('#dest_verify_button').is(':disabled')) return alert('Source and Destination organizations must be verified before continuing.');
 
- 
-      
-    }
+      if (!$('#src_client_id').val() || !$('#src_client_secret').val() || !$('#src_region').val()) return alert('Source organization must be inputted and verified before continuing');
+      if (!$('#dest_client_id').val() || !$('#dest_client_secret').val() || !$('#dest_region').val()) return alert('Detination organization must be inputted and verified before continuing');
+    };
 
     const loadConfigurationItems = () => {
-     
       console.log('!! Data', availableResources);
-        var inputGroup = document.createElement("resource_group");
+      var inputGroup = document.createElement('resource_group');
 
-      for(var r = 0; r < availableResources.length; r++){
+      for (var r = 0; r < availableResources.length; r++) {
         // create the necessary elements
         var pair = availableResources[r];
 
-            var checkbox = document.createElement("input");
-            checkbox.type = "checkbox";
-            checkbox.className = "form-check-input";
-            checkbox.id = pair.id;
-            slct.appendChild(checkbox);
-    
-            var label = document.createElement('label')
-            label.innerHTML = pair.displayName;
-            label.className = "form-check-label";
-            label.for = pair.id;
+        var checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.className = 'form-check-input';
+        checkbox.id = pair.id;
+        slct.appendChild(checkbox);
 
-            slct.appendChild(label);
-            slct.appendChild(document.createElement("br"));
+        var label = document.createElement('label');
+        label.innerHTML = pair.displayName;
+        label.className = 'form-check-label';
+        label.for = pair.id;
+
+        slct.appendChild(label);
+        slct.appendChild(document.createElement('br'));
       }
-    }
+    };
 
-
-    const handleApplyToken = () =>{
+    const handleApplyToken = () => {
       console.log('handleApplyToken()');
       if (githubToken?.length > 1) {
         $('#no-token-entered').hide();
@@ -246,31 +225,30 @@
 
     const init = async () => {
       console.log('init()');
-      await log('Home');      
-      loadConfigurationItems();
       $('#token-entered').hide();
+      await log('Home');
+      loadConfigurationItems();
 
-      const sourceVerifyForm = document.querySelector("#submitSource");
-    if(sourceVerifyForm) {
-      sourceVerifyForm.addEventListener("submit", function(e){verifyOrg(e)})
-    }
+      const sourceVerifyForm = document.querySelector('#submitSource');
+      if (sourceVerifyForm) {
+        sourceVerifyForm.addEventListener('submit', function (e) {
+          verifyOrg(e);
+        });
+      }
     };
 
     init();
-    
+
     $(document).ready(function () {
       try {
-        $.get('/.github/workflows/terraform.yml')
-        .done(function (data) {
-          console.log('File load complete');                            
+        $.get('/.github/workflows/terraform.yml').done(function (data) {
+          console.log('File load complete');
           githubActionName = jsyaml.load(data).name;
           console.log('githubActionName:', githubActionName);
-      });
+        });
       } catch (error) {
         console.error(error);
       }
-       
     });
-
   </script>
 </html>
