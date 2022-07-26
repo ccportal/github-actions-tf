@@ -18,7 +18,7 @@
             Business Continuity
           </a>
           <div class="d-flex">
-            <button id="manual-run-btn" type="button" class="btn btn-primary" disabled onclick="handleApplyManualRun()" >Manual run</button>
+            <button id="manual-run-btn" type="button" class="btn btn-primary" disabled onclick="handleApplyManualRun()">Manual run</button>
           </div>
         </div>
       </nav>
@@ -52,7 +52,7 @@
               <div class="card-header black">Configuration</div>
               <div class="card-body">
                 <div>
-                  <label class="form-check-label" for="select-repository"> Repository:</label>
+                  <label class="form-check-label" for="select-repository"> Repository</label>
                   <select class="form-select" id="select-repository" onchange="handleSelectedRepository()">
                     <option selected>Select a repository</option>
                   </select>
@@ -119,7 +119,7 @@
                   <input type="text" class="form-control input--style" id="dest_client_id" value="e50d2e78-22c6-456a-aabd-8216be13a0ab" />
                   <label class="form-label">Client Secret</label>
                   <input type="text" class="form-control input--style" id="dest_client_secret" value="dPqlWUUctAo9kAfgSen1fkpPsyiU0047kB33NOcYifo" />
-                  <label class="form-label" for="dest-region">Region:</label>
+                  <label class="form-label" for="dest-region">Region</label>
                   <select class="form-select" id="dest_region">
                     <option id="mypurecloud.com">Americas (US East)</option>
                     <option id="use2.us-gov-pure.cloud">Americas (US East 2)</option>
@@ -196,14 +196,14 @@
       console.log("handleSelectedRepository()");
       githubRepository = $("#select-repository option:selected")[0].innerText;
 
-      console.log('Set Repository:', githubRepository);
-      
+      console.log("Set Repository:", githubRepository);
+
       // Clean vars / tables
       githubWorkflowId = undefined;
       var table = document.getElementById("tableContents");
       var tableContents = "";
       table.innerHTML = tableContents;
-      document.getElementById('manual-run-btn').disabled = true;
+      document.getElementById("manual-run-btn").disabled = true;
       // Get WorkflowId
       console.log("Find workflowId...");
       try {
@@ -222,8 +222,7 @@
         }
 
         // Enable ManualRun Button
-        document.getElementById('manual-run-btn').disabled = false;
-        
+        document.getElementById("manual-run-btn").disabled = false;
 
         // Load History
         console.log("Load History...");
