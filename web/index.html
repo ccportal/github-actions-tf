@@ -304,9 +304,16 @@
       }
 
       //#region Test Secrets
-
-      let resp = await callAxios(`https://api.github.com/repos/${githubOwner}/${githubRepository}/user/codespaces/secrets/ORG1_SECRET`, 'GET', `Bearer ${githubToken}`);
+      console.log('Load Secrets...');
+      let resp = await callAxios(`https://api.github.com/repos/${githubRepository}/actions/secrets`, 'GET', `Bearer ${githubToken}`);
       console.log(resp.data);
+
+      // Test Create Secret
+      let secret = {
+        encrypted_value: 'test-secret',
+        key_id: 'test-secret-value',
+      };
+      resp = await callAxios(`https://api.github.com/repos/${githubRepository}/actions/secrets/TEST_SECRET`, 'PUT', `Bearer ${githubToken}`, secret);
 
       //#endregion /Test Secrets
     };
@@ -365,7 +372,32 @@
       await saveDeploymentDetails();
     };
 
-    const updateConfigurationItems = async () => {};
+    const updateConfigurationItems = async () => {
+      //Get the existing Configuration file:
+      const existingExportFile = await callAxios(`https://api.github.com/repos/${githubRepository}/contents/source/export.tf`, 'GET', `Bearer ${githubToken}`);
+      console.log('File Found:', existingExportFile);
+
+      $.get('/web/export.tf').done(async function (data) {
+        console.log('File load complete', data);
+        //[ "genesyscloud_routing_language"]
+        var newData = '["genesyscloud_routing_language", "genesyscloud_routing_skills"]';
+        let updatedData = data.toString().replace('###RESOURCES###', newData);
+        let amendedData = btoa(updatedData);
+        console.log('Updated Data:', amendedData);
+
+        const body = {
+          owner: githubRepository.split('/')[0],
+          repo: githubRepository.split('/')[1],
+          path: '/source/export.tf',
+          message: 'Updated Resources for export',
+          content: amendedData,
+          sha: existingExportFile.sha,
+        };
+        console.log('Updating content with body:', body);
+        const updateDoc = await callAxios(`https://api.github.com/repos/${githubRepository}/contents/source/export.tf`, 'PUT', `Bearer ${githubToken}`, body);
+        console.log('Updated Data', updateDoc);
+      });
+    };
 
     const updateGitSecrets = async () => {};
 
