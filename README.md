@@ -32,7 +32,7 @@ This repository contains a set of Github actions and a web frontend to democase 
 
 ## Architecture
 
-[INSERT DIAGRAM HERE](image)
+![Architecture Diagram](./architecture.png "Architecture Diagram")
 
 ## How it works
 
