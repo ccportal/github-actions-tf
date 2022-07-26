@@ -170,10 +170,10 @@
     var githubToken = '';
     var githubActionName = '';
     var githubRepository = '';
-    var githubOwner = 'ccportal';
+    var githubOwner = '';
     var githubWorkflowId = undefined;
     var rememberToken = true;
-
+    var githubRepositories = [];
     const personalTokenOnChange = async () => {
       console.log('personalTokenOnChange()');
       githubToken = $('#github-personal-token').val();
@@ -211,7 +211,7 @@
     const handleSelectedRepository = async () => {
       console.log('handleSelectedRepository()');
       githubRepository = $('#select-repository option:selected')[0].innerText;
-
+    
       console.log('Set Repository:', githubRepository);
 
       // Clean vars / tables
@@ -339,7 +339,7 @@
     const loadRepositories = async (githubToken) => {
       console.log('Loading Repositories...');
       let repositories = await callAxios('https://api.github.com/user/repos', 'GET', `Bearer ${githubToken}`);
-
+      githubRepositories = repositories;
       //Update the select with the repositories
       for (let i = 0; i < repositories.length; i++) {
         $('#select-repository').append(
