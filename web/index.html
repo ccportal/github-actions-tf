@@ -124,9 +124,8 @@
   <script>
     var githubToken = "";
     var githubActionName = "";
-    var githubRepository = "";
     var githubOwner = "ccportal";
-    var githubRepo = "github-actions-tf";
+    var githubRepo = "";
     var githubWorkflowId = "";
     var rememberToken = true;
 
@@ -158,9 +157,9 @@
 
     const handleSelectedRepository = async () => {
       console.log("handleSelectedRepository()");
-      githubRepository = $("#select-repository option:selected")[0].innerText;
+      githubRepo = $("#select-repository option:selected")[0].innerText;
 
-      console.log("Set Repository:", githubRepository);
+      console.log("Set Repository:", githubRepo);
 
        // Get WorkflowId
        console.log("Find workflowId...");
@@ -192,7 +191,7 @@
         table.innerHTML = tableContents;
 
       if (rememberToken) {
-        localStorage.setItem("github-repository", githubRepository);
+        localStorage.setItem("github-repository", githubRepo);
       }
     };
 
