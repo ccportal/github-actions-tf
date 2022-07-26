@@ -157,7 +157,7 @@
 
     const handleSelectedRepository = async () => {
       console.log("handleSelectedRepository()");
-      githubRepository = $("#select-repository option:selected")[0].innerText;
+      githubRepo = $("#select-repository option:selected")[0].innerText;
 
       console.log("Set Repository:", githubRepository);
       githubWorkflowId = undefined;
@@ -197,7 +197,7 @@
       
 
       if (rememberToken) {
-        localStorage.setItem("github-repository", githubRepository);
+        localStorage.setItem("github-repository", githubRepo);
       }
     };
 
