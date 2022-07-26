@@ -17,6 +17,9 @@
             <i class="bi bi-activity"></i>
             Business Continuity
           </a>
+          <div class="d-flex">
+            <button id="manual-run-btn" type="button" class="btn btn-primary" onclick="handleApplyManualRun()">Manual run</button>
+          </div>
         </div>
       </nav>
 
@@ -33,7 +36,7 @@
         <button type="button" class="btn btn-default mt-3" onclick="handleClearToken()">Clear</button>
       </div>
 
-      <div id="token-entered-columns">
+      <div id="token-entered-columns" class="p-4">
         <div class="row">
           <div class="col-2">
             <div class="card">
@@ -82,8 +85,20 @@
                 <input type="text" class="form-control input--style" id="src_client_id" value="304bd193-4dd0-453b-858a-02ca6b64eb2d" />
                 <label class="form-label">Client Secret</label>
                 <input type="password" class="form-control input--style" id="src_client_secret/" value="jbnmSZTIMlHIxjY9LZ0YYlVrVYiAa6gDih30tk16ELY" />
-                <label class="form-label">Region</label>
-                <input type="text" class="form-control input--style" id="src_region" value="mypurecloud.ie" />
+                <label class="form-label" for="src-region">Region</label>
+                <select class="form-select" id="src_region">
+                  <option id="mypurecloud.com">Americas (US East)</option>
+                  <option id="use2.us-gov-pure.cloud">Americas (US East 2)</option>
+                  <option id="usw2.pure.cloud">Americas (US West)</option>
+                  <option id="cac1.pure.cloud">Americas (Canada)</option>
+                  <option id="mypurecloud.de ">EMEA (Frankfurt))</option>
+                  <option id="mypurecloud.ie" selected>EMEA (Dublin)</option>
+                  <option id="euw2.pure.cloud ">EMEA (London)</option>
+                  <option id="uaps1.pure.cloud">Asia Pacific (Mumbai)</option>
+                  <option id="apne2.pure.cloud">Asia Pacific (Seoul)</option>
+                  <option id="mypurecloud.com.au">Asia Pacific (Sydney)</option>
+                  <option id="mypurecloud.jp">Asia Pacific (Tokyo)</option>
+                </select>
               </div>
             </div>
 
@@ -92,11 +107,23 @@
               <div class="card-body">
                 <div class="input-group-desc">
                   <label class="form-label">Client Id</label>
-                  <input type="text" class="form-control input--style" id="dest_client_id" />
+                  <input type="text" class="form-control input--style" id="dest_client_id" value="e50d2e78-22c6-456a-aabd-8216be13a0ab" />
                   <label class="form-label">Client Secret</label>
-                  <input type="password" class="form-control input--style" id="dest_client_secret" />
-                  <label class="form-label">Region</label>
-                  <input type="text" class="form-control input--style" id="dest_region" />
+                  <input type="text" class="form-control input--style" id="dest_client_secret" value="dPqlWUUctAo9kAfgSen1fkpPsyiU0047kB33NOcYifo" />
+                  <label class="form-label" for="dest-region">Region:</label>
+                  <select class="form-select" id="dest_region">
+                    <option id="mypurecloud.com">Americas (US East)</option>
+                    <option id="use2.us-gov-pure.cloud">Americas (US East 2)</option>
+                    <option id="usw2.pure.cloud">Americas (US West)</option>
+                    <option id="cac1.pure.cloud">Americas (Canada)</option>
+                    <option id="mypurecloud.de " selected>EMEA (Frankfurt))</option>
+                    <option id="umypurecloud.ie">EMEA (Dublin)</option>
+                    <option id="euw2.pure.cloud ">EMEA (London)</option>
+                    <option id="uaps1.pure.cloud">Asia Pacific (Mumbai)</option>
+                    <option id="apne2.pure.cloud">Asia Pacific (Seoul)</option>
+                    <option id="mypurecloud.com.au">Asia Pacific (Sydney)</option>
+                    <option id="mypurecloud.jp">Asia Pacific (Tokyo)</option>
+                  </select>
                 </div>
               </div>
             </div>
@@ -125,9 +152,9 @@
   <script>
     var githubToken = "";
     var githubActionName = "";
+    var githubRepository = "";
     var githubOwner = "ccportal";
-    var githubRepo = "";
-    var githubWorkflowId = "";
+    var githubWorkflowId = undefined;
     var rememberToken = true;
 
     const personalTokenOnChange = async () => {
@@ -158,41 +185,52 @@
 
     const handleSelectedRepository = async () => {
       console.log("handleSelectedRepository()");
-      githubRepo = $("#select-repository option:selected")[0].innerText;
+      githubRepository = $("#select-repository option:selected")[0].innerText;
 
-      console.log("Set Repository:", githubRepo);
-
-      // Get WorkflowId
-      console.log("Find workflowId...");
-      const workflow_Ids = await callAxios(`https://api.github.com/repos/${githubOwner}/${githubRepo}/actions/workflows`, "GET", `Bearer ${githubToken}`);
-      workflow_Ids.workflows.forEach((item) => {
-        if (item.name === githubActionName) githubWorkflowId = item.id;
-      });
-      console.log("githubWorkflowId:", githubWorkflowId);
-
-      // Load History
-      console.log("Load History...");
-      const data = await callAxios(`https://api.github.com/repos/${githubOwner}/${githubRepo}/actions/workflows/${githubWorkflowId}/runs`, "GET", `Bearer ${githubToken}`);
-
-      // Feed the table with the data from GitHub
+      console.log("Set Repository:", githubRepository);
+      githubWorkflowId = undefined;
       var table = document.getElementById("tableContents");
       var tableContents = "";
-      data.workflow_runs.forEach(function (item) {
-        if (item.name === githubActionName) {
-          let conclusion = "";
-          if (item.conclusion) {
-            conclusion = item.conclusion === "success" ? '<i class="bi bi-check-circle-fill" style="color:green"></i>' : item.conclusion === "cancelled" ? '<i class="bi bi-exclamation-circle-fill"  style="color:gray"></i>' : '<i class="bi bi-x-circle-fill"  style="color:red"></i>';
-          } else {
-            conclusion = "";
-          }
-          //<td><a target="_blank" href="${item.html_url}">${item.name}</href></td>
-          tableContents = tableContents + `<tr><td><a target="_blank" href="${item.html_url}">${moment(item.run_started_at).format("YYYY-MM-DD HH:mm:ss")}</href></td><td>${conclusion}</td></tr>`;
-        }
-      });
       table.innerHTML = tableContents;
+      // Get WorkflowId
+      console.log("Find workflowId...");
+      try {
+        const workflow_Ids = await callAxios(`https://api.github.com/repos/${githubOwner}/${githubRepository}/actions/workflows`, "GET", `Bearer ${githubToken}`);
+        if (!workflow_Ids?.workflows) {
+          console.log("No workflows found");
+          return;
+        }
+        workflow_Ids.workflows.forEach((item) => {
+          if (item.name === githubActionName) githubWorkflowId = item.id;
+        });
+        console.log("githubWorkflowId:", githubWorkflowId);
+        if (!githubWorkflowId) {
+          console.log("GitHubWorkflowId not set.");
+          return;
+        }
+
+        // Load History
+        console.log("Load History...");
+        const data = await callAxios(`https://api.github.com/repos/${githubOwner}/${githubRepository}/actions/workflows/${githubWorkflowId}/runs?per_page=10`, "GET", `Bearer ${githubToken}`);
+        // Feed the table with the data from GitHub
+        data.workflow_runs.forEach(function (item) {
+          if (item.name === githubActionName) {
+            let conclusion = "";
+            if (item.conclusion) {
+              conclusion = item.conclusion === "success" ? '<i class="bi bi-check-circle-fill" style="color:green" data-toggle="tooltip" data-placement="right" title="Success"></i>' : item.conclusion === "cancelled" ? '<i class="bi bi-exclamation-circle-fill"  style="color:gray" data-toggle="tooltip" data-placement="right" title="Cancelled"></i>' : '<i class="bi bi-x-circle-fill"  style="color:red" data-toggle="tooltip" data-placement="right" title="Failed"></i>';
+            } else {
+              conclusion = "";
+            }
+            tableContents = tableContents + `<tr><td><a target="_blank" href="${item.html_url}">${moment(item.run_started_at).format("YYYY-MM-DD HH:mm:ss")}</href></td><td>${conclusion}</td></tr>`;
+          }
+        });
+        table.innerHTML = tableContents;
+      } catch (error) {
+        console.error(error);
+      }
 
       if (rememberToken) {
-        localStorage.setItem("github-repository", githubRepo);
+        localStorage.setItem("github-repository", githubRepository);
       }
     };
 
@@ -249,7 +287,7 @@
       if (githubToken?.length > 1) {
         $("#no-token-entered").hide();
         $("#token-entered-columns").show();
-
+        $("#manual-run-btn").show();
         if (rememberToken) {
           localStorage.setItem("github-token", githubToken);
         }
@@ -262,7 +300,7 @@
     const handleApplyManualRun = async () => {
       console.log("handleApplyManualRun()");
 
-      await callAxios(`https://api.github.com/repos/${githubOwner}/${githubRepo}/actions/workflows/${githubWorkflowId}/dispatches`, "POST", `Bearer ${githubToken}`, { ref: "master" });
+      await callAxios(`https://api.github.com/repos/${githubOwner}/${githubRepository}/actions/workflows/${githubWorkflowId}/dispatches`, "POST", `Bearer ${githubToken}`, { ref: "master" });
     };
 
     const loadRepositories = async (githubToken) => {
@@ -293,6 +331,7 @@
       githubToken = localStorage.getItem("github-token") ?? "";
       $("#github-personal-token").val(githubToken);
       $("#token-entered-columns").hide();
+      $("#manual-run-btn").hide();
       await log("Home");
       // loadConfigurationItems();
     };
