@@ -1,3 +1,91 @@
+body {
+  font-family: "Open Sans", "Arial", "Helvetica Neue", sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  background: -webkit-gradient(linear, left bottom, right top, from(#08aeea), to(#b721ff));
+  background: -webkit-linear-gradient(bottom left, #08aeea 0%, #b721ff 100%);
+  background: -moz-linear-gradient(bottom left, #08aeea 0%, #b721ff 100%);
+  background: -o-linear-gradient(bottom left, #08aeea 0%, #b721ff 100%);
+  background: linear-gradient(to top right, #08aeea 0%, #b721ff 100%);
+}
+
+.row-space {
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+  -moz-box-pack: justify;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+}
+
+.input-group-desc {
+  position: relative;
+}
+
+.input--style {
+  line-height: 50px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  padding: 0 22px;
+  font-size: 16px;
+  color: #555;
+  margin-bottom: 8px;
+}
+
+.label--desc {
+  position: absolute;
+  text-transform: capitalize;
+  display: block;
+  color: #999;
+  font-size: 14px;
+  margin: 0;
+  margin-top: 7px;
+  left: 0;
+}
+/* ==========================================================================
+   #CARD
+   ========================================================================== */
+
+.card {
+  background: #fff;
+  -webkit-border-radius: 10px !important;
+  -moz-border-radius: 10px !important;
+  border-radius: 10px !important;
+  -webkit-box-shadow: 0px 8px 20px 0px rgba(0, 0, 0, 0.15);
+  -moz-box-shadow: 0px 8px 20px 0px rgba(0, 0, 0, 0.15);
+  box-shadow: 0px 8px 20px 0px rgba(0, 0, 0, 0.15);
+}
+
+.card-header {
+  padding: 10px 0;
+  background: #1a1a1a;
+  -webkit-border-top-left-radius: 10px !important;
+  -moz-border-radius-topleft: 10px !important;
+  border-top-left-radius: 10px !important;
+  -webkit-border-top-right-radius: 10px !important;
+  -moz-border-radius-topright: 10px !important;
+  border-top-right-radius: 10px !important;
+}
+
+.card-body {
+  padding: 22px 25px;
+  padding-bottom: 23px;
+  background-color: #f5f5ff !important;
+  -webkit-border-bottom-left-radius: 10px !important;
+  -moz-border-radius-bottomleft: 10px !important;
+  border-bottom-left-radius: 10px !important;
+  -webkit-border-bottom-right-radius: 10px !important;
+  -moz-border-radius-bottomright: 10px !important;
+  border-bottom-right-radius: 10px !important;
+}
+
+@media (max-width: 767px) {
+  .card-5 .card-body {
+    padding: 40px 30px;
+    padding-bottom: 50px;
+  }
+}
+
 .card-header {
   background-color: black !important;
   color: white !important;
