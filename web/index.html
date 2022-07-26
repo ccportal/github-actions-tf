@@ -26,12 +26,12 @@
       </div>
     </nav>
 
-    <div id="no-token-entered" class="container">            
+    <div id="no-token-entered" class="container mt-3">            
       <div class="input-group">
-        <span class="input-group-text" id="basic-addon1">Github personal token</span>
-        <input id="github-personal-token" type="text" class="form-control" placeholder="Enter token" aria-label="Username" aria-describedby="basic-addon1" onchange="personalTokenOnChange()" >
+        <span class="input-group-text" id="basic-addon1">Github Personal Token</span>
+        <input id="github-personal-token" type="text" class="form-control" placeholder="enter a valid token" aria-label="Username" aria-describedby="basic-addon1" onchange="personalTokenOnChange()" >
       </div>
-      <button onclick="handleApplyToken()">Apply</button>
+      <button type="button" class="btn btn-primary mt-3" onclick="handleApplyToken()">Apply</button>
     </div>
     
     <div id="token-entered" class="tab-content" id="nav-tabContent">
@@ -209,8 +209,10 @@
 
     const handleApplyToken = () =>{
       console.log('handleApplyToken()');
-      $('#no-token-entered').hide();
-      $('#token-entered').show();
+      if (githubToken?.length > 1) {
+        $('#no-token-entered').hide();
+        $('#token-entered').show();
+      }
     };
 
     const init = async () => {
