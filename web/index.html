@@ -26,12 +26,12 @@
       </div>
     </nav>
 
-    <div id="no-token-entered" class="container">            
+    <div id="no-token-entered" class="container mt-3">            
       <div class="input-group">
-        <span class="input-group-text" id="basic-addon1">Github personal token</span>
-        <input id="github-personal-token" type="text" class="form-control" placeholder="Enter token" aria-label="Username" aria-describedby="basic-addon1" onchange="personalTokenOnChange()" >
+        <span class="input-group-text" id="basic-addon1">Github Personal Token</span>
+        <input id="github-personal-token" type="text" class="form-control" placeholder="enter a valid token" aria-label="Username" aria-describedby="basic-addon1" onchange="personalTokenOnChange()" >
       </div>
-      <button onclick="handleApplyToken()">Apply</button>
+      <button type="button" class="btn btn-primary mt-3" onclick="handleApplyToken()">Apply</button>
     </div>
     
     <div id="token-entered" class="tab-content" id="nav-tabContent">
@@ -65,6 +65,9 @@
               <div class="col">
                 Configuration Items:
                 <div id="slct"></div>
+              </div>
+              <div class="row align-items-start">
+                <button type="submit" id="src_verify_button" class="btn btn-primary" onClick="onSetConfiguration()">Save Configuration</button>
               </div>
           </div>
           <div class="row align-items-start">
@@ -168,26 +171,51 @@
         console.error(errors);
       }
     };
+    
+    const handleLoginBtn = () => {
+      console.log('handleLoginBtn()');
+      const githubParams = getGithubParams();                
+      window.location.href = githubParams.codeUrl;
+    };
+
+    
+
+    const handleLogoutBtn = () => {
+      console.log('handleLogoutBtn()');
+    };
 
     const isLocalhost = () => 'localhost' === window.location.host;
     
     const verifyOrg = (orgType) => {
       //TODO: Check the auth is valid
 
-      //disable the input boxes
-      $(`#${orgType}_client_id`).prop('disabled', true);
-      $(`#${orgType}_client_secret`).prop('disabled', true);
-      $(`#${orgType}_region`).prop('disabled', true);
-      $(`#${orgType}_verify_button`).prop('disabled', true);
-    };
+     //disable the input boxes
+     $(`#${orgType}_client_id`).prop('disabled', true);
+     $(`#${orgType}_client_secret`).prop('disabled', true);
+     $(`#${orgType}_region`).prop('disabled', true);
+     $(`#${orgType}_verify_button`).prop('disabled', false);
+    }
 
     const onSetConfiguration = (config) => {
-      console.log('Setting Configuration', config);
-    };
+      console.log(!$("#src_client_id").val());
+      
+
+      //if source and destination has not been verified do not enabled return
+      if(!$("#src_verify_button").is(":disabled") || !$("#dest_verify_button").is(":disabled"))
+        return alert('Source and Destination organizations must be verified before continuing.');
+      
+      if(!$("#src_client_id").val() || !$("#src_client_secret").val() || !$("#src_region").val()) return alert('Source organization must be inputted and verified before continuing');
+      if(!$("#dest_client_id").val() || !$("#dest_client_secret").val() || !$("#dest_region").val()) return alert('Detination organization must be inputted and verified before continuing');
+
+ 
+      
+    }
 
     const loadConfigurationItems = () => {
      
       console.log('!! Data', availableResources);
+        var inputGroup = document.createElement("resource_group");
+
       for(var r = 0; r < availableResources.length; r++){
         // create the necessary elements
         var pair = availableResources[r];
@@ -210,8 +238,10 @@
 
     const handleApplyToken = () =>{
       console.log('handleApplyToken()');
-      $('#no-token-entered').hide();
-      $('#token-entered').show();
+      if (githubToken?.length > 1) {
+        $('#no-token-entered').hide();
+        $('#token-entered').show();
+      }
     };
 
     const init = async () => {
