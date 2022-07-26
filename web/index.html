@@ -11,12 +11,12 @@
   <body>
     <div class="main">
       <nav class="navbar bg-light">
-      <div class="container-fluid">
-        <a class="navbar-brand" href="#">
-          <i class="bi bi-activity"></i>
-          Business Continuity
-        </a>
-      </div>
+        <div class="container-fluid">
+          <a class="navbar-brand" href="#">
+            <i class="bi bi-activity"></i>
+            Business Continuity
+          </a>
+        </div>
       </nav>
 
       <div id="no-token-entered" class="container mt-3">
@@ -30,119 +30,116 @@
         </div>
         <button type="button" class="btn btn-primary mt-3" onclick="handleApplyToken()">Apply</button>
         <button type="button" class="btn btn-default mt-3" onclick="handleClearToken()">Clear</button>
-      </div>
 
-      <div>
-        <label class="form-check-label" for="select-repository"> Repository:</label>
-        <select class="form-select"  id="select-repository" onchange="handleSelectedRepository()">
-          <option selected>Open this select menu</option>
-        </select>
-      </div>
-
-      <nav id="token-entered-tab-control">
-        <div class="nav nav-tabs" id="nav-tab" role="tablist">
-          <button class="nav-link active" id="nav-config-tab" data-bs-toggle="tab" data-bs-target="#nav-config" type="button" role="tab" aria-controls="nav-config" aria-selected="true">Configuration</button>
-          <button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">History</button>
+        <div>
+          <label class="form-check-label" for="select-repository"> Repository:</label>
+          <select class="form-select"  id="select-repository" onchange="handleSelectedRepository()">
+            <option selected>Open this select menu</option>
+          </select>
         </div>
-      </nav>
+      </div>
 
-      <div id="token-entered-tab-content" class="tab-content" id="nav-tabContent">
-      <div class="tab-pane fade show active" id="nav-config" role="tabpanel" aria-labelledby="nav-config-tab">
-        <div class="container">
-          <div class="row align-items-start">
-            <div class="col">
-                <div>Source</div>
+      <div id="token-entered-columns">
+        <div class="row">
+          <div class="col">
+            <div class="card">
+              <div class="card-header">Source</div>
+              <div class="card-body">
                 <label class="form-label">Client ID:</label>
                 <input type="text" class="form-control" id="src_client_id" value="304bd193-4dd0-453b-858a-02ca6b64eb2d" />
                 <label class="form-label">Client Secret:</label>
                 <input type="text" class="form-control" id="src_client_secret/" value="jbnmSZTIMlHIxjY9LZ0YYlVrVYiAa6gDih30tk16ELY" />
                 <label class="form-label">Region:</label>
                 <input type="text" class="form-control" id="src_region" value="mypurecloud.ie" />
-              <br />
-            </div>
-            <div class="col">
-              <div>Destination</div>
-              <label class="form-label">Client ID:</label>
-              <input type="text" class="form-control" id="dest_client_id" />
-              <label class="form-label">Client Secret:</label>
-              <input type="text" class="form-control" id="dest_client_secret" />
-              <label class="form-label">Region:</label>
-              <input type="text" class="form-control" id="dest_region" />
-            </div>
 
-          <div class="row align-items-start">
-            <div class="col">
-              Configuration Items
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="genesyscloud_architect_datatable" checked />
-                <label class="form-check-label" for="genesyscloud_architect_datatable">Data Tables</label>
-              </div>
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="genesyscloud_flow" checked />
-                <label class="form-check-label" for="genesyscloud_flow">Flows</label>
-              </div>
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="genesyscloud_routing_queue" checked />
-                <label class="form-check-label" for="genesyscloud_routing_queue">Queues</label>
-              </div>
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="genesyscloud_routing_skill" checked />
-                <label class="form-check-label" for="genesyscloud_routing_skill">Skills</label>
-              </div>
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="genesyscloud_user" checked />
-                <label class="form-check-label" for="genesyscloud_user">Users</label>
-              </div>
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="genesyscloud_user_roles" checked />
-                <label class="form-check-label" for="genesyscloud_user_roles">Roles</label>
+                <div>Configuration Items</div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="genesyscloud_architect_datatable" checked />
+                  <label class="form-check-label" for="genesyscloud_architect_datatable">Data Tables</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="genesyscloud_flow" checked />
+                  <label class="form-check-label" for="genesyscloud_flow">Flows</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="genesyscloud_routing_queue" checked />
+                  <label class="form-check-label" for="genesyscloud_routing_queue">Queues</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="genesyscloud_routing_skill" checked />
+                  <label class="form-check-label" for="genesyscloud_routing_skill">Skills</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="genesyscloud_user" checked />
+                  <label class="form-check-label" for="genesyscloud_user">Users</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="genesyscloud_user_roles" checked />
+                  <label class="form-check-label" for="genesyscloud_user_roles">Roles</label>
+                </div>
               </div>
             </div>
           </div>
-
-          <button id="manualRun" class="btn btn-primary" onClick="handleApplyManualRun()">Manual Run</button>
+          <div class="col">
+            <div class="card">
+              <div class="card-header">Destination</div>
+              <div class="card-body">
+                <div>Destination</div>
+                <label class="form-label">Client ID:</label>
+                <input type="text" class="form-control" id="dest_client_id" />
+                <label class="form-label">Client Secret:</label>
+                <input type="text" class="form-control" id="dest_client_secret" />
+                <label class="form-label">Region:</label>
+                <input type="text" class="form-control" id="dest_region" />
+              </div>
+            </div>
+          </div>
+          <div class="col">
+            <div class="card">
+              <div class="card-header">History</div>
+              <div class="card-body">
+                <table class="table table-striped table-sm">
+                  <thead class="thead-light">
+                    <tr>
+                      <th>Name</th>                      
+                      <th>Date</th>
+                      <th>Status</th>
+                      <th>Conclusion</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tableContents"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
         </div>
-
-      <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
-        <div class="container-fluid">
-          <table class="table table-striped table-sm">
-            <thead class="thead-light">
-              <tr>
-                <th>Name</th>
-                <th>Event</th>
-                <th>Date</th>
-                <th>Status</th>
-                <th>Conclusion</th>
-              </tr>
-            </thead>
-            <tbody id="tableContents"></tbody>
-          </table>
-        </div>
-      </div>
       </div>
     </div>
   </body>
 
   <script>
-    var githubToken = "";
+    var githubToken = '';
+    var githubActionName = '';
     var githubRepository = "";
-    var githubActionName = "";
+    var githubOwner = 'ccportal';
+    var githubRepo = 'github-actions-tf';
+    var githubWorkflowId = '';
     var rememberToken = true;
 
     const personalTokenOnChange = async () => {
-      console.log("personalTokenOnChange()");
-      githubToken = $("#github-personal-token").val();
+      console.log('personalTokenOnChange()');
+      githubToken = $('#github-personal-token').val();
     };
 
     const callAxios = async (url, method, authorization, body) => {
-      console.log('callAxios', url, method, authorization, body);
+      console.log('callAxios', url, method, authorization);
       try {
         const result = await axios({
           url: url,
           method: method,
           headers: {
             'Content-Type': 'application/json',
-            Authorization: authorization // PAT for now hardcoded, removed later
+            Authorization: authorization, // PAT for now hardcoded, removed later
           },
           data: body ? JSON.stringify(body) : null,
         });
@@ -155,7 +152,7 @@
       }
     };
 
-    const handleSelectedRepository = async() => {
+    const handleSelectedRepository = async () => {
       console.log('handleSelectedRepository()');
       githubRepository = $("#select-repository option:selected")[0].innerText;
      
@@ -164,7 +161,6 @@
       if (rememberToken) {
           localStorage.setItem("github-repository", githubRepository);
         }
-
     }
 
     const log = async (step) => {
@@ -172,18 +168,18 @@
         const data = {
           date: moment().format(),
           userinfo: {
-            id: "webPage",
-            orgId: "unknown",
-            orgName: "unknown",
+            id: 'webPage',
+            orgId: 'unknown',
+            orgName: 'unknown',
           },
           activity: {
-            action: "View",
-            source: "web",
-            stage: "BusinessContinuityApp",
+            action: 'View',
+            source: 'web',
+            stage: 'BusinessContinuityApp',
             step: step,
             message: `Accessed ${window.location.origin}${window.location.pathname}`,
             object: {
-              type: "Page",
+              type: 'Page',
               host: window.location.host,
               hostname: window.location.hostname,
               href: window.location.href,
@@ -202,41 +198,55 @@
     };
 
     const handleRememberCheck = (e) => {
-      console.log("handleRememberCheck()");
-      rememberToken = $("#remember-token").prop("checked");
+      console.log('handleRememberCheck()');
+      rememberToken = $('#remember-token').prop('checked');
     };
 
-    const isLocalhost = () => "localhost" === window.location.host;
+    const isLocalhost = () => 'localhost' === window.location.host;
 
     const onSetConfiguration = (config) => {
-      console.log(!$("#src_client_id").val());
+      console.log(!$('#src_client_id').val());
 
       if (!$('#src_client_id').val() || !$('#src_client_secret').val() || !$('#src_region').val()) return alert('Source organization must be inputted and verified before continuing');
       if (!$('#dest_client_id').val() || !$('#dest_client_secret').val() || !$('#dest_region').val()) return alert('Detination organization must be inputted and verified before continuing');
     };
 
     const handleApplyToken = async () => {
-      console.log("handleApplyToken()");
+      console.log('handleApplyToken()');
       if (githubToken?.length > 1) {
-        $("#no-token-entered").hide();
-        $("#token-entered-tab-control").show();
-        $("#token-entered-tab-content").show();
-
+        $('#no-token-entered').hide();
+        $('#token-entered-columns').show();
 
         if (rememberToken) {
-          localStorage.setItem("github-token", githubToken);
+          localStorage.setItem('github-token', githubToken);
         }
         await log('Logged-In');
-        const data = await callAxios('https://api.github.com/repos/ccportal/github-actions-tf/actions/runs', 'GET',`Bearer ${githubToken}`);
+
+        // Get WorkflowId
+        console.log('Find workflowId...');
+        const workflow_Ids = await callAxios(`https://api.github.com/repos/${githubOwner}/${githubRepo}/actions/workflows`, 'GET', `Bearer ${githubToken}`);
+        workflow_Ids.workflows.forEach((item) => {
+          if (item.name === githubActionName) githubWorkflowId = item.id;
+        });
+        console.log('githubWorkflowId:', githubWorkflowId);
+
+        // Load History
+        console.log('Load History...');
+        const data = await callAxios(`https://api.github.com/repos/${githubOwner}/${githubRepo}/actions/workflows/${githubWorkflowId}/runs`, 'GET',`Bearer ${githubToken}`);
 
         // Feed the table with the data from GitHub
         var table = document.getElementById('tableContents');
         var tableContents = '';
         data.workflow_runs.forEach(function (item) {
           if (item.name === githubActionName) {
-            let conclusion = item.conclusion === "success" ? '<i class="bi bi-check-circle-fill" style="color:green"></i>' : item.conclusion === "cancelled" ? '<i class="bi bi-exclamation-circle-fill"  style="color:gray"></i>' : '<i class="bi bi-x-circle-fill"  style="color:red"></i>';
+            let conclusion = '';
+            if (item.conclusion) {
+              conclusion = item.conclusion === 'success' ? '<i class="bi bi-check-circle-fill" style="color:green"></i>' : item.conclusion === 'cancelled' ? '<i class="bi bi-exclamation-circle-fill"  style="color:gray"></i>' : '<i class="bi bi-x-circle-fill"  style="color:red"></i>';
+            } else {
+              conclusion = '';
+            }
 
-            tableContents = tableContents + `<tr><td><a target="_blank" href="${item.html_url}">${item.name}</href></td><td>${item.event}</td><td>${moment(item.run_started_at).format('YYYY-MM-DD HH:mm:ss')}</td><td>${item.status}</td><td>${conclusion}</td></tr>`;
+            tableContents = tableContents + `<tr><td><a target="_blank" href="${item.html_url}">${item.name}</href></td><td>${moment(item.run_started_at).format('YYYY-MM-DD HH:mm:ss')}</td><td>${item.status}</td><td>${conclusion}</td></tr>`;
           }
         });
         table.innerHTML = tableContents;
@@ -248,7 +258,8 @@
     const handleApplyManualRun = async () => {
       console.log('handleApplyManualRun()');
 
-    }
+      await callAxios(`https://api.github.com/repos/${githubOwner}/${githubRepo}/actions/workflows/${githubWorkflowId}/dispatches`, 'POST', `Bearer ${githubToken}`, { ref: 'master' });
+    };
 
     const loadRepositories = async(githubToken) => {
 
@@ -267,18 +278,17 @@
     }
 
     const handleClearToken = async () => {
-      console.log("handleClearToken()");
-      $("#github-personal-token").val("");
-      localStorage.removeItem("github-token");
+      console.log('handleClearToken()');
+      $('#github-personal-token').val('');
+      localStorage.removeItem('github-token');
     };
 
     const init = async () => {
-      console.log("init()");
-      githubToken = localStorage.getItem("github-token") ?? "";
-      $("#github-personal-token").val(githubToken);
-      $("#token-entered-tab-control").hide();
-      $("#token-entered-tab-content").hide();
-      await log("Home");
+      console.log('init()');
+      githubToken = localStorage.getItem('github-token') ?? '';
+      $('#github-personal-token').val(githubToken);
+      $('#token-entered-columns').hide();
+      await log('Home');
       // loadConfigurationItems();
     };
 
@@ -286,10 +296,10 @@
 
     $(document).ready(function () {
       try {
-        $.get("/.github/workflows/terraform.yml").done(function (data) {
-          console.log("File load complete");
+        $.get('/.github/workflows/terraform.yml').done(function (data) {
+          console.log('File load complete');
           githubActionName = jsyaml.load(data).name;
-          console.log("githubActionName:", githubActionName);
+          console.log('githubActionName:', githubActionName);
         });
       } catch (error) {
         console.error(error);
