@@ -1,6 +1,78 @@
 body {
+  font-family: 'Open Sans', 'Arial', 'Helvetica Neue', sans-serif;
+  font-weight: 400;
+  font-size: 16px;
   background: rgb(2, 0, 36);
   background: linear-gradient(33deg, rgba(2, 0, 36, 1) 0%, rgba(9, 9, 121, 1) 35%, rgba(160, 0, 255, 1) 100%);
+}
+
+.row-space {
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+  -moz-box-pack: justify;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+}
+
+.input-group-desc {
+  position: relative;
+}
+
+.input--style {
+  line-height: 50px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  padding: 0 22px;
+  font-size: 16px;
+  color: #555;
+}
+
+.label--desc {
+  position: absolute;
+  text-transform: capitalize;
+  display: block;
+  color: #999;
+  font-size: 14px;
+  margin: 0;
+  margin-top: 7px;
+  left: 0;
+}
+/* ==========================================================================
+   #CARD
+   ========================================================================== */
+
+.card {
+  background: #fff;
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  border-radius: 10px;
+  -webkit-box-shadow: 0px 8px 20px 0px rgba(0, 0, 0, 0.15);
+  -moz-box-shadow: 0px 8px 20px 0px rgba(0, 0, 0, 0.15);
+  box-shadow: 0px 8px 20px 0px rgba(0, 0, 0, 0.15);
+}
+
+.card-header {
+  padding: 10px 0;
+  background: #1a1a1a;
+  -webkit-border-top-left-radius: 10px;
+  -moz-border-radius-topleft: 10px;
+  border-top-left-radius: 10px;
+  -webkit-border-top-right-radius: 10px;
+  -moz-border-radius-topright: 10px;
+  border-top-right-radius: 10px;
+}
+
+.card-body {
+  padding: 22px 25px;
+  padding-bottom: 23px;
+}
+
+@media (max-width: 767px) {
+  .card-5 .card-body {
+    padding: 40px 30px;
+    padding-bottom: 50px;
+  }
 }
 
 .card-header {
