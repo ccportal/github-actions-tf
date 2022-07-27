@@ -1,0 +1,6 @@
+{
+  "terraform_resources": [
+    { "id": "genesyscloud_routing_language", "displayName": "Language" },
+    { "id": "genesyscloud_routing_skills", "displayName": "language" }
+  ]
+}
