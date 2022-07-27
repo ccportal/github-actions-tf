@@ -435,7 +435,6 @@
 
       const sha = getSHA("/source/export.tf.json");
       await pushToGithub('/source/export.tf.json', 'Updated resources for Export'. amendedData, githubRepository.split("/")[1], githubRepository.split("/")[0], sha )
-      console.log("Updated Data", updateDoc);
     };
 
     const updateGitSecrets = async () => {
@@ -609,73 +608,32 @@
       }
     };
 
-      const saveSelectedResources = async () => {
-        console.log('Saving Selected resources', availableResources);
-        let _selectedResources = [];
+    const saveSelectedResources = async () => {
+      console.log("Saving Selected resources", availableResources);
+      let _selectedResources = [];
 
-        for (var r = 0; r < availableResources.terraform_resources.length; r++) {
-          let resource = availableResources.terraform_resources[r];
-          let domObject = $(resource.id);
-          if (document.getElementById(resource.id).checked) {
-            selectedResources.push(domObject);
-          } else {
-            selectedResources.splice(domObject);
-          }
-
+      for (var r = 0; r < availableResources.terraform_resources.length; r++) {
+        let resource = availableResources.terraform_resources[r];
+        let domObject = $(resource.id);
+        if (document.getElementById(resource.id).checked) {
+          selectedResources.push(domObject);
+        } else {
+          selectedResources.splice(domObject);
         }
       }
-    
-      init();
-
-    // const getFileFromGithub = async (filename, decodeYaml = false) => {
-    //   try {
-    //     const file = await callAxios(`https://api.github.com/repos/${githubRepository}/contents/${filename}`, "GET", `Bearer ${githubToken}`);
-    //     console.log("file:", file);
-    //     let content = atob(file.content);
-    //     console.log("decodeYaml:", decodeYaml);
-    //     if (decodeYaml) {
-    //       content = jsyaml.load(content);
-    //       console.log("terra content #2:", content);
-    //     }
-    //     return content;
-    //   } catch (error) {
-    //     console.error(error);
-    //   }
-    // };
-
-    //encrypt();
-
-    const getFileFromGithub = async (filename, decodeYaml = false) => {
-      try {
-        const file = await callAxios(`https://api.github.com/repos/${githubRepository}/contents/${filename}`, "GET", `Bearer ${githubToken}`);
-        console.log("file:", file);
-        let content = atob(file.content);
-        console.log("decodeYaml:", decodeYaml);
-        if (decodeYaml) {
-          content = jsyaml.load(content);
-          console.log("terra content #2:", content);
-        }
-        return content;
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    const getLatestSHA = async (branchName) => {
-      const sha = await callAxios(`https://api.github.com/repos/${githubRepository}/branches/${branchName}`, "GET", `Bearer ${githubToken}`);
-      console.log("sha:", sha);
     };
 
     const saveDeploymentDetails = async () => {
       console.log("Saving deployment details...");
       const schedule = getSchedule();
       const scheduleEnabled = getScheduleEnabled();
-      const terraformYml = await getFileFromGithub(".github/workflows/terraform.yml", true);
+      const terraformYml = await getGithubFile(".github/workflows/terraform.yml", false, true);
       terraformYml.on = {
         schedule: scheduleEnabled ? schedule : undefined,
       };
 
-      await pushToGithub(".github/workflows/terraform.yml", terraformYml);
+      const sha = await getSHA(".github/workflows/terraform.yml");
+      await pushToGithub(".github/workflows/terraform.yml", terraformYml, "Updating Terraform Configuration", githubRepository.split("/")[1], githubRepository.split("/")[0], sha);
     };
 
     const encrypt = async (publicKey) => {
@@ -716,8 +674,6 @@
           githubActionName = jsyaml.load(data).name;
           console.log("githubActionName:", githubActionName);
         });
-        logUrl = isLocalhost ? "api.dev.ccportal.genesys.com" : "ccportal.genesys.com";
-        callAxios(`https://${logUrl}/logging/messages`, "POST", `Bearer ${githubToken}`, data);
       } catch (errors) {
         console.error(errors);
       }
