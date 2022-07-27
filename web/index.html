@@ -438,27 +438,7 @@
     };
 
     const updateGitSecrets = async () => {
-      $.get("/web/export.tf").done(async function (data) {
-        console.log("File load complete", data);
-        //[ "genesyscloud_routing_language"]
-        var newData = '["genesyscloud_routing_language", "genesyscloud_routing_skills"]';
-        let updatedData = data.toString().replace("###RESOURCES###", newData);
-        let amendedData = btoa(updatedData);
-        console.log("Updated Data:", amendedData);
-
-        const body = {
-          owner: githubRepository.split("/")[0],
-          repo: githubRepository.split("/")[1],
-          path: "/source/export.tf",
-          message: "Updated Resources for export",
-          content: amendedData,
-          sha: existingExportFile.sha,
-        };
-        console.log("Updating content with body:", body);
-
-        //const updateDoc = await callAxios(`https://api.github.com/repos/${githubRepository}/contents/source/export.tf`, "PUT", `Bearer ${githubToken}`, body);
-        console.log("Updated Data", updateDoc);
-      });
+      console.log("updateGitSecrets()");
     };
 
     const handleApplyToken = async () => {
