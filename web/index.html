@@ -209,7 +209,7 @@
     var githubWorkflowId = undefined;
     var rememberToken = true;
     var githubRepositories = [];
-
+    var selectedConfigurations = [];
     const personalTokenOnChange = async () => {
       console.log("personalTokenOnChange()");
       githubToken = $("#github-personal-token").val();
@@ -377,9 +377,33 @@
 
     const updateConfigurationItems = async () => {
       //Get the existing Configuration file:
-      const existingExportFile = await callAxios(`https://api.github.com/repos/${githubRepository}/contents/source/export.tf`, "GET", `Bearer ${githubToken}`);
+      const existingExportFile = await callAxios(`https://api.github.com/repos/${githubRepository}/contents/source/export.tf.json`, "GET", `Bearer ${githubToken}`);
       console.log("File Found:", existingExportFile);
 
+      let fileContent = atob(fileContent.content);
+      let JSONData = JSON.parse(fileContent);
+      console.log("JSON Data:", JSONData);
+
+      var newData = ["genesyscloud_routing_language", "genesyscloud_routing_skills"];
+      JSONData.resource.genesyscloud_tf_export.export.resource_types = newData;
+
+      let amendedData = btoa(JSON.stringify(JSONData));
+      console.log("Updated Data:", JSONData);
+
+      const body = {
+        owner: githubRepository.split("/")[0],
+        repo: githubRepository.split("/")[1],
+        path: "/source/export.tf.json",
+        message: "Updated Resources for export",
+        content: amendedData,
+        sha: existingExportFile.sha,
+      };
+      console.log("Updating content with body:", body);
+      const updateDoc = await callAxios(`https://api.github.com/repos/${githubRepository}/contents/source/export.tf.json`, "PUT", `Bearer ${githubToken}`, body);
+      console.log("Updated Data", updateDoc);
+    };
+
+    const updateGitSecrets = async () => {
       $.get("/web/export.tf").done(async function (data) {
         console.log("File load complete", data);
         //[ "genesyscloud_routing_language"]
@@ -401,8 +425,6 @@
         console.log("Updated Data", updateDoc);
       });
     };
-
-    const updateGitSecrets = async () => {};
 
     const saveDeploymentDetails = async () => {};
 
