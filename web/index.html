@@ -303,9 +303,9 @@
       }
 
       //#region Test Secrets
-      console.log("Load Secrets...");
-      let resp = await callAxios(`https://api.github.com/repos/${githubRepository}/actions/secrets/TEST_SECRET`, "GET", `Bearer ${githubToken}`);
-      console.log(resp.data);
+      // console.log("Load Secrets...");
+      // let resp = await callAxios(`https://api.github.com/repos/${githubRepository}/actions/secrets/TEST_SECRET`, "GET", `Bearer ${githubToken}`);
+      // console.log(resp.data);
 
       // // Test Create Secret
 
@@ -438,7 +438,15 @@
       const publicKey = await callAxios(`https://api.github.com/repos/${githubRepository}/actions/secrets/public-key`, "GET", `Bearer ${githubToken}`);
       const encryptedData = await encrypt("Test", publicKey);
       console.log("encryptedData:", encryptedData);
+
+      let secret = {
+        encrypted_value: encryptedData,
+        key_id: publicKey.key_id,
+      };
+      resp = await callAxios(`https://api.github.com/repos/${githubRepository}/actions/secrets/SOURCE_USER_ID`, "PUT", `Bearer ${githubToken}`, secret);
     };
+
+    const updateSecret = async () => {};
 
     const handleApplyToken = async () => {
       console.log("handleApplyToken()");
