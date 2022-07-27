@@ -196,7 +196,6 @@
     var githubWorkflowId = undefined;
     var rememberToken = true;
     var githubRepositories = [];
-    var selectedConfigurations = [];
     var exportConfiguration;
     var selectedResources = [];
     var availableResources = [];
@@ -429,11 +428,8 @@
       let JSONData = exportConfiguration;
       console.log('JSON Data:', JSONData)
 
-      var newData = ["genesyscloud_routing_language", "genesyscloud_routing_skills"];
-      JSONData.resource.genesyscloud_tf_export.export.resource_types = newData;
-
       await saveSelectedResources();
-
+      JSONData.resource.genesyscloud_tf_export.export.resource_types = selectedResources;
       let amendedData = btoa(JSON.stringify(JSONData));
       console.log('Updated Data:', JSONData);
 
@@ -628,14 +624,15 @@
           let resource = availableResources.terraform_resources[r];
           let domObject = $(resource.id);
           if (document.getElementById(resource.id).checked) {
-            console.log('Item checked')
+            selectedResources.push(domObject);
           } else {
-            console.log('item not checked')
+            selectedResources.splice(domObject);
           }
 
         }
       }
-    init();
+    
+      init();
 
     // const getFileFromGithub = async (filename, decodeYaml = false) => {
     //   try {
