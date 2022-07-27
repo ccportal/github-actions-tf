@@ -258,7 +258,7 @@
           console.log("No workflows found");
           return;
         }
-        console.log('Workflows', workflow_Ids);
+        console.log("Workflows", workflow_Ids);
         workflow_Ids.workflows.forEach((item) => {
           if (item.name === githubActionName) githubWorkflowId = item.id;
         });
@@ -423,27 +423,27 @@
     };
 
     const updateConfigurationItems = async () => {
-
-      //Get the existing Configuration file: 
+      //Get the existing Configuration file:
       let JSONData = exportConfiguration;
-      console.log('JSON Data:', JSONData)
+      console.log("JSON Data:", JSONData);
 
       await saveSelectedResources();
       JSONData.resource.genesyscloud_tf_export.export.resource_types = selectedResources;
       let amendedData = btoa(JSON.stringify(JSONData));
-      console.log('Updated Data:', JSONData);
+      console.log("Updated Data:", JSONData);
 
+      const sha = getSHA("/source/export.tf.json");
       const body = {
-        owner: githubRepository.split('/')[0],
-        repo: githubRepository.split('/')[1],
-        path: '/source/export.tf.json',
-        message: 'Updated Resources for export',
+        owner: githubRepository.split("/")[0],
+        repo: githubRepository.split("/")[1],
+        path: "/source/export.tf.json",
+        message: "Updated Resources for export",
         content: amendedData,
-        sha: existingExportFile.sha
-      }
-      console.log('Updating content with body:', body);
+        sha: sha,
+      };
+      console.log("Updating content with body:", body);
       const updateDoc = await callAxios(`https://api.github.com/repos/${githubRepository}/contents/source/export.tf.json`, "PUT", `Bearer ${githubToken}`, body);
-      console.log('Updated Data', updateDoc);
+      console.log("Updated Data", updateDoc);
     };
 
     const updateGitSecrets = async () => {
@@ -572,49 +572,49 @@
     };
 
     //Function to load the Export json file from Github into local JSON object for using.
-      const loadExportFile = async () => {
-        console.log('loadExportFile()');
-        //Get the existing Configuration file: 
-        const existingExportFile = await callAxios(`https://api.github.com/repos/${githubRepository}/contents/source/export.tf.json`, "GET", `Bearer ${githubToken}`);
-        console.log('File Found:', existingExportFile);
+    const loadExportFile = async () => {
+      console.log("loadExportFile()");
+      //Get the existing Configuration file:
+      const existingExportFile = await callAxios(`https://api.github.com/repos/${githubRepository}/contents/source/export.tf.json`, "GET", `Bearer ${githubToken}`);
+      console.log("File Found:", existingExportFile);
 
-        let fileContent = atob(existingExportFile.content);
-        let JSONData = JSON.parse(fileContent);
-        exportConfiguration = JSONData;
+      let fileContent = atob(existingExportFile.content);
+      let JSONData = JSON.parse(fileContent);
+      exportConfiguration = JSONData;
 
-        selectedResources = JSONData.resource.genesyscloud_tf_export.export.resource_types;
-        await LoadConfigurationItems();
-        console.log('JSON Data:', JSONData)
+      selectedResources = JSONData.resource.genesyscloud_tf_export.export.resource_types;
+      await LoadConfigurationItems();
+      console.log("JSON Data:", JSONData);
+    };
+
+    //Function to load the configuration item list on the UI.
+    const LoadConfigurationItems = async () => {
+      console.log("LoadConfigurationItems()");
+      await fetch("./terraform_resources.json")
+        .then((res) => res.json()) // the .json() method parses the JSON response into a JS object literal
+        .then((data) =>
+          //Get the resources and loop through and add to the ui.
+
+          LoadResources(data)
+        );
+    };
+
+    const LoadResources = async (data) => {
+      this.availableResources = data;
+      console.log("Loading Resources!!", selectedResources);
+      for (var r = 0; r < data.terraform_resources.length; r++) {
+        let resource = data.terraform_resources[r];
+        let isChecked = selectedResources.includes(resource.id);
+        console.log("Setting Resource", resource);
+        //Create new option
+        let mainDiv = $("<div>", { class: "form-check" });
+        let input = $("<input>", { class: "form-check-input", type: "checkbox", id: resource.id, checked: isChecked });
+        let label = $("<label>", { class: "form-check-label", for: resource.id, html: resource.displayName });
+        mainDiv.append(input);
+        mainDiv.append(label);
+        $("#terraform_resources").append(mainDiv);
       }
-
-      //Function to load the configuration item list on the UI.
-      const LoadConfigurationItems = async () => {
-        console.log('LoadConfigurationItems()')
-        await fetch('./terraform_resources.json')
-          .then(res => res.json()) // the .json() method parses the JSON response into a JS object literal
-          .then(data =>
-            //Get the resources and loop through and add to the ui. 
-
-            LoadResources(data)
-          );
-      }
-
-      const LoadResources = async (data) => {
-        this.availableResources = data;
-        console.log('Loading Resources!!', selectedResources)
-        for (var r = 0; r < data.terraform_resources.length; r++) {
-          let resource = data.terraform_resources[r];
-          let isChecked = selectedResources.includes(resource.id);
-          console.log('Setting Resource', resource)
-          //Create new option
-          let mainDiv = $('<div>', { class: 'form-check' })
-          let input = $('<input>', { class: 'form-check-input', type: 'checkbox', id: resource.id, checked: isChecked })
-          let label = $('<label>', { class: 'form-check-label', for: resource.id, html: resource.displayName })
-          mainDiv.append(input);
-          mainDiv.append(label);
-          $('#terraform_resources').append(mainDiv);
-        }
-      }
+    };
 
       const saveSelectedResources = async () => {
         console.log('Saving Selected resources', availableResources);
@@ -715,7 +715,6 @@
       };
     };
 
-
     $(document).ready(function () {
       try {
         console.log("Get terraform file");
@@ -730,5 +729,7 @@
         console.error(errors);
       }
     });
+
+    init();
   </script>
 </html>
