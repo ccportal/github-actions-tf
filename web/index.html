@@ -535,6 +535,13 @@
       $("#token-entered-columns").hide();
       $("#save-btn").hide();
       $("#manual-run-btn").hide();
+
+      $.get("/.github/workflows/terraform.yml").done(function (data) {
+        console.log("File load complete");
+        githubActionName = jsyaml.load(data).name;
+        console.log("githubActionName:", githubActionName);
+      });
+
       await log("Home");
       // loadConfigurationItems();
     };
@@ -551,18 +558,13 @@
 
     //Function to load the configuration item list on the UI.
     const LoadConfigurationItems = async () => {
-      console.log("LoadConfigurationItems()", availableResources);
-      if (!availableResources) {
-        await fetch("./terraform_resources.json")
-          .then((res) => res.json()) // the .json() method parses the JSON response into a JS object literal
-          .then(
-            async (data) =>
-              //Get the resources and loop through and add to the ui.
-              await LoadResources(data)
-          );
-      } else {
-        await LoadResources(availableResources);
-      }
+      console.log("LoadConfigurationItems()");
+      await fetch("./terraform_resources.json")
+        .then((res) => res.json()) // the .json() method parses the JSON response into a JS object literal
+        .then((data) =>
+          //Get the resources and loop through and add to the ui.
+          LoadResources(data)
+        );
     };
 
     const LoadResources = async (data) => {
@@ -622,19 +624,6 @@
 
       return encrypted;
     };
-
-    $(document).ready(function () {
-      try {
-        console.log("Get terraform file");
-        $.get("/.github/workflows/terraform.yml").done(function (data) {
-          console.log("File load complete");
-          githubActionName = jsyaml.load(data).name;
-          console.log("githubActionName:", githubActionName);
-        });
-      } catch (errors) {
-        console.error(errors);
-      }
-    });
 
     window.sodium = {
       onload: function (_sodium) {

@@ -1,36 +1,107 @@
-{
-  "name": "Sync Organizations",
-  "on": { "schedule": "* * 0 * * *" },
-  "permissions": { "contents": "write" },
-  "jobs":
-    {
-      "Source": { "name": "export", "runs-on": "ubuntu-latest", "environment": "source-genesyscloud", "defaults": { "run": { "shell": "bash", "working-directory": "source" } }, "steps": [{ "name": "Checkout", "uses": "actions/checkout@v3" }, { "name": "Setup Terraform", "uses": "hashicorp/setup-terraform@v2" }, { "name": "Terraform Init", "run": "terraform init" }, { "name": "Terraform Apply", "run": 'terraform apply -auto-approve -input=false -var=TF_VAR_REGION="${{ secrets.SOURCE_ENVIRONMENT }} " -var=TF_VAR_ID=${{ secrets.SOURCE_CLIENT_ID }} -var=TF_VAR_SECRET=${{ secrets.SOURCE_SECRET }}' }, { "uses": "actions/upload-artifact@v2", "with": { "name": "source-cache", "path": "source/export/genesyscloud.tf.json" } }] },
-      "Destination":
-        {
-          "name": "${{github.job}}",
-          "needs": "export",
-          "runs-on": "ubuntu-latest",
-          "environment": "${{github.job}}",
-          "defaults": { "run": { "shell": "bash", "working-directory": "targets" } },
-          "steps":
-            [
-              { "name": "Checkout", "uses": "actions/checkout@v3" },
-              { "uses": "actions/download-artifact@v2", "with": { "name": "source-cache" } },
-              { "name": "Apply Export from Source Org", "run": "cp ../genesyscloud.tf.json ./input.tf.json" },
-              { "name": "Get Last Terraform state file (if exists)", "run": "cp ./${{github.job}}/terraform.tfstate terraform.tfstate 2>/dev/null || :\n" },
-              { "name": "Terraform Init", "run": "terraform init" },
-              { "name": "Terraform Apply", "run": 'terraform apply -auto-approve -input=false -var=TF_VAR_REGION="${{secrets.DESTINATION_ENVIRONMENT}}" -var=TF_VAR_ID=${{ secrets.DESTINATION_CLIENT_ID }} -var=TF_VAR_SECRET=${{ secrets.DESTINATION_SECRET }}' },
-              { "uses": "actions/upload-artifact@v2", "with": { "name": "tf-state-${{github.job}}", "path": "destinations/terraform.tfstate" } },
-            ],
-        },
-      "Finalize":
-        {
-          "name": "Finalize",
-          "needs": ["Source", "Target"],
-          "runs-on": "ubuntu-latest",
-          "environment": "Finalize",
-          "defaults": { "run": { "shell": "bash", "working-directory": "destinations" } },
-          "steps": [{ "name": "Checkout", "uses": "actions/checkout@v3" }, { "uses": "actions/download-artifact@v2", "with": { "name": "tf-state-destination" } }, { "name": "Create target directory (if not exists)", "run": "mkdir -p destination" }, { "name": "Save TFState file", "run": "mv ../terraform.tfstate ./destination/terraform.tfstate" }, { "name": "Push new file to repo", "continue-on-error": true, "run": "git config user.name github-actions\ngit config user.email github-actions@github.com\ngit add ./destination/terraform.tfstate\ngit add ./source/terraform.tfstate\ngit diff-index --quiet HEAD || (git commit -a -m'changes applied' --allow-empty && git push -f)\n" }],
-        },
-    },
-}
+name: "Sync Organizations"
+
+on:
+  # schedule:
+  #  - cron:  '*/10 * * * *'
+  push:
+    branches:
+      - "master"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  export:
+    name: "export"
+    runs-on: ubuntu-latest
+    environment: source-genesyscloud
+
+    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+    defaults:
+      run:
+        shell: bash
+        working-directory: source
+
+    steps:
+      # Checkout the repository to the GitHub Actions runner
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+
+      # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
+      - name: Terraform Init
+        run: terraform init
+
+        # On push to "master", build or change infrastructure according to Terraform configuration files
+        # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
+      - name: Terraform Apply
+        run: terraform apply -auto-approve -input=false -var=TF_VAR_REGION="eu-west-1" -var=TF_VAR_ID=${{ secrets.SOURCE_USER_ID }} -var=TF_VAR_SECRET=${{ secrets.SOURCE_SECRET }}
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: source-cache
+          path: source/export/genesyscloud.tf.json
+
+  SCAassociatesEMEA:
+    name: ${{github.job}}
+    needs: export
+    runs-on: ubuntu-latest
+    environment: ${{github.job}}
+
+    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+    defaults:
+      run:
+        shell: bash
+        working-directory: targets
+
+    steps:
+      # Checkout the repository to the GitHub Actions runner
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - uses: actions/download-artifact@v2
+        with:
+          name: source-cache
+
+      - name: Apply Export from Source Org
+        run: cp ../genesyscloud.tf.json ./input.tf.json
+
+      - name: Get Last Terraform state file
+        if: hashFiles('./${{github.job}}/terraform.tfstate') != ''
+        run: cp ./${{github.job}}/terraform.tfstate terraform.tfstate
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Apply
+        run: terraform apply -auto-approve -input=false -var=TF_VAR_REGION="eu-central-1" -var=TF_VAR_ID=${{ secrets.ORG1_USER_ID }} -var=TF_VAR_SECRET=${{ secrets.ORG1_SECRET }}
+
+      - name: Check if directory exists
+        id: dir-verify
+        run: |
+          if [ ! -d ${{github.job}} ]; then
+            echo "::set-output name=exists::true"
+          else
+            echo "::set-output name=exists::false"
+          fi
+
+      - name: Create target directory (if not exists)
+        if: steps.dir-verify.exists == false
+        run: mkdir ${{github.job}}
+
+      - name: Save TFState file
+        run: mv terraform.tfstate ./${{github.job}}/terraform.tfstate
+
+      # Push new file to repo
+      - name: Push new file to repo
+        continue-on-error: true
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add ./${{github.job}}/terraform.tfstate
+          git commit -m "changes applied"
+          git push
