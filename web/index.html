@@ -86,7 +86,7 @@
                 </div>
 
                 <div class="mt-3">Schedule</div>
-                <select class="form-select" id="cron-day'">
+                <select class="form-select" id="cron-day">
                   <option value="*" selected>Everyday</option>
                   <option value="MON">Monday</option>
                   <option value="TUE">Tuesday</option>
@@ -96,31 +96,31 @@
                   <option value="SAT">Saturday</option>
                   <option value="SUN">Sunday</option>
                 </select>
-                <select class="form-select" d="cron-hour'">
+                <select class="form-select" id="cron-hour">
                   <option value="0" selected>at 00:00</option>
-                  <option value="1" selected>at 01:00</option>
-                  <option value="2" selected>at 02:00</option>
-                  <option value="3" selected>at 03:00</option>
-                  <option value="4" selected>at 04:00</option>
-                  <option value="5" selected>at 05:00</option>
-                  <option value="0" selected>at 06:00</option>
-                  <option value="7" selected>at 07:00</option>
-                  <option value="8" selected>at 08:00</option>
-                  <option value="9" selected>at 09:00</option>
-                  <option value="10" selected>at 10:00</option>
-                  <option value="11" selected>at 11:00</option>
-                  <option value="12" selected>at 12:00</option>
-                  <option value="13" selected>at 13:00</option>
-                  <option value="14" selected>at 14:00</option>
-                  <option value="15" selected>at 15:00</option>
-                  <option value="16" selected>at 16:00</option>
-                  <option value="17" selected>at 17:00</option>
-                  <option value="18" selected>at 18:00</option>
-                  <option value="19" selected>at 19:00</option>
-                  <option value="20" selected>at 20:00</option>
-                  <option value="21" selected>at 21:00</option>
-                  <option value="22" selected>at 22:00</option>
-                  <option value="23" selected>at 23:00</option>
+                  <option value="1">at 01:00</option>
+                  <option value="2">at 02:00</option>
+                  <option value="3">at 03:00</option>
+                  <option value="4">at 04:00</option>
+                  <option value="5">at 05:00</option>
+                  <option value="0">at 06:00</option>
+                  <option value="7">at 07:00</option>
+                  <option value="8">at 08:00</option>
+                  <option value="9">at 09:00</option>
+                  <option value="10">at 10:00</option>
+                  <option value="11">at 11:00</option>
+                  <option value="12">at 12:00</option>
+                  <option value="13">at 13:00</option>
+                  <option value="14">at 14:00</option>
+                  <option value="15">at 15:00</option>
+                  <option value="16">at 16:00</option>
+                  <option value="17">at 17:00</option>
+                  <option value="18">at 18:00</option>
+                  <option value="19">at 19:00</option>
+                  <option value="20">at 20:00</option>
+                  <option value="21">at 21:00</option>
+                  <option value="22">at 22:00</option>
+                  <option value="23">at 23:00</option>
                 </select>
               </div>
             </div>
@@ -459,19 +459,13 @@
       localStorage.removeItem('github-token');
     };
 
-    const init = async () => {
-      console.log('init()');
-      githubToken = localStorage.getItem('github-token') ?? '';
-      $('#github-personal-token').val(githubToken);
-      $('#token-entered-columns').hide();
-      $('#save-btn').hide();
-      $('#manual-run-btn').hide();
-      await log('Home');
-      // loadConfigurationItems();
-    };
-
     const getSchedule = () => {
       console.log('getSchedule()');
+      const day = $('#cron-day').val();
+      const hour = $('#cron-hour').val();
+      const cron = `* * ${hour} * * ${day}`;
+      console.log({ day, hour, cron });
+      return cron;
     };
 
     const setSchedule = (cronString) => {
@@ -484,8 +478,19 @@
       if (dayTemp.includes('-')) day = dayTemp.split('-')[0];
       else if (dayTemp.includes(',')) day = dayTemp.split(',')[0];
       else day = dayTemp;
-      $('#cron-day').val(day);
-      $('#cron-month').val(month);
+      $('#cron-day').val(day).change();
+      $('#cron-hour').val(hour).change();
+    };
+
+    const init = async () => {
+      console.log('init()');
+      githubToken = localStorage.getItem('github-token') ?? '';
+      $('#github-personal-token').val(githubToken);
+      $('#token-entered-columns').hide();
+      $('#save-btn').hide();
+      $('#manual-run-btn').hide();
+      await log('Home');
+      // loadConfigurationItems();
     };
 
     init();
