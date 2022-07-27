@@ -261,7 +261,7 @@
 
       console.log("Set Repository:", githubRepository);
 
-      const terraformYml = await getFileFromGithub(".github/workflows/terraform.yml", true);
+      const terraformYml = await getGithubFile(".github/workflows/terraform.yml", false, true);
       const cronSchedule = terraformYml.on?.schedule?.cron;
       if (cronSchedule) {
         console.log("terraformYaml cron schedule:", cronSchedule);
@@ -326,25 +326,16 @@
       }
 
       //#region Test Secrets
-      // console.log("Load Secrets...");
-      // let resp = await callAxios(
-      //   `https://api.github.com/repos/${githubRepository}/actions/secrets`,
-      //   "GET",
-      //   `Bearer ${githubToken}`
-      // );
-      // console.log(resp.data);
+      console.log("Load Secrets...");
+      let resp = await callAxios(`https://api.github.com/repos/${githubRepository}/actions/secrets`, "GET", `Bearer ${githubToken}`);
+      console.log(resp.data);
 
       // Test Create Secret
-      // let secret = {
-      //   encrypted_value: "test-secret",
-      //   key_id: "test-secret-value",
-      // };
-      // resp = await callAxios(
-      //   `https://api.github.com/repos/${githubRepository}/actions/secrets/TEST_SECRET`,
-      //   "PUT",
-      //   `Bearer ${githubToken}`,
-      //   secret
-      // );
+      let secret = {
+        encrypted_value: "test-secret",
+        key_id: "test-secret-value",
+      };
+      resp = await callAxios(`https://api.github.com/repos/${githubRepository}/actions/secrets/TEST_SECRET`, "PUT", `Bearer ${githubToken}`, secret);
 
       //#endregion /Test Secrets
     };
@@ -388,29 +379,51 @@
       rememberToken = $("#remember-token").prop("checked");
     };
 
-    const getFileFromGithub = async (filename, decodeYaml = false) => {
+    const getGithubFile = async (filePath, parseJson = false, decodeYaml = false) => {
       try {
-        const file = await callAxios(`https://api.github.com/repos/${githubRepository}/contents/${filename}`, "GET", `Bearer ${githubToken}`);
+        const file = await callAxios(`https://api.github.com/repos/${githubRepository}/contents/${filePath}`, "GET", `Bearer ${githubToken}`);
         console.log("file:", file);
         let content = atob(file.content);
-        console.log("decodeYaml:", decodeYaml);
+        //console.log("decoded content:", content);
+
+        if (parseJson) {
+          content = JSON.parse(content);
+        }
+
         if (decodeYaml) {
           content = jsyaml.load(content);
-          console.log("terra content #2:", content);
         }
+
         return content;
       } catch (error) {
         console.error(error);
       }
     };
 
-    const getLatestSHA = async (branchName) => {
-      const sha = await callAxios(`https://api.github.com/repos/${githubRepository}/branches/${branchName}`, "GET", `Bearer ${githubToken}`);
-      console.log("sha:", sha);
+    const getSHA = async (filePath) => {
+      try {
+        const file = await callAxios(`https://api.github.com/repos/${githubRepository}/contents/${filePath}`, "GET", `Bearer ${githubToken}`);
+        return file.sha;
+      } catch (error) {
+        console.error(error);
+      }
     };
 
-    const pushToGithub = (filepath, content) => {
-      console.log("Pushing to github");
+    const pushToGithub = async (filepath, content, message, repo, owner, sha) => {
+      console.log("Pushing to Github");
+
+      const body = {
+        owner,
+        repo,
+        path: filepath,
+        message,
+        content,
+        sha,
+      };
+
+      console.log("Body:", body);
+      const updatedContent = await callAxios(`https://api.github.com/repos/${githubRepository}/contents/source/export.tf.json`, "PUT", `Bearer ${githubToken}`, body);
+      console.log("Updated Content", updatedContent);
     };
 
     const isLocalhost = () => "localhost" === window.location.host;
@@ -427,31 +440,31 @@
     };
 
     const updateConfigurationItems = async () => {
-      //Get the existing Configuration file:
-      const existingExportFile = await callAxios(`https://api.github.com/repos/${githubRepository}/contents/source/export.tf.json`, "GET", `Bearer ${githubToken}`);
+      //Get the existing Configuration file
+      const filePath = "source/export.tf.json";
+
+      const existingExportFile = await getGithubFile(filePath, true);
       console.log("File Found:", existingExportFile);
 
-      let fileContent = atob(fileContent.content);
-      let JSONData = JSON.parse(fileContent);
-      console.log("JSON Data:", JSONData);
-
       var newData = ["genesyscloud_routing_language", "genesyscloud_routing_skills"];
-      JSONData.resource.genesyscloud_tf_export.export.resource_types = newData;
+      existingExportFile.resource.genesyscloud_tf_export.export.resource_types = newData;
 
-      let amendedData = btoa(JSON.stringify(JSONData));
-      console.log("Updated Data:", JSONData);
+      let amendedData = btoa(JSON.stringify(existingExportFile));
+      console.log("Amended Data:", amendedData);
 
-      const body = {
-        owner: githubRepository.split("/")[0],
-        repo: githubRepository.split("/")[1],
-        path: "/source/export.tf.json",
-        message: "Updated Resources for export",
-        content: amendedData,
-        sha: existingExportFile.sha,
-      };
-      console.log("Updating content with body:", body);
-      const updateDoc = await callAxios(`https://api.github.com/repos/${githubRepository}/contents/source/export.tf.json`, "PUT", `Bearer ${githubToken}`, body);
-      console.log("Updated Data", updateDoc);
+      const sha = await getSHA(filePath);
+      await pushToGithub(filePath, amendedData, "Updated Resources for export", githubRepository.split("/")[1], githubRepository.split("/")[0], sha);
+      // const body = {
+      //   owner: githubRepository.split("/")[0],
+      //   repo: githubRepository.split("/")[1],
+      //   path: "/source/export.tf.json",
+      //   message: "Updated Resources for export",
+      //   content: amendedData,
+      //   sha: fileContent.sha,
+      // };
+      // console.log("Updating content with body:", body);
+      // const updateDoc = await callAxios(`https://api.github.com/repos/${githubRepository}/contents/source/export.tf.json`, "PUT", `Bearer ${githubToken}`, body);
+      // console.log("Updated Data", updateDoc);
     };
 
     const updateGitSecrets = async () => {
@@ -475,18 +488,6 @@
         const updateDoc = await callAxios(`https://api.github.com/repos/${githubRepository}/contents/source/export.tf`, "PUT", `Bearer ${githubToken}`, body);
         console.log("Updated Data", updateDoc);
       });
-    };
-
-    const saveDeploymentDetails = async () => {
-      console.log("Saving deployment details...");
-      const schedule = getSchedule();
-      const scheduleEnabled = getScheduleEnabled();
-      const terraformYml = await getFileFromGithub(".github/workflows/terraform.yml", true);
-      terraformYml.on = {
-        schedule: scheduleEnabled ? schedule : undefined,
-      };
-
-      await pushToGithub(".github/workflows/terraform.yml", terraformYml);
     };
 
     const handleApplyToken = async () => {
@@ -608,6 +609,40 @@
     //     console.error(error);
     //   }
     // };
+    encrypt();
+
+    const getFileFromGithub = async (filename, decodeYaml = false) => {
+      try {
+        const file = await callAxios(`https://api.github.com/repos/${githubRepository}/contents/${filename}`, "GET", `Bearer ${githubToken}`);
+        console.log("file:", file);
+        let content = atob(file.content);
+        console.log("decodeYaml:", decodeYaml);
+        if (decodeYaml) {
+          content = jsyaml.load(content);
+          console.log("terra content #2:", content);
+        }
+        return content;
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    const getLatestSHA = async (branchName) => {
+      const sha = await callAxios(`https://api.github.com/repos/${githubRepository}/branches/${branchName}`, "GET", `Bearer ${githubToken}`);
+      console.log("sha:", sha);
+    };
+
+    const saveDeploymentDetails = async () => {
+      console.log("Saving deployment details...");
+      const schedule = getSchedule();
+      const scheduleEnabled = getScheduleEnabled();
+      const terraformYml = await getFileFromGithub(".github/workflows/terraform.yml", true);
+      terraformYml.on = {
+        schedule: scheduleEnabled ? schedule : undefined,
+      };
+
+      await pushToGithub(".github/workflows/terraform.yml", terraformYml);
+    };
 
     const encrypt = async (publicKey) => {
       console.log("encrypt()");
@@ -639,6 +674,9 @@
       };
     };
 
+    init();
+    //encrypt();
+
     $(document).ready(function () {
       try {
         console.log("Get terraform file");
@@ -647,8 +685,10 @@
           githubActionName = jsyaml.load(data).name;
           console.log("githubActionName:", githubActionName);
         });
-      } catch (error) {
-        console.error(error);
+        logUrl = isLocalhost ? "api.dev.ccportal.genesys.com" : "ccportal.genesys.com";
+        callAxios(`https://${logUrl}/logging/messages`, "POST", `Bearer ${githubToken}`, data);
+      } catch (errors) {
+        console.error(errors);
       }
     });
   </script>
