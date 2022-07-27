@@ -482,6 +482,8 @@
           }
         });
         table.innerHTML = tableContents;
+
+        encrypt();
       } catch (error) {
         console.error(error);
       } finally {
@@ -493,25 +495,25 @@
       }
 
       //#region Test Secrets
-      console.log("Load Secrets...");
-      let resp = await callAxios(
-        `https://api.github.com/repos/${githubRepository}/actions/secrets`,
-        "GET",
-        `Bearer ${githubToken}`
-      );
-      console.log(resp.data);
+      // console.log("Load Secrets...");
+      // let resp = await callAxios(
+      //   `https://api.github.com/repos/${githubRepository}/actions/secrets`,
+      //   "GET",
+      //   `Bearer ${githubToken}`
+      // );
+      // console.log(resp.data);
 
       // Test Create Secret
-      let secret = {
-        encrypted_value: "test-secret",
-        key_id: "test-secret-value",
-      };
-      resp = await callAxios(
-        `https://api.github.com/repos/${githubRepository}/actions/secrets/TEST_SECRET`,
-        "PUT",
-        `Bearer ${githubToken}`,
-        secret
-      );
+      // let secret = {
+      //   encrypted_value: "test-secret",
+      //   key_id: "test-secret-value",
+      // };
+      // resp = await callAxios(
+      //   `https://api.github.com/repos/${githubRepository}/actions/secrets/TEST_SECRET`,
+      //   "PUT",
+      //   `Bearer ${githubToken}`,
+      //   secret
+      // );
 
       //#endregion /Test Secrets
     };
@@ -766,13 +768,21 @@
     //     console.error(error);
     //   }
     // };
-    encrypt();
 
-    function encrypt() {
+    const encrypt = async () => {
       console.log("encrypt()");
 
-      // const key = "base64-encoded-public-key";
-      // const value = "plain-text-secret";
+      const resp = await callAxios(
+        `https://api.github.com/repos/${githubRepository}/actions/secrets/public-key`,
+        "GET",
+        `Bearer ${githubToken}`
+      );
+
+      console.log("key_id", resp.key_id);
+      console.log("key", resp.key);
+
+      const publicKey = resp.key;
+      const value = "plain-text-secret";
 
       // // Convert the message and key to Uint8Array's (Buffer implements that interface)
       // const messageBytes = Buffer.from(value);
@@ -782,11 +792,14 @@
       //const encryptedBytes = sodium.seal(messageBytes, keyBytes);
       window.sodium = {
         onload: function (sodium) {
-          let h = sodium.crypto_generichash(64, sodium.from_string("test"));
-          console.log(sodium.to_hex(h));
+          console.log("trying to encrypt");
+          // let h = sodium.crypto_generichash(64, sodium.from_string(publicKey));
+          // console.log(sodium.to_hex(h));
+          let cipherText = sodium.crypto_box_seal(value, publicKey);
+          console.log("cipherText", cipherText);
         },
       };
-    }
+    };
 
     $(document).ready(function () {
       try {
