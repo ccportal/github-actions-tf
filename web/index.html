@@ -432,7 +432,7 @@
       let amendedData = btoa(JSON.stringify(JSONData));
       console.log("Updated Data:", JSONData);
 
-      const sha = getSHA("/source/export.tf.json");
+      const sha = await getSHA("/source/export.tf.json");
       const body = {
         owner: githubRepository.split("/")[0],
         repo: githubRepository.split("/")[1],
@@ -640,7 +640,8 @@
         schedule: scheduleEnabled ? schedule : undefined,
       };
 
-      await pushToGithub(".github/workflows/terraform.yml", terraformYml);
+      const sha = await getSHA(".github/workflows/terraform.yml");
+      await pushToGithub(".github/workflows/terraform.yml", terraformYml, "Updating Terraform Configuration", githubRepository.split("/")[1], githubRepository.split("/")[0], sha);
     };
 
     const encrypt = async (publicKey) => {
