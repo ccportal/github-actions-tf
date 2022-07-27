@@ -194,7 +194,7 @@
     var githubRepositories = [];
     var exportConfiguration;
     var selectedResources = [];
-    var availableResources = [];
+    var availableResources;
     var sodium = undefined;
 
     const personalTokenOnChange = async () => {
@@ -247,6 +247,10 @@
       // Clean vars / tables
       clearUI();
       document.getElementById("spinnerHistory").hidden = false;
+
+      //Load existing configuration for the Export File.
+      await loadExportFile();
+
       // Get WorkflowId
       console.log("Find workflowId...");
       try {
@@ -303,9 +307,6 @@
       if (rememberToken) {
         localStorage.setItem("github-repository", githubRepository);
       }
-
-      //Load the Export config file
-      await loadExportFile();
 
       //#region Test Secrets
       console.log("Load Secrets...");
@@ -394,18 +395,18 @@
 
     const pushToGithub = async (filepath, content, message, repo, owner, sha) => {
       console.log("Pushing to Github");
-
+      let strContent = btoa(JSON.stringify(content));
       const body = {
         owner,
         repo,
         path: filepath,
         message,
-        content,
+        content: strContent,
         sha,
       };
 
       console.log("Body:", body);
-      const updatedContent = await callAxios(`https://api.github.com/repos/${githubRepository}/contents/source/export.tf.json`, "PUT", `Bearer ${githubToken}`, body);
+      const updatedContent = await callAxios(`https://api.github.com/repos/${githubRepository}/contents/${filepath}`, "PUT", `Bearer ${githubToken}`, body);
       console.log("Updated Content", updatedContent);
     };
 
@@ -430,11 +431,9 @@
       await saveSelectedResources();
       let updatedJson = JSONData;
       updatedJson.resource.genesyscloud_tf_export.export.resource_types = selectedResources;
-      let amendedData = btoa(JSON.stringify(updatedJson));
       console.log("Updated Data:", updatedJson);
-
-      const sha = getSHA("/source/export.tf.json");
-      await pushToGithub("/source/export.tf.json", "Updated resources for Export".amendedData, githubRepository.split("/")[1], githubRepository.split("/")[0], sha);
+      const sha = await getSHA("/source/export.tf.json");
+      await pushToGithub("source/export.tf.json", updatedJson, "Updated resources for Export", githubRepository.split("/")[1], githubRepository.split("/")[0], sha);
     };
 
     const updateGitSecrets = async () => {
@@ -463,7 +462,7 @@
 
         //#endregion /Test Secrets
 
-        await loadRepositories(githubToken);
+        //await loadRepositories(githubToken);
       }
     };
 
@@ -545,35 +544,33 @@
 
     //Function to load the Export json file from Github into local JSON object for using.
     const loadExportFile = async () => {
-      console.log("loadExportFile()");
       //Get the existing Configuration file:
-      const existingExportFile = await callAxios(`https://api.github.com/repos/${githubRepository}/contents/source/export.tf.json`, "GET", `Bearer ${githubToken}`);
-      console.log("File Found:", existingExportFile);
-
-      let fileContent = atob(existingExportFile.content);
-      let JSONData = JSON.parse(fileContent);
-      exportConfiguration = JSONData;
-
-      selectedResources = JSONData.resource.genesyscloud_tf_export.export.resource_types;
+      const fileContent = await getGithubFile("source/export.tf.json", true, false);
+      console.log("File Found:", fileContent);
+      exportConfiguration = fileContent;
+      selectedResources = fileContent.resource.genesyscloud_tf_export.export.resource_types;
       await LoadConfigurationItems();
-      console.log("JSON Data:", JSONData);
     };
 
     //Function to load the configuration item list on the UI.
     const LoadConfigurationItems = async () => {
-      console.log("LoadConfigurationItems()");
-      await fetch("./terraform_resources.json")
-        .then((res) => res.json()) // the .json() method parses the JSON response into a JS object literal
-        .then((data) =>
-          //Get the resources and loop through and add to the ui.
-
-          LoadResources(data)
-        );
+      console.log("LoadConfigurationItems()", availableResources);
+      if (!availableResources) {
+        await fetch("./terraform_resources.json")
+          .then((res) => res.json()) // the .json() method parses the JSON response into a JS object literal
+          .then(
+            async (data) =>
+              //Get the resources and loop through and add to the ui.
+              await LoadResources(data)
+          );
+      } else {
+        await LoadResources(availableResources);
+      }
     };
 
     const LoadResources = async (data) => {
       this.availableResources = data;
-      console.log("Loading Resources!!", selectedResources);
+      console.log("Loading Resources!!", selectedResources, data);
       for (var r = 0; r < data.terraform_resources.length; r++) {
         let resource = data.terraform_resources[r];
         let isChecked = selectedResources.includes(resource.id);
@@ -589,18 +586,19 @@
     };
 
     const saveSelectedResources = async () => {
-      console.log("Saving Selected resources", availableResources);
+      console.log("Saving Selected resources", availableResources, selectedResources);
       let _selectedResources = [];
 
       for (var r = 0; r < availableResources.terraform_resources.length; r++) {
         let resource = availableResources.terraform_resources[r];
-        let domObject = $(resource.id);
         if (document.getElementById(resource.id).checked) {
-          selectedResources.push(domObject);
+          if (!selectedResources.includes(resource.id)) selectedResources.push(resource.id);
         } else {
-          selectedResources.splice(domObject);
+          if (selectedResources.includes(resource.id)) selectedResources.splice(resource.id);
         }
       }
+
+      console.log("Updated Selected Resources:", selectedResources);
     };
 
     const saveDeploymentDetails = async () => {
