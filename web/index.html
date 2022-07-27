@@ -432,7 +432,7 @@
       console.log("Updated Data:", updatedJson);
 
       const sha = getSHA("/source/export.tf.json");
-      await pushToGithub('/source/export.tf.json', 'Updated resources for Export'. amendedData, githubRepository.split("/")[1], githubRepository.split("/")[0], sha )
+      await pushToGithub("/source/export.tf.json", "Updated resources for Export".amendedData, githubRepository.split("/")[1], githubRepository.split("/")[0], sha);
     };
 
     const updateGitSecrets = async () => {
@@ -644,7 +644,7 @@
 
       let cipherText = sodium.crypto_box_seal(value, keyBytes);
       const encrypted = buffer.Buffer.from(cipherText).toString("base64");
-      console.log("cipherText", encrypted);
+
       return encrypted;
     };
 
