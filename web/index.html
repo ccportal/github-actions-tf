@@ -298,22 +298,11 @@
           if (item.name === githubActionName) {
             let conclusion = "";
             if (item.conclusion) {
-              conclusion =
-                item.conclusion === "success"
-                  ? '<i class="bi bi-check-circle-fill" style="color:green" data-toggle="tooltip" data-placement="right" title="Success"></i>'
-                  : item.conclusion === "cancelled"
-                  ? '<i class="bi bi-exclamation-circle-fill"  style="color:gray" data-toggle="tooltip" data-placement="right" title="Cancelled"></i>'
-                  : '<i class="bi bi-x-circle-fill"  style="color:red" data-toggle="tooltip" data-placement="right" title="Failed"></i>';
+              conclusion = item.conclusion === "success" ? '<i class="bi bi-check-circle-fill" style="color:green" data-toggle="tooltip" data-placement="right" title="Success"></i>' : item.conclusion === "cancelled" ? '<i class="bi bi-exclamation-circle-fill"  style="color:gray" data-toggle="tooltip" data-placement="right" title="Cancelled"></i>' : '<i class="bi bi-x-circle-fill"  style="color:red" data-toggle="tooltip" data-placement="right" title="Failed"></i>';
             } else {
               conclusion = "";
             }
-            tableContents =
-              tableContents +
-              `<tr><td><a target="_blank" href="${item.html_url}">${moment(
-                item.run_started_at
-              ).format(
-                "YYYY-MM-DD HH:mm:ss"
-              )}</href></td><td class="text-center">${conclusion}</td></tr>`;
+            tableContents = tableContents + `<tr><td><a target="_blank" href="${item.html_url}">${moment(item.run_started_at).format("YYYY-MM-DD HH:mm:ss")}</href></td><td class="text-center">${conclusion}</td></tr>`;
           }
         });
         table.innerHTML = tableContents;
@@ -397,9 +386,10 @@
       }
     };
 
-    const getLatestSHA = (branchName) => {
-      const file = await callAxios(`https://api.github.com/repos/${githubRepository}/branches/${branchName}`, "GET", `Bearer ${githubToken}`);
-    }
+    const getLatestSHA = async (branchName) => {
+      const sha = await callAxios(`https://api.github.com/repos/${githubRepository}/branches/${branchName}`, "GET", `Bearer ${githubToken}`);
+      console.log("sha:", sha);
+    };
 
     const pushToGithub = (filepath, content) => {
       console.log("Pushing to github");
@@ -540,15 +530,15 @@
     };
 
     const getScheduleEnabled = () => {
-      console.log('getScheduleEnabled()');
-      const enabled = $('#cron-enabled').prop('checked');
+      console.log("getScheduleEnabled()");
+      const enabled = $("#cron-enabled").prop("checked");
       console.log({ enabled });
       return enabled;
     };
 
     const setScheduleEnabled = (checked) => {
-      console.log('setScheduleEnabled()');
-      const enabled = $('#cron-enabled').prop('checked', checked);
+      console.log("setScheduleEnabled()");
+      const enabled = $("#cron-enabled").prop("checked", checked);
     };
 
     const getSchedule = () => {
