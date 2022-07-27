@@ -186,9 +186,9 @@
   </body>
 
   <script>
-    var githubToken = "";
-    var githubActionName = "";
-    var githubRepository = "";
+    var githubToken = '';
+    var githubActionName = '';
+    var githubRepository = '';
     var githubWorkflowId = undefined;
     var rememberToken = true;
     var githubRepositories = [];
@@ -198,18 +198,18 @@
     var sodium = undefined;
 
     const personalTokenOnChange = async () => {
-      console.log("personalTokenOnChange()");
-      githubToken = $("#github-personal-token").val();
+      console.log('personalTokenOnChange()');
+      githubToken = $('#github-personal-token').val();
     };
 
     const callAxios = async (url, method, authorization, body, suppressExceptions = false) => {
-      console.log("callAxios", url, method);
+      console.log('callAxios', url, method);
       try {
         const result = await axios({
           url: url,
           method: method,
           headers: {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
             Authorization: authorization, // PAT for now hardcoded, removed later
           },
           data: body ? JSON.stringify(body) : null,
@@ -225,81 +225,81 @@
     };
 
     const clearUI = () => {
-      console.log("clearUI()");
+      console.log('clearUI()');
 
       githubWorkflowId = undefined;
-      document.getElementById("tableContents").innerHTML = "";
-      document.getElementById("manual-run-btn").disabled = true;
+      document.getElementById('tableContents').innerHTML = '';
+      document.getElementById('manual-run-btn').disabled = true;
     };
 
     const handleSelectedRepository = async () => {
-      githubRepository = $("#select-repository option:selected").text();
+      githubRepository = $('#select-repository option:selected').text();
 
-      console.log("Set Repository:", githubRepository);
+      console.log('Set Repository:', githubRepository);
 
-      const terraformYml = await getGithubFile(".github/workflows/terraform.yml", false, true);
+      const terraformYml = await getGithubFile('.github/workflows/terraform.yml', false, true);
       const cronSchedule = terraformYml.on?.schedule?.cron;
       if (cronSchedule) {
-        console.log("terraformYaml cron schedule:", cronSchedule);
+        console.log('terraformYaml cron schedule:', cronSchedule);
         setSchedule(cronSchedule);
       }
 
       // Clean vars / tables
       clearUI();
-      document.getElementById("spinnerHistory").hidden = false;
+      document.getElementById('spinnerHistory').hidden = false;
 
       //Load existing configuration for the Export File.
       await loadExportFile();
 
       // Get WorkflowId
-      console.log("Find workflowId...");
+      console.log('Find workflowId...');
       try {
-        const workflow_Ids = await callAxios(`https://api.github.com/repos/${githubRepository}/actions/workflows`, "GET", `Bearer ${githubToken}`);
+        const workflow_Ids = await callAxios(`https://api.github.com/repos/${githubRepository}/actions/workflows`, 'GET', `Bearer ${githubToken}`);
         if (!workflow_Ids?.workflows) {
-          console.log("No workflows found");
+          console.log('No workflows found');
           return;
         }
-        console.log("Workflows", workflow_Ids);
+        console.log('Workflows', workflow_Ids);
         workflow_Ids.workflows.forEach((item) => {
           if (item.name === githubActionName) githubWorkflowId = item.id;
         });
-        console.log("githubWorkflowId:", githubWorkflowId);
+        console.log('githubWorkflowId:', githubWorkflowId);
         if (!githubWorkflowId) {
-          console.log("GitHubWorkflowId not set.");
+          console.log('GitHubWorkflowId not set.');
           return;
         }
 
         // Enable ManualRun Button
-        document.getElementById("manual-run-btn").disabled = false;
+        document.getElementById('manual-run-btn').disabled = false;
 
         // Load History
-        console.log("Load History...");
-        const data = await callAxios(`https://api.github.com/repos/${githubRepository}/actions/workflows/${githubWorkflowId}/runs?per_page=10`, "GET", `Bearer ${githubToken}`);
+        console.log('Load History...');
+        const data = await callAxios(`https://api.github.com/repos/${githubRepository}/actions/workflows/${githubWorkflowId}/runs?per_page=10`, 'GET', `Bearer ${githubToken}`);
         // Feed the table with the data from GitHub
 
-        var table = document.getElementById("tableContents");
-        var tableContents = "";
+        var table = document.getElementById('tableContents');
+        var tableContents = '';
 
         data.workflow_runs.forEach(function (item) {
           if (item.name === githubActionName) {
-            let conclusion = "";
+            let conclusion = '';
             if (item.conclusion) {
-              conclusion = item.conclusion === "success" ? '<i class="bi bi-check-circle-fill" style="color:green" data-toggle="tooltip" data-placement="right" title="Success"></i>' : item.conclusion === "cancelled" ? '<i class="bi bi-exclamation-circle-fill"  style="color:gray" data-toggle="tooltip" data-placement="right" title="Cancelled"></i>' : '<i class="bi bi-x-circle-fill"  style="color:red" data-toggle="tooltip" data-placement="right" title="Failed"></i>';
+              conclusion = item.conclusion === 'success' ? '<i class="bi bi-check-circle-fill" style="color:green" data-toggle="tooltip" data-placement="right" title="Success"></i>' : item.conclusion === 'cancelled' ? '<i class="bi bi-exclamation-circle-fill"  style="color:gray" data-toggle="tooltip" data-placement="right" title="Cancelled"></i>' : '<i class="bi bi-x-circle-fill"  style="color:red" data-toggle="tooltip" data-placement="right" title="Failed"></i>';
             } else {
-              conclusion = "";
+              conclusion = '';
             }
-            tableContents = tableContents + `<tr><td><a target="_blank" href="${item.html_url}">${moment(item.run_started_at).format("YYYY-MM-DD HH:mm:ss")}</href></td><td class="text-center">${conclusion}</td></tr>`;
+            tableContents = tableContents + `<tr><td><a target="_blank" href="${item.html_url}">${moment(item.run_started_at).format('YYYY-MM-DD HH:mm:ss')}</href></td><td class="text-center">${conclusion}</td></tr>`;
           }
         });
         table.innerHTML = tableContents;
       } catch (error) {
         console.error(error);
       } finally {
-        document.getElementById("spinnerHistory").hidden = true;
+        document.getElementById('spinnerHistory').hidden = true;
       }
 
       if (rememberToken) {
-        localStorage.setItem("github-repository", githubRepository);
+        localStorage.setItem('github-repository', githubRepository);
       }
 
       //#region Test Secrets
@@ -323,18 +323,18 @@
         const data = {
           date: moment().format(),
           userinfo: {
-            id: "webPage",
-            orgId: "unknown",
-            orgName: "unknown",
+            id: 'webPage',
+            orgId: 'unknown',
+            orgName: 'unknown',
           },
           activity: {
-            action: "View",
-            source: "web",
-            stage: "BusinessContinuityApp",
+            action: 'View',
+            source: 'web',
+            stage: 'BusinessContinuityApp',
             step: step,
             message: `Accessed ${window.location.origin}${window.location.pathname}`,
             object: {
-              type: "Page",
+              type: 'Page',
               host: window.location.host,
               hostname: window.location.hostname,
               href: window.location.href,
@@ -345,22 +345,22 @@
           },
         };
         //console.log('[Tracking] data:', data);
-        logUrl = isLocalhost ? "api.dev.ccportal.genesys.com" : "ccportal.genesys.com";
-        callAxios(`https://${logUrl}/logging/messages`, "POST", `Bearer ${githubToken}`, data);
+        logUrl = isLocalhost ? 'api.dev.ccportal.genesys.com' : 'ccportal.genesys.com';
+        callAxios(`https://${logUrl}/logging/messages`, 'POST', `Bearer ${githubToken}`, data);
       } catch (errors) {
         console.error(errors);
       }
     };
 
     const handleRememberCheck = (e) => {
-      console.log("handleRememberCheck()");
-      rememberToken = $("#remember-token").prop("checked");
+      console.log('handleRememberCheck()');
+      rememberToken = $('#remember-token').prop('checked');
     };
 
     const getGithubFile = async (filePath, parseJson = false, decodeYaml = false) => {
       try {
-        const file = await callAxios(`https://api.github.com/repos/${githubRepository}/contents/${filePath}`, "GET", `Bearer ${githubToken}`);
-        console.log("file:", file);
+        const file = await callAxios(`https://api.github.com/repos/${githubRepository}/contents/${filePath}`, 'GET', `Bearer ${githubToken}`);
+        console.log('file:', file);
         let content = atob(file.content);
         //console.log("decoded content:", content);
 
@@ -380,7 +380,7 @@
 
     const getSHA = async (filePath) => {
       try {
-        const file = await callAxios(`https://api.github.com/repos/${githubRepository}/contents/${filePath}`, "GET", `Bearer ${githubToken}`);
+        const file = await callAxios(`https://api.github.com/repos/${githubRepository}/contents/${filePath}`, 'GET', `Bearer ${githubToken}`);
         return file.sha;
       } catch (error) {
         console.error(error);
@@ -388,7 +388,7 @@
     };
 
     const pushToGithub = async (filepath, content, message, repo, owner, sha) => {
-      console.log("Pushing to Github");
+      console.log('Pushing to Github');
       let strContent = btoa(JSON.stringify(content));
       const body = {
         owner,
@@ -399,12 +399,12 @@
         sha,
       };
 
-      console.log("Body:", body);
-      const updatedContent = await callAxios(`https://api.github.com/repos/${githubRepository}/contents/${filepath}`, "PUT", `Bearer ${githubToken}`, body);
-      console.log("Updated Content", updatedContent);
+      console.log('Body:', body);
+      const updatedContent = await callAxios(`https://api.github.com/repos/${githubRepository}/contents/${filepath}`, 'PUT', `Bearer ${githubToken}`, body);
+      console.log('Updated Content', updatedContent);
     };
 
-    const isLocalhost = () => "localhost" === window.location.host;
+    const isLocalhost = () => 'localhost' === window.location.host;
 
     const handleSetConfiguration = async (config) => {
       //Validation:
@@ -420,151 +420,156 @@
     const updateConfigurationItems = async () => {
       //Get the existing Configuration file:
       let JSONData = exportConfiguration;
-      console.log("JSON Data:", JSONData, selectedResources);
+      console.log('JSON Data:', JSONData, selectedResources);
 
       await saveSelectedResources();
       let updatedJson = JSONData;
       updatedJson.resource.genesyscloud_tf_export.export.resource_types = selectedResources;
-      console.log("Updated Data:", updatedJson);
-      const sha = await getSHA("/source/export.tf.json");
-      await pushToGithub("source/export.tf.json", updatedJson, "Updated resources for Export", githubRepository.split("/")[1], githubRepository.split("/")[0], sha);
+      console.log('Updated Data:', updatedJson);
+      const sha = await getSHA('/source/export.tf.json');
+      await pushToGithub('source/export.tf.json', updatedJson, 'Updated resources for Export', githubRepository.split('/')[1], githubRepository.split('/')[0], sha);
     };
 
     const updateGitSecrets = async () => {
-      console.log("updateGitSecrets()");
+      console.log('updateGitSecrets()');
 
       // Load PublicKey for Security Settings
-      console.log("retrieve publicKey for repo...");
-      const publicKey = await callAxios(`https://api.github.com/repos/${githubRepository}/actions/secrets/public-key`, "GET", `Bearer ${githubToken}`);
+      console.log('retrieve publicKey for repo...');
+      const publicKey = await callAxios(`https://api.github.com/repos/${githubRepository}/actions/secrets/public-key`, 'GET', `Bearer ${githubToken}`);
 
-      await updateSecret("Test", "SOURCE_ENVIRONMENT", publicKey);
+      await updateSecret('Test', 'SOURCE_ENVIRONMENT', publicKey);
     };
 
     const updateSecret = async (plainText, secretName, publicKey) => {
       try {
         const encryptedData = await encrypt(plainText, publicKey);
-        console.log("encryptedData:", encryptedData);
+        console.log('encryptedData:', encryptedData);
         let secret = {
           encrypted_value: encryptedData,
           key_id: publicKey.key_id,
         };
-        await callAxios(`https://api.github.com/repos/${githubRepository}/actions/secrets/${secretName}`, "PUT", `Bearer ${githubToken}`, secret);
+        await callAxios(`https://api.github.com/repos/${githubRepository}/actions/secrets/${secretName}`, 'PUT', `Bearer ${githubToken}`, secret);
       } catch (error) {
         console.error(error);
       }
     };
 
     const handleApplyToken = async () => {
-      console.log("handleApplyToken()");
+      console.log('handleApplyToken()');
       if (githubToken?.length > 1) {
         if (rememberToken) {
-          localStorage.setItem("github-token", githubToken);
+          localStorage.setItem('github-token', githubToken);
         }
-        await log("Logged-In");
+        await log('Logged-In');
         try {
           await loadRepositories(githubToken);
-          $("#no-token-entered").hide();
-          $("#token-entered-columns").show();
-          $("#save-btn").show();
-          $("#manual-run-btn").show();
+          $('#no-token-entered').hide();
+          $('#token-entered-columns').show();
+          $('#save-btn').show();
+          $('#manual-run-btn').show();
+          const r = localStorage.getItem('github-repository');
+          if (localStorage) {
+            $('#select-repository').val(r);
+            handleSelectedRepository();
+          }
         } catch (err) {
           console.log(err);
-          alert("Invalid token");
+          alert('Invalid token');
         }
-        await log("Logged-In");
+        await log('Logged-In');
 
         //await loadRepositories(githubToken);
       }
     };
 
     const handleApplyManualRun = async () => {
-      console.log("handleApplyManualRun()");
-      await callAxios(`https://api.github.com/repos/${githubRepository}/actions/workflows/${githubWorkflowId}/dispatches`, "POST", `Bearer ${githubToken}`, { ref: "master" });
+      console.log('handleApplyManualRun()');
+      await callAxios(`https://api.github.com/repos/${githubRepository}/actions/workflows/${githubWorkflowId}/dispatches`, 'POST', `Bearer ${githubToken}`, { ref: 'master' });
     };
 
     const loadRepositories = async (githubToken) => {
-      console.log("Loading Repositories...");
-      let repositories = await callAxios("https://api.github.com/user/repos", "GET", `Bearer ${githubToken}`);
+      console.log('Loading Repositories...');
+      let repositories = await callAxios('https://api.github.com/user/repos', 'GET', `Bearer ${githubToken}`);
       repositories = repositories.sort((a, b) => a.full_name.localeCompare(b.full_name));
       githubRepositories = repositories;
       //Update the select with the repositories
       for (let i = 0; i < repositories.length; i++) {
-        $("#select-repository").append(
-          $("<option>", {
+        $('#select-repository').append(
+          $('<option>', {
             value: repositories[i].full_name,
             text: repositories[i].full_name,
           })
         );
       }
 
-      console.log("Repositories found:", repositories);
+      console.log('Repositories found:', repositories);
     };
 
     const handleClearToken = async () => {
-      console.log("handleClearToken()");
-      $("#github-personal-token").val("");
-      localStorage.removeItem("github-token");
+      console.log('handleClearToken()');
+      $('#github-personal-token').val('');
+      localStorage.removeItem('github-token');
     };
 
     const getScheduleEnabled = () => {
-      console.log("getScheduleEnabled()");
-      const enabled = $("#cron-enabled").prop("checked");
+      console.log('getScheduleEnabled()');
+      const enabled = $('#cron-enabled').prop('checked');
       console.log({ enabled });
       return enabled;
     };
 
     const setScheduleEnabled = (checked) => {
-      console.log("setScheduleEnabled()");
-      const enabled = $("#cron-enabled").prop("checked", checked);
+      console.log('setScheduleEnabled()');
+      const enabled = $('#cron-enabled').prop('checked', checked);
     };
 
     const getSchedule = () => {
-      console.log("getSchedule()");
-      const day = $("#cron-day").val();
-      const hour = $("#cron-hour").val();
+      console.log('getSchedule()');
+      const day = $('#cron-day').val();
+      const hour = $('#cron-hour').val();
       const cron = `* * ${hour} * * ${day}`;
       console.log({ day, hour, cron });
       return cron;
     };
 
     const setSchedule = (cronString) => {
-      console.log("setSchedule()");
-      const parsed = cronString.split(" ");
-      let hour = parsed[2]?.split(",")[0] ?? "0";
-      if (hour === "?") hour === "*";
-      const dayTemp = parsed[5] ?? "*";
-      let day = "";
-      if (dayTemp.includes("-")) day = dayTemp.split("-")[0];
-      else if (dayTemp.includes(",")) day = dayTemp.split(",")[0];
+      console.log('setSchedule()');
+      const parsed = cronString.split(' ');
+      let hour = parsed[2]?.split(',')[0] ?? '0';
+      if (hour === '?') hour === '*';
+      const dayTemp = parsed[5] ?? '*';
+      let day = '';
+      if (dayTemp.includes('-')) day = dayTemp.split('-')[0];
+      else if (dayTemp.includes(',')) day = dayTemp.split(',')[0];
       else day = dayTemp;
-      $("#cron-day").val(day).change();
-      $("#cron-hour").val(hour).change();
+      $('#cron-day').val(day).change();
+      $('#cron-hour').val(hour).change();
     };
 
     const init = async () => {
-      console.log("init()");
-      githubToken = localStorage.getItem("github-token") ?? "";
-      $("#github-personal-token").val(githubToken);
-      $("#token-entered-columns").hide();
-      $("#save-btn").hide();
-      $("#manual-run-btn").hide();
+      console.log('init()');
+      githubToken = localStorage.getItem('github-token') ?? '';
+      $('#github-personal-token').val(githubToken);
+      $('#token-entered-columns').hide();
+      $('#save-btn').hide();
+      $('#manual-run-btn').hide();
 
-      $.get("/.github/workflows/terraform.yml").done(function (data) {
-        console.log("File load complete");
+      $.get('/.github/workflows/terraform.yml').done(function (data) {
+        console.log('File load complete');
         githubActionName = jsyaml.load(data).name;
-        console.log("githubActionName:", githubActionName);
+        console.log('githubActionName:', githubActionName);
       });
 
-      await log("Home");
+      await log('Home');
       // loadConfigurationItems();
     };
 
     //Function to load the Export json file from Github into local JSON object for using.
     const loadExportFile = async () => {
-      console.log("Loading Export file from Github...");
+      console.log('Loading Export file from Github...');
       //Get the existing Configuration file:
-      const fileContent = await getGithubFile("source/export.tf.json", true, false);
-      console.log("File Found:", fileContent);
+      const fileContent = await getGithubFile('source/export.tf.json', true, false);
+      console.log('File Found:', fileContent);
       exportConfiguration = fileContent;
       selectedResources = fileContent.resource.genesyscloud_tf_export.export.resource_types;
       await LoadConfigurationItems();
@@ -572,8 +577,8 @@
 
     //Function to load the configuration item list on the UI.
     const LoadConfigurationItems = async () => {
-      console.log("LoadConfigurationItems()");
-      await fetch("./terraform_resources.json")
+      console.log('LoadConfigurationItems()');
+      await fetch('./terraform_resources.json')
         .then((res) => res.json()) // the .json() method parses the JSON response into a JS object literal
         .then((data) =>
           //Get the resources and loop through and add to the ui.
@@ -583,23 +588,23 @@
 
     const LoadResources = async (data) => {
       this.availableResources = data;
-      console.log("Loading Resources!!", selectedResources, data);
+      console.log('Loading Resources!!', selectedResources, data);
       for (var r = 0; r < data.terraform_resources.length; r++) {
         let resource = data.terraform_resources[r];
         let isChecked = selectedResources.includes(resource.id);
-        console.log("Setting Resource", resource);
+        console.log('Setting Resource', resource);
         //Create new option
-        let mainDiv = $("<div>", { class: "form-check" });
-        let input = $("<input>", { class: "form-check-input", type: "checkbox", id: resource.id, checked: isChecked });
-        let label = $("<label>", { class: "form-check-label", for: resource.id, html: resource.displayName });
+        let mainDiv = $('<div>', { class: 'form-check' });
+        let input = $('<input>', { class: 'form-check-input', type: 'checkbox', id: resource.id, checked: isChecked });
+        let label = $('<label>', { class: 'form-check-label', for: resource.id, html: resource.displayName });
         mainDiv.append(input);
         mainDiv.append(label);
-        $("#terraform_resources").append(mainDiv);
+        $('#terraform_resources').append(mainDiv);
       }
     };
 
     const saveSelectedResources = async () => {
-      console.log("Saving Selected resources", availableResources, selectedResources);
+      console.log('Saving Selected resources', availableResources, selectedResources);
       let _selectedResources = [];
 
       for (var r = 0; r < availableResources.terraform_resources.length; r++) {
@@ -611,37 +616,37 @@
         }
       }
 
-      console.log("Updated Selected Resources:", selectedResources);
+      console.log('Updated Selected Resources:', selectedResources);
     };
 
     const saveDeploymentDetails = async () => {
-      console.log("Saving deployment details...");
+      console.log('Saving deployment details...');
       const schedule = getSchedule();
       const scheduleEnabled = getScheduleEnabled();
-      const terraformYml = await getGithubFile(".github/workflows/terraform.yml", false, true);
+      const terraformYml = await getGithubFile('.github/workflows/terraform.yml', false, true);
       terraformYml.on = {
         schedule: scheduleEnabled ? schedule : undefined,
       };
 
-      const sha = await getSHA(".github/workflows/terraform.yml");
-      await pushToGithub(".github/workflows/terraform.yml", terraformYml, "Updating Terraform Configuration", githubRepository.split("/")[1], githubRepository.split("/")[0], sha);
+      const sha = await getSHA('.github/workflows/terraform.yml');
+      await pushToGithub('.github/workflows/terraform.yml', terraformYml, 'Updating Terraform Configuration', githubRepository.split('/')[1], githubRepository.split('/')[0], sha);
     };
 
     const encrypt = async (value, publicKey) => {
-      console.log("encrypt()");
+      console.log('encrypt()');
 
       const messageBytes = buffer.Buffer.from(value);
-      const keyBytes = buffer.Buffer.from(publicKey.key, "base64");
+      const keyBytes = buffer.Buffer.from(publicKey.key, 'base64');
 
       let cipherText = sodium.crypto_box_seal(value, keyBytes);
-      const encrypted = buffer.Buffer.from(cipherText).toString("base64");
+      const encrypted = buffer.Buffer.from(cipherText).toString('base64');
 
       return encrypted;
     };
 
     window.sodium = {
       onload: function (_sodium) {
-        console.log("sodium is loaded");
+        console.log('sodium is loaded');
         sodium = _sodium;
       },
     };
