@@ -481,7 +481,6 @@
       let repositories = await callAxios("https://api.github.com/user/repos", "GET", `Bearer ${githubToken}`);
       repositories = repositories.sort((a, b) => a.full_name.localeCompare(b.full_name));
       githubRepositories = repositories;
-      console.log("repositories:", repositories);
       //Update the select with the repositories
       for (let i = 0; i < repositories.length; i++) {
         $("#select-repository").append(
@@ -556,6 +555,7 @@
 
     //Function to load the Export json file from Github into local JSON object for using.
     const loadExportFile = async () => {
+      console.log('Loading Export file from Github...');
       //Get the existing Configuration file:
       const fileContent = await getGithubFile("source/export.tf.json", true, false);
       console.log("File Found:", fileContent);
