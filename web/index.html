@@ -477,7 +477,7 @@
       for (let i = 0; i < repositories.length; i++) {
         $("#select-repository").append(
           $("<option>", {
-            value: repositories[i].name,
+            value: repositories[i].full_name,
             text: repositories[i].full_name,
           })
         );
@@ -547,7 +547,7 @@
 
     //Function to load the Export json file from Github into local JSON object for using.
     const loadExportFile = async () => {
-      console.log('Loading Export file from Github...');
+      console.log("Loading Export file from Github...");
       //Get the existing Configuration file:
       const fileContent = await getGithubFile("source/export.tf.json", true, false);
       console.log("File Found:", fileContent);
