@@ -2,5 +2,7 @@
   "javascript.preferences.quoteStyle": "single",
   "editor.formatOnPaste": true,
   "editor.formatOnSave": true,
-  "yaml.format.singleQuote": true
+  "yaml.format.singleQuote": true,
+  "editor.wordWrapColumn": 8000,
+  "html.format.wrapLineLength": 0
 }

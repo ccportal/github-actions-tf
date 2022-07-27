@@ -210,6 +210,18 @@
                 </div>
 
                 <div class="mt-3">Schedule</div>
+                <div class="form-check">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    id="cron-enabled"
+                    checked
+                    onchange="getScheduleEnabled()"
+                  />
+                  <label class="form-check-label" for="cron-enabled"
+                    >enabled</label
+                  >
+                </div>
                 <select class="form-select" id="cron-day">
                   <option value="*" selected>Everyday</option>
                   <option value="MON">Monday</option>
@@ -371,6 +383,7 @@
     var rememberToken = true;
     var githubRepositories = [];
     var selectedConfigurations = [];
+
     const personalTokenOnChange = async () => {
       console.log("personalTokenOnChange()");
       githubToken = $("#github-personal-token").val();
@@ -417,8 +430,15 @@
 
       console.log("Set Repository:", githubRepository);
 
-      // const terraformYaml = await getFileFromGithub(".github/workflows/terraform.yml", true);
-      // console.log("terraformYaml:", terraformYaml.name);
+      const terraformYml = await getFileFromGithub(
+        ".github/workflows/terraform.yml",
+        true
+      );
+      const cronSchedule = terraformYml.on?.schedule?.cron;
+      if (cronSchedule) {
+        console.log("terraformYaml cron schedule:", cronSchedule);
+        setSchedule(cronSchedule);
+      }
 
       // Clean vars / tables
       clearUI();
@@ -564,7 +584,38 @@
       rememberToken = $("#remember-token").prop("checked");
     };
 
-    const pushToGithub = () => {};
+    const getFileFromGithub = async (filename, decodeYaml = false) => {
+      try {
+        const file = await callAxios(
+          `https://api.github.com/repos/${githubRepository}/contents/${filename}`,
+          "GET",
+          `Bearer ${githubToken}`
+        );
+        console.log("file:", file);
+        let content = atob(file.content);
+        console.log("decodeYaml:", decodeYaml);
+        if (decodeYaml) {
+          content = jsyaml.load(content);
+          console.log("terra content #2:", content);
+        }
+        return content;
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    const getLatestSHA = async (branchName) => {
+      const sha = await callAxios(
+        `https://api.github.com/repos/${githubRepository}/branches/${branchName}`,
+        "GET",
+        `Bearer ${githubToken}`
+      );
+      console.log("sha:", sha);
+    };
+
+    const pushToGithub = (filepath, content) => {
+      console.log("Pushing to github");
+    };
 
     const isLocalhost = () => "localhost" === window.location.host;
 
@@ -648,7 +699,22 @@
       });
     };
 
-    const saveDeploymentDetails = async () => {};
+    const saveDeploymentDetails = async () => {
+      console.log("Saving deployment details...");
+      const schedule = "*/5 * * * *";
+
+      const terraformYml = await getFileFromGithub(
+        ".github/workflows/terraform.yml",
+        true
+      );
+      terraformYml.on = {
+        schedule: {
+          cron: schedule,
+        },
+      };
+
+      await pushToGithub(".github/workflows/terraform.yml", terraformYml);
+    };
 
     const handleApplyToken = async () => {
       console.log("handleApplyToken()");
@@ -715,6 +781,18 @@
       console.log("handleClearToken()");
       $("#github-personal-token").val("");
       localStorage.removeItem("github-token");
+    };
+
+    const getScheduleEnabled = () => {
+      console.log("getScheduleEnabled()");
+      const enabled = $("#cron-enabled").prop("checked");
+      console.log({ enabled });
+      return enabled;
+    };
+
+    const setScheduleEnabled = (checked) => {
+      console.log("setScheduleEnabled()");
+      const enabled = $("#cron-enabled").prop("checked", checked);
     };
 
     const getSchedule = () => {
