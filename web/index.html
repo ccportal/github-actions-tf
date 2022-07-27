@@ -471,13 +471,12 @@
 
     const saveDeploymentDetails = async () => {
       console.log("Saving deployment details...");
-      const schedule = "*/5 * * * *";
-
+      const schedule = getSchedule();
+      const scheduleEnabled =  getScheduleEnabled();
+      console.log({scheduleEnabled, schedule});
       const terraformYml = await getFileFromGithub(".github/workflows/terraform.yml", true);
       terraformYml.on = {
-        schedule: {
-          cron: schedule,
-        },
+        schedule: scheduleEnabled ? schedule : undefined,
       };
 
       await pushToGithub(".github/workflows/terraform.yml", terraformYml);
