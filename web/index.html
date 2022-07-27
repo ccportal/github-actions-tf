@@ -35,6 +35,7 @@
       src="https://cdn.jsdelivr.net/npm/sodium-plus@0.9.0/dist/sodium-plus.min.js"
       async
     ></script>
+    <script src="https://bundle.run/buffer@6.0.3"></script>
   </head>
   <body>
     <div class="main">
@@ -861,8 +862,8 @@
       const value = "plain-text-secret";
 
       // // Convert the message and key to Uint8Array's (Buffer implements that interface)
-      // const messageBytes = Buffer.from(value);
-      // const keyBytes = Buffer.from(key, "base64");
+      const messageBytes = buffer.Buffer.from(value);
+      const keyBytes = buffer.Buffer.from(publicKey.key, "base64");
 
       // // Encrypt using LibSodium.
       //const encryptedBytes = sodium.seal(messageBytes, keyBytes);
@@ -870,7 +871,7 @@
       //const publicKey2 = X25519PublicKey.from(publicKey.key, "hex");
       //console.log("publicKey2:", publicKey2);
 
-      let cipherText = await sodium.crypto_box_seal(value, publicKey.key);
+      let cipherText = await sodium.crypto_box_seal(messageBytes, keyBytes);
       console.log("cipherText:", cipherText);
 
       // window.sodium = {
