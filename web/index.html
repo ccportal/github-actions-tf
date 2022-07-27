@@ -228,6 +228,10 @@
       console.log("clearUI()");
 
       githubWorkflowId = undefined;
+      selectedResources = [];
+      exportConfiguration = undefined;
+       $("#terraform_resources").children().remove();
+
       document.getElementById("tableContents").innerHTML = "";
       document.getElementById("manual-run-btn").disabled = true;
     };
@@ -235,8 +239,12 @@
     const handleSelectedRepository = async () => {
       githubRepository = $("#select-repository option:selected").text();
 
-      console.log("Set Repository:", githubRepository);
 
+      console.log("Set Repository:", githubRepository);
+      // Clean vars / tables
+      clearUI();
+      document.getElementById("spinnerHistory").hidden = false;
+      
       const terraformYml = await getGithubFile(".github/workflows/terraform.yml", false, true);
       const cronSchedule = terraformYml.on?.schedule?.cron;
       if (cronSchedule) {
@@ -244,9 +252,7 @@
         setSchedule(cronSchedule);
       }
 
-      // Clean vars / tables
-      clearUI();
-      document.getElementById("spinnerHistory").hidden = false;
+
 
       //Load existing configuration for the Export File.
       await loadExportFile();
