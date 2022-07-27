@@ -228,6 +228,10 @@
       console.log('clearUI()');
 
       githubWorkflowId = undefined;
+      selectedResources = [];
+      exportConfiguration = undefined;
+      $('#terraform_resources').children().remove();
+
       document.getElementById('tableContents').innerHTML = '';
       document.getElementById('manual-run-btn').disabled = true;
     };
@@ -236,6 +240,9 @@
       githubRepository = $('#select-repository option:selected').text();
 
       console.log('Set Repository:', githubRepository);
+      // Clean vars / tables
+      clearUI();
+      document.getElementById('spinnerHistory').hidden = false;
 
       const terraformYml = await getGithubFile('.github/workflows/terraform.yml', false, true);
       const cronSchedule = terraformYml.on?.schedule?.cron;
@@ -243,10 +250,6 @@
         console.log('terraformYaml cron schedule:', cronSchedule);
         setSchedule(cronSchedule);
       }
-
-      // Clean vars / tables
-      clearUI();
-      document.getElementById('spinnerHistory').hidden = false;
 
       //Load existing configuration for the Export File.
       await loadExportFile();
@@ -437,13 +440,18 @@
       console.log('retrieve publicKey for repo...');
       const publicKey = await callAxios(`https://api.github.com/repos/${githubRepository}/actions/secrets/public-key`, 'GET', `Bearer ${githubToken}`);
 
-      await updateSecret('Test', 'SOURCE_ENVIRONMENT', publicKey);
+      await updateSecret($('#src_client_id').val(), 'SOURCE_CLIENT_ID', publicKey);
+      await updateSecret($('#src_client_secret').val(), 'SOURCE_SECRET', publicKey);
+      await updateSecret($('#src_region').val(), 'SOURCE_ENVIRONMENT', publicKey);
+
+      await updateSecret($('#dest_client_id').val(), 'DESTINATION_CLIENT_ID', publicKey);
+      await updateSecret($('#dest_client_secret').val(), 'DESTINATION_SECRET', publicKey);
+      await updateSecret($('#dest_region').val(), 'DESTINATION_ENVIRONMENT', publicKey);
     };
 
     const updateSecret = async (plainText, secretName, publicKey) => {
       try {
         const encryptedData = await encrypt(plainText, publicKey);
-        console.log('encryptedData:', encryptedData);
         let secret = {
           encrypted_value: encryptedData,
           key_id: publicKey.key_id,
