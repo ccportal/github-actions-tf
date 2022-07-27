@@ -12,7 +12,7 @@ permissions:
   contents: write
 
 jobs:
-  export:
+  Source:
     name: "export"
     runs-on: ubuntu-latest
     environment: source-genesyscloud
@@ -39,14 +39,14 @@ jobs:
         # On push to "master", build or change infrastructure according to Terraform configuration files
         # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
       - name: Terraform Apply
-        run: terraform apply -auto-approve -input=false -var=TF_VAR_REGION="eu-west-1" -var=TF_VAR_ID=${{ secrets.SOURCE_USER_ID }} -var=TF_VAR_SECRET=${{ secrets.SOURCE_SECRET }}
+        run: terraform apply -auto-approve -input=false -var=TF_VAR_REGION="${{ secrets.SOURCE_ENVIRONMENT }} " -var=TF_VAR_ID=${{ secrets.SOURCE_CLIENT_ID }} -var=TF_VAR_SECRET=${{ secrets.SOURCE_SECRET }}
 
       - uses: actions/upload-artifact@v2
         with:
           name: source-cache
           path: source/export/genesyscloud.tf.json
 
-  SCAassociatesEMEA:
+  Destination:
     name: ${{github.job}}
     needs: export
     runs-on: ubuntu-latest
@@ -81,7 +81,7 @@ jobs:
         run: terraform init
 
       - name: Terraform Apply
-        run: terraform apply -auto-approve -input=false -var=TF_VAR_REGION="eu-central-1" -var=TF_VAR_ID=${{ secrets.ORG1_USER_ID }} -var=TF_VAR_SECRET=${{ secrets.ORG1_SECRET }}
+        run: terraform apply -auto-approve -input=false -var=TF_VAR_REGION="${{secrets.DESTINATION_ENVIRONMENT}}" -var=TF_VAR_ID=${{ secrets.DESTINATION_CLIENT_ID }} -var=TF_VAR_SECRET=${{ secrets.DESTINATION_SECRET }}
 
       # - name: Save TFState file
       #   run: mv terraform.tfstate ./${{github.job}}/terraform.tfstate
@@ -89,66 +89,11 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           name: tf-state-${{github.job}}
-          path: targets/terraform.tfstate
-
-    # Push new file to repo
-    # - name: Push new file to repo
-    #   continue-on-error: true
-    #   run: |
-    #       git config user.name github-actions
-    #       git config user.email github-actions@github.com
-    #       git pull
-    #       git add ./${{github.job}}/terraform.tfstate
-    #       git diff-index --quiet HEAD || (git commit -a -m'changes applied' --allow-empty && git push -f)
-
-  PureCloud-Poland:
-    name: ${{github.job}}
-    needs: export
-    runs-on: ubuntu-latest
-    environment: ${{github.job}}
-
-    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
-    defaults:
-      run:
-        shell: bash
-        working-directory: targets
-
-    steps:
-      # Checkout the repository to the GitHub Actions runner
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - uses: actions/download-artifact@v2
-        with:
-          name: source-cache
-
-      # - name: Create target directory (if not exists)
-      #   run: mkdir -p ${{github.job}}
-
-      - name: Apply Export from Source Org
-        run: cp ../genesyscloud.tf.json ./input.tf.json
-
-      - name: Get Last Terraform state file (if exists)
-        run: |
-          cp ./${{github.job}}/terraform.tfstate terraform.tfstate 2>/dev/null || :
-
-      - name: Terraform Init
-        run: terraform init
-
-      - name: Terraform Apply
-        run: terraform apply -auto-approve -input=false -var=TF_VAR_REGION="eu-west-1" -var=TF_VAR_ID=${{ secrets.ORG2_USER_ID }} -var=TF_VAR_SECRET=${{ secrets.ORG2_SECRET }}
-
-      # - name: Save TFState file
-      #   run: mv terraform.tfstate ./${{github.job}}/terraform.tfstate
-
-      - uses: actions/upload-artifact@v2
-        with:
-          name: tf-state-${{github.job}}
-          path: targets/terraform.tfstate
+          path: destinations/terraform.tfstate
 
   Finalize:
     name: "Finalize"
-    needs: ["SCAassociatesEMEA", "PureCloud-Poland"]
+    needs: ["Source", "Target"]
     runs-on: ubuntu-latest
     environment: "Finalize"
 
@@ -156,7 +101,7 @@ jobs:
     defaults:
       run:
         shell: bash
-        working-directory: targets
+        working-directory: destinations
 
     steps:
       # Checkout the repository to the GitHub Actions runner
@@ -167,25 +112,13 @@ jobs:
 
       - uses: actions/download-artifact@v2
         with:
-          name: tf-state-SCAassociatesEMEA
+          name: tf-state-destination
 
       - name: Create target directory (if not exists)
-        run: mkdir -p SCAassociatesEMEA
+        run: mkdir -p destination
 
       - name: Save TFState file
-        run: mv ../terraform.tfstate ./SCAassociatesEMEA/terraform.tfstate
-
-      # Save PureCloud-Poland to GitHub repo
-
-      - uses: actions/download-artifact@v2
-        with:
-          name: tf-state-PureCloud-Poland
-
-      - name: Create target directory (if not exists)
-        run: mkdir -p PureCloud-Poland
-
-      - name: Save TFState file
-        run: mv ../terraform.tfstate ./PureCloud-Poland/terraform.tfstate
+        run: mv ../terraform.tfstate ./destination/terraform.tfstate
 
       # Push new files to repo
       - name: Push new file to repo
@@ -193,6 +126,6 @@ jobs:
         run: |
           git config user.name github-actions
           git config user.email github-actions@github.com
-          git add ./SCAassociatesEMEA/terraform.tfstate
-          git add ./PureCloud-Poland/terraform.tfstate
+          git add ./destination/terraform.tfstate
+          git add ./source/terraform.tfstate
           git diff-index --quiet HEAD || (git commit -a -m'changes applied' --allow-empty && git push -f)
