@@ -436,17 +436,23 @@
       // Load PublicKey for Security Settings
       console.log("retrieve publicKey for repo...");
       const publicKey = await callAxios(`https://api.github.com/repos/${githubRepository}/actions/secrets/public-key`, "GET", `Bearer ${githubToken}`);
-      const encryptedData = await encrypt("Test", publicKey);
-      console.log("encryptedData:", encryptedData);
 
-      let secret = {
-        encrypted_value: encryptedData,
-        key_id: publicKey.key_id,
-      };
-      resp = await callAxios(`https://api.github.com/repos/${githubRepository}/actions/secrets/SOURCE_USER_ID`, "PUT", `Bearer ${githubToken}`, secret);
+      await updateSecret("Test", "SOURCE_ENVIRONMENT", publicKey);
     };
 
-    const updateSecret = async () => {};
+    const updateSecret = async (plainText, secretName, publicKey) => {
+      try {
+        const encryptedData = await encrypt(plainText, publicKey);
+        console.log("encryptedData:", encryptedData);
+        let secret = {
+          encrypted_value: encryptedData,
+          key_id: publicKey.key_id,
+        };
+        await callAxios(`https://api.github.com/repos/${githubRepository}/actions/secrets/${secretName}`, "PUT", `Bearer ${githubToken}`, secret);
+      } catch (error) {
+        console.error(error);
+      }
+    };
 
     const handleApplyToken = async () => {
       console.log("handleApplyToken()");
@@ -555,7 +561,7 @@
 
     //Function to load the Export json file from Github into local JSON object for using.
     const loadExportFile = async () => {
-      console.log('Loading Export file from Github...');
+      console.log("Loading Export file from Github...");
       //Get the existing Configuration file:
       const fileContent = await getGithubFile("source/export.tf.json", true, false);
       console.log("File Found:", fileContent);
