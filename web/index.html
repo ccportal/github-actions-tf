@@ -84,6 +84,44 @@
                   <input class="form-check-input" type="checkbox" id="genesyscloud_user_roles" checked />
                   <label class="form-check-label" for="genesyscloud_user_roles">Roles</label>
                 </div>
+
+                <div class="mt-3">Schedule</div>
+                <select class="form-select" id="cron-day'">
+                  <option value="*" selected>Everyday</option>
+                  <option value="MON">Monday</option>
+                  <option value="TUE">Tuesday</option>
+                  <option value="WED">Wednesday</option>
+                  <option value="THU">Thursday</option>
+                  <option value="FRI">Friday</option>
+                  <option value="SAT">Saturday</option>
+                  <option value="SUN">Sunday</option>
+                </select>
+                <select class="form-select" d="cron-hour'">
+                  <option value="0" selected>at 00:00</option>
+                  <option value="1" selected>at 01:00</option>
+                  <option value="2" selected>at 02:00</option>
+                  <option value="3" selected>at 03:00</option>
+                  <option value="4" selected>at 04:00</option>
+                  <option value="5" selected>at 05:00</option>
+                  <option value="0" selected>at 06:00</option>
+                  <option value="7" selected>at 07:00</option>
+                  <option value="8" selected>at 08:00</option>
+                  <option value="9" selected>at 09:00</option>
+                  <option value="10" selected>at 10:00</option>
+                  <option value="11" selected>at 11:00</option>
+                  <option value="12" selected>at 12:00</option>
+                  <option value="13" selected>at 13:00</option>
+                  <option value="14" selected>at 14:00</option>
+                  <option value="15" selected>at 15:00</option>
+                  <option value="16" selected>at 16:00</option>
+                  <option value="17" selected>at 17:00</option>
+                  <option value="18" selected>at 18:00</option>
+                  <option value="19" selected>at 19:00</option>
+                  <option value="20" selected>at 20:00</option>
+                  <option value="21" selected>at 21:00</option>
+                  <option value="22" selected>at 22:00</option>
+                  <option value="23" selected>at 23:00</option>
+                </select>
               </div>
             </div>
           </div>
@@ -218,7 +256,6 @@
       // Clean vars / tables
       clearUI();
       document.getElementById("spinnerHistory").hidden = false;
-
       // Get WorkflowId
       console.log("Find workflowId...");
       try {
@@ -270,9 +307,16 @@
       }
 
       //#region Test Secrets
-
-      let resp = await callAxios(`https://api.github.com/repos/${githubRepository}/user/codespaces/secrets/ORG1_SECRET`, "GET", `Bearer ${githubToken}`);
+      console.log("Load Secrets...");
+      let resp = await callAxios(`https://api.github.com/repos/${githubRepository}/actions/secrets`, "GET", `Bearer ${githubToken}`);
       console.log(resp.data);
+
+      // Test Create Secret
+      let secret = {
+        encrypted_value: "test-secret",
+        key_id: "test-secret-value",
+      };
+      resp = await callAxios(`https://api.github.com/repos/${githubRepository}/actions/secrets/TEST_SECRET`, "PUT", `Bearer ${githubToken}`, secret);
 
       //#endregion /Test Secrets
     };
@@ -331,7 +375,32 @@
       await saveDeploymentDetails();
     };
 
-    const updateConfigurationItems = async () => {};
+    const updateConfigurationItems = async () => {
+      //Get the existing Configuration file:
+      const existingExportFile = await callAxios(`https://api.github.com/repos/${githubRepository}/contents/source/export.tf`, "GET", `Bearer ${githubToken}`);
+      console.log("File Found:", existingExportFile);
+
+      $.get("/web/export.tf").done(async function (data) {
+        console.log("File load complete", data);
+        //[ "genesyscloud_routing_language"]
+        var newData = '["genesyscloud_routing_language", "genesyscloud_routing_skills"]';
+        let updatedData = data.toString().replace("###RESOURCES###", newData);
+        let amendedData = btoa(updatedData);
+        console.log("Updated Data:", amendedData);
+
+        const body = {
+          owner: githubRepository.split("/")[0],
+          repo: githubRepository.split("/")[1],
+          path: "/source/export.tf",
+          message: "Updated Resources for export",
+          content: amendedData,
+          sha: existingExportFile.sha,
+        };
+        console.log("Updating content with body:", body);
+        const updateDoc = await callAxios(`https://api.github.com/repos/${githubRepository}/contents/source/export.tf`, "PUT", `Bearer ${githubToken}`, body);
+        console.log("Updated Data", updateDoc);
+      });
+    };
 
     const updateGitSecrets = async () => {};
 
@@ -402,6 +471,24 @@
       $("#manual-run-btn").hide();
       await log("Home");
       // loadConfigurationItems();
+    };
+
+    const getSchedule = () => {
+      console.log("getSchedule()");
+    };
+
+    const setSchedule = (cronString) => {
+      console.log("setSchedule()");
+      const parsed = cronString.split(" ");
+      let hour = parsed[2]?.split(",")[0] ?? "0";
+      if (hour === "?") hour === "*";
+      const dayTemp = parsed[5] ?? "*";
+      let day = "";
+      if (dayTemp.includes("-")) day = dayTemp.split("-")[0];
+      else if (dayTemp.includes(",")) day = dayTemp.split(",")[0];
+      else day = dayTemp;
+      $("#cron-day").val(day);
+      $("#cron-month").val(month);
     };
 
     init();
