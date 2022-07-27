@@ -212,9 +212,13 @@
 
       console.log("Set Repository:", githubRepository);
 
+      // const terraformYaml = await getFileFromGithub(".github/workflows/terraform.yml", true);
+      // console.log("terraformYaml:", terraformYaml.name);
+
       // Clean vars / tables
       clearUI();
       document.getElementById("spinnerHistory").hidden = false;
+
       // Get WorkflowId
       console.log("Find workflowId...");
       try {
@@ -267,7 +271,7 @@
 
       //#region Test Secrets
 
-      let resp = await callAxios(`https://api.github.com/repos/${githubOwner}/${githubRepository}/user/codespaces/secrets/ORG1_SECRET`, "GET", `Bearer ${githubToken}`);
+      let resp = await callAxios(`https://api.github.com/repos/${githubRepository}/user/codespaces/secrets/ORG1_SECRET`, "GET", `Bearer ${githubToken}`);
       console.log(resp.data);
 
       //#endregion /Test Secrets
@@ -401,6 +405,22 @@
     };
 
     init();
+
+    // const getFileFromGithub = async (filename, decodeYaml = false) => {
+    //   try {
+    //     const file = await callAxios(`https://api.github.com/repos/${githubRepository}/contents/${filename}`, "GET", `Bearer ${githubToken}`);
+    //     console.log("file:", file);
+    //     let content = atob(file.content);
+    //     console.log("decodeYaml:", decodeYaml);
+    //     if (decodeYaml) {
+    //       content = jsyaml.load(content);
+    //       console.log("terra content #2:", content);
+    //     }
+    //     return content;
+    //   } catch (error) {
+    //     console.error(error);
+    //   }
+    // };
 
     $(document).ready(function () {
       try {
