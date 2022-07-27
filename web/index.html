@@ -425,24 +425,16 @@
     const updateConfigurationItems = async () => {
       //Get the existing Configuration file:
       let JSONData = exportConfiguration;
-      console.log("JSON Data:", JSONData);
+      console.log("JSON Data:", JSONData, selectedResources);
 
       await saveSelectedResources();
-      JSONData.resource.genesyscloud_tf_export.export.resource_types = selectedResources;
-      let amendedData = btoa(JSON.stringify(JSONData));
-      console.log("Updated Data:", JSONData);
+      let updatedJson = JSONData;
+      updatedJson.resource.genesyscloud_tf_export.export.resource_types = selectedResources;
+      let amendedData = btoa(JSON.stringify(updatedJson));
+      console.log("Updated Data:", updatedJson);
 
       const sha = getSHA("/source/export.tf.json");
-      const body = {
-        owner: githubRepository.split("/")[0],
-        repo: githubRepository.split("/")[1],
-        path: "/source/export.tf.json",
-        message: "Updated Resources for export",
-        content: amendedData,
-        sha: sha,
-      };
-      console.log("Updating content with body:", body);
-      const updateDoc = await callAxios(`https://api.github.com/repos/${githubRepository}/contents/source/export.tf.json`, "PUT", `Bearer ${githubToken}`, body);
+      await pushToGithub('/source/export.tf.json', 'Updated resources for Export'. amendedData, githubRepository.split("/")[1], githubRepository.split("/")[0], sha )
       console.log("Updated Data", updateDoc);
     };
 
@@ -464,7 +456,8 @@
           sha: existingExportFile.sha,
         };
         console.log("Updating content with body:", body);
-        const updateDoc = await callAxios(`https://api.github.com/repos/${githubRepository}/contents/source/export.tf`, "PUT", `Bearer ${githubToken}`, body);
+
+        //const updateDoc = await callAxios(`https://api.github.com/repos/${githubRepository}/contents/source/export.tf`, "PUT", `Bearer ${githubToken}`, body);
         console.log("Updated Data", updateDoc);
       });
     };
