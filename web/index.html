@@ -66,30 +66,7 @@
                 </div>
 
                 <div class="mt-3">Configuration Items</div>
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" id="genesyscloud_architect_datatable" checked />
-                  <label class="form-check-label" for="genesyscloud_architect_datatable">Data Tables</label>
-                </div>
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" id="genesyscloud_flow" checked />
-                  <label class="form-check-label" for="genesyscloud_flow">Flows</label>
-                </div>
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" id="genesyscloud_routing_queue" checked />
-                  <label class="form-check-label" for="genesyscloud_routing_queue">Queues</label>
-                </div>
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" id="genesyscloud_routing_skill" checked />
-                  <label class="form-check-label" for="genesyscloud_routing_skill">Skills</label>
-                </div>
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" id="genesyscloud_user" checked />
-                  <label class="form-check-label" for="genesyscloud_user">Users</label>
-                </div>
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" id="genesyscloud_user_roles" checked />
-                  <label class="form-check-label" for="genesyscloud_user_roles">Roles</label>
-                </div>
+                <div id="terraform_resources"></div>
 
                 <div class="mt-3">Schedule</div>
                 <div class="form-check">
@@ -220,6 +197,9 @@
     var rememberToken = true;
     var githubRepositories = [];
     var selectedConfigurations = [];
+    var exportConfiguration;
+    var selectedResources = [];
+    var availableResources = [];
 
     const personalTokenOnChange = async () => {
       console.log("personalTokenOnChange()");
@@ -325,6 +305,9 @@
       if (rememberToken) {
         localStorage.setItem("github-repository", githubRepository);
       }
+
+      //Load the Export config file
+      await loadExportFile();
 
       //#region Test Secrets
       console.log("Load Secrets...");
@@ -441,31 +424,30 @@
     };
 
     const updateConfigurationItems = async () => {
-      //Get the existing Configuration file
-      const filePath = "source/export.tf.json";
 
-      const existingExportFile = await getGithubFile(filePath, true);
-      console.log("File Found:", existingExportFile);
+      //Get the existing Configuration file: 
+      let JSONData = exportConfiguration;
+      console.log('JSON Data:', JSONData)
 
       var newData = ["genesyscloud_routing_language", "genesyscloud_routing_skills"];
-      existingExportFile.resource.genesyscloud_tf_export.export.resource_types = newData;
+      JSONData.resource.genesyscloud_tf_export.export.resource_types = newData;
 
-      let amendedData = btoa(JSON.stringify(existingExportFile));
-      console.log("Amended Data:", amendedData);
+      await saveSelectedResources();
 
-      const sha = await getSHA(filePath);
-      await pushToGithub(filePath, amendedData, "Updated Resources for export", githubRepository.split("/")[1], githubRepository.split("/")[0], sha);
-      // const body = {
-      //   owner: githubRepository.split("/")[0],
-      //   repo: githubRepository.split("/")[1],
-      //   path: "/source/export.tf.json",
-      //   message: "Updated Resources for export",
-      //   content: amendedData,
-      //   sha: fileContent.sha,
-      // };
-      // console.log("Updating content with body:", body);
-      // const updateDoc = await callAxios(`https://api.github.com/repos/${githubRepository}/contents/source/export.tf.json`, "PUT", `Bearer ${githubToken}`, body);
-      // console.log("Updated Data", updateDoc);
+      let amendedData = btoa(JSON.stringify(JSONData));
+      console.log('Updated Data:', JSONData);
+
+      const body = {
+        owner: githubRepository.split('/')[0],
+        repo: githubRepository.split('/')[1],
+        path: '/source/export.tf.json',
+        message: 'Updated Resources for export',
+        content: amendedData,
+        sha: existingExportFile.sha
+      }
+      console.log('Updating content with body:', body);
+      const updateDoc = await callAxios(`https://api.github.com/repos/${githubRepository}/contents/source/export.tf.json`, "PUT", `Bearer ${githubToken}`, body);
+      console.log('Updated Data', updateDoc);
     };
 
     const updateGitSecrets = async () => {
@@ -593,6 +575,66 @@
       // loadConfigurationItems();
     };
 
+    //Function to load the Export json file from Github into local JSON object for using.
+      const loadExportFile = async () => {
+        console.log('loadExportFile()');
+        //Get the existing Configuration file: 
+        const existingExportFile = await callAxios(`https://api.github.com/repos/${githubRepository}/contents/source/export.tf.json`, "GET", `Bearer ${githubToken}`);
+        console.log('File Found:', existingExportFile);
+
+        let fileContent = atob(existingExportFile.content);
+        let JSONData = JSON.parse(fileContent);
+        exportConfiguration = JSONData;
+
+        selectedResources = JSONData.resource.genesyscloud_tf_export.export.resource_types;
+        await LoadConfigurationItems();
+        console.log('JSON Data:', JSONData)
+      }
+
+      //Function to load the configuration item list on the UI.
+      const LoadConfigurationItems = async () => {
+        console.log('LoadConfigurationItems()')
+        await fetch('./terraform_resources.json')
+          .then(res => res.json()) // the .json() method parses the JSON response into a JS object literal
+          .then(data =>
+            //Get the resources and loop through and add to the ui. 
+
+            LoadResources(data)
+          );
+      }
+
+      const LoadResources = async (data) => {
+        this.availableResources = data;
+        console.log('Loading Resources!!', selectedResources)
+        for (var r = 0; r < data.terraform_resources.length; r++) {
+          let resource = data.terraform_resources[r];
+          let isChecked = selectedResources.includes(resource.id);
+          console.log('Setting Resource', resource)
+          //Create new option
+          let mainDiv = $('<div>', { class: 'form-check' })
+          let input = $('<input>', { class: 'form-check-input', type: 'checkbox', id: resource.id, checked: isChecked })
+          let label = $('<label>', { class: 'form-check-label', for: resource.id, html: resource.displayName })
+          mainDiv.append(input);
+          mainDiv.append(label);
+          $('#terraform_resources').append(mainDiv);
+        }
+      }
+
+      const saveSelectedResources = async () => {
+        console.log('Saving Selected resources', availableResources);
+        let _selectedResources = [];
+
+        for (var r = 0; r < availableResources.terraform_resources.length; r++) {
+          let resource = availableResources.terraform_resources[r];
+          let domObject = $(resource.id);
+          if (document.getElementById(resource.id).checked) {
+            console.log('Item checked')
+          } else {
+            console.log('item not checked')
+          }
+
+        }
+      }
     init();
 
     // const getFileFromGithub = async (filename, decodeYaml = false) => {
@@ -610,7 +652,7 @@
     //     console.error(error);
     //   }
     // };
-    
+
     //encrypt();
 
     const getFileFromGithub = async (filename, decodeYaml = false) => {
