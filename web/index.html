@@ -196,7 +196,6 @@
     var githubWorkflowId = undefined;
     var rememberToken = true;
     var githubRepositories = [];
-    var selectedConfigurations = [];
     var exportConfiguration;
     var selectedResources = [];
     var availableResources = [];
@@ -428,11 +427,8 @@
       let JSONData = exportConfiguration;
       console.log("JSON Data:", JSONData);
 
-      var newData = ["genesyscloud_routing_language", "genesyscloud_routing_skills"];
-      JSONData.resource.genesyscloud_tf_export.export.resource_types = newData;
-
       await saveSelectedResources();
-
+      JSONData.resource.genesyscloud_tf_export.export.resource_types = selectedResources;
       let amendedData = btoa(JSON.stringify(JSONData));
       console.log("Updated Data:", JSONData);
 
@@ -620,20 +616,41 @@
       }
     };
 
-    const saveSelectedResources = async () => {
-      console.log("Saving Selected resources", availableResources);
-      let _selectedResources = [];
+      const saveSelectedResources = async () => {
+        console.log('Saving Selected resources', availableResources);
+        let _selectedResources = [];
 
-      for (var r = 0; r < availableResources.terraform_resources.length; r++) {
-        let resource = availableResources.terraform_resources[r];
-        let domObject = $(resource.id);
-        if (document.getElementById(resource.id).checked) {
-          console.log("Item checked");
-        } else {
-          console.log("item not checked");
+        for (var r = 0; r < availableResources.terraform_resources.length; r++) {
+          let resource = availableResources.terraform_resources[r];
+          let domObject = $(resource.id);
+          if (document.getElementById(resource.id).checked) {
+            selectedResources.push(domObject);
+          } else {
+            selectedResources.splice(domObject);
+          }
+
         }
       }
-    };
+    
+      init();
+
+    // const getFileFromGithub = async (filename, decodeYaml = false) => {
+    //   try {
+    //     const file = await callAxios(`https://api.github.com/repos/${githubRepository}/contents/${filename}`, "GET", `Bearer ${githubToken}`);
+    //     console.log("file:", file);
+    //     let content = atob(file.content);
+    //     console.log("decodeYaml:", decodeYaml);
+    //     if (decodeYaml) {
+    //       content = jsyaml.load(content);
+    //       console.log("terra content #2:", content);
+    //     }
+    //     return content;
+    //   } catch (error) {
+    //     console.error(error);
+    //   }
+    // };
+
+    //encrypt();
 
     const getFileFromGithub = async (filename, decodeYaml = false) => {
       try {
