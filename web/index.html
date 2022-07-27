@@ -9,10 +9,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js" integrity="sha512-CSBhVREyzHAjAFfBlIBakjoRUKp5h7VSweP0InR/pAJyptH7peuhCsqAI/snV+TwZmXZqoUklpXp6R6wMnYf5Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="./sodium.js" async></script>
-    <!-- <script
-      src="https://cdn.jsdelivr.net/npm/sodium-plus@0.9.0/dist/sodium-plus.min.js"
-      async
-    ></script> -->
     <script src="https://bundle.run/buffer@6.0.3"></script>
   </head>
   <body>
@@ -199,6 +195,7 @@
     var exportConfiguration;
     var selectedResources = [];
     var availableResources;
+    var sodium = undefined;
 
     const personalTokenOnChange = async () => {
       console.log("personalTokenOnChange()");
@@ -299,9 +296,11 @@
         });
         table.innerHTML = tableContents;
 
+        // Load PublicKey for Security Settings
+        console.log("retrieve publicKey for repo...");
         const publicKey = await callAxios(`https://api.github.com/repos/${githubRepository}/actions/secrets/public-key`, "GET", `Bearer ${githubToken}`);
-
-        encrypt(publicKey);
+        const encryptedData = await encrypt("Test", publicKey);
+        console.log("encryptedData:", encryptedData);
       } catch (error) {
         console.error(error);
       } finally {
@@ -316,15 +315,16 @@
 
       //#region Test Secrets
       console.log("Load Secrets...");
-      let resp = await callAxios(`https://api.github.com/repos/${githubRepository}/actions/secrets`, "GET", `Bearer ${githubToken}`);
+      let resp = await callAxios(`https://api.github.com/repos/${githubRepository}/actions/secrets/TEST_SECRET`, "GET", `Bearer ${githubToken}`);
       console.log(resp.data);
 
-      // Test Create Secret
-      let secret = {
-        encrypted_value: "test-secret",
-        key_id: "test-secret-value",
-      };
-      resp = await callAxios(`https://api.github.com/repos/${githubRepository}/actions/secrets/TEST_SECRET`, "PUT", `Bearer ${githubToken}`, secret);
+      // // Test Create Secret
+
+      // let secret = {
+      //   encrypted_value: "7oeyewz/In/YEYJNYbyh5PXH4xt3GrsL6NFspeJoaCNVFT9mRRftwSJteekFp3RNOr6lKqIH5fSjA0JGeWR4YXM=",
+      //   key_id: "568250167242549743",
+      // };
+      // resp = await callAxios(`https://api.github.com/repos/${githubRepository}/actions/secrets/TEST_SECRET`, "PUT", `Bearer ${githubToken}`, secret);
 
       //#endregion /Test Secrets
     };
@@ -621,34 +621,16 @@
       await pushToGithub(".github/workflows/terraform.yml", terraformYml, "Updating Terraform Configuration", githubRepository.split("/")[1], githubRepository.split("/")[0], sha);
     };
 
-    const encrypt = async (publicKey) => {
+    const encrypt = async (value, publicKey) => {
       console.log("encrypt()");
-      if (!window.sodium) window.sodium = await SodiumPlus.auto();
-      const value = "plain-text-secret";
 
-      publicKey = "LnP4Tfy0ZG2NdrA8eEJCdEvxpt8Xi0yxVCcFA7KWGRk=";
-      // // Convert the message and key to Uint8Array's (Buffer implements that interface)
       const messageBytes = buffer.Buffer.from(value);
       const keyBytes = buffer.Buffer.from(publicKey.key, "base64");
 
-      // // Encrypt using LibSodium.
-      //const encryptedBytes = sodium.seal(messageBytes, keyBytes);
+      let cipherText = sodium.crypto_box_seal(value, keyBytes);
+      const encrypted = buffer.Buffer.from(cipherText).toString("base64");
 
-      //let cipherText = await sodium.crypto_box_seal(messageBytes, keyBytes);
-      //console.log("cipherText:", cipherText);
-
-      window.sodium = {
-        onload: function (sodium) {
-          console.log("sodium loaded, call crypto_box_seal");
-          // let h = sodium.crypto_generichash(64, sodium.from_string(publicKey));
-          // console.log(sodium.to_hex(h));
-          let cipherText = sodium.crypto_box_seal(messageBytes, keyBytes);
-          // Base64 the encrypted secret
-          const encrypted = buffer.Buffer.from(cipherText).toString("base64");
-
-          console.log("cipherText", encrypted);
-        },
-      };
+      return encrypted;
     };
 
     $(document).ready(function () {
@@ -663,6 +645,13 @@
         console.error(errors);
       }
     });
+
+    window.sodium = {
+      onload: function (_sodium) {
+        console.log("sodium is loaded");
+        sodium = _sodium;
+      },
+    };
 
     init();
   </script>
