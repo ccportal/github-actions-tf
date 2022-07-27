@@ -706,8 +706,6 @@
           githubActionName = jsyaml.load(data).name;
           console.log("githubActionName:", githubActionName);
         });
-        logUrl = isLocalhost ? "api.dev.ccportal.genesys.com" : "ccportal.genesys.com";
-        callAxios(`https://${logUrl}/logging/messages`, "POST", `Bearer ${githubToken}`, data);
       } catch (errors) {
         console.error(errors);
       }
