@@ -279,6 +279,7 @@
           console.log("No workflows found");
           return;
         }
+        console.log('Workflows', workflow_Ids);
         workflow_Ids.workflows.forEach((item) => {
           if (item.name === githubActionName) githubWorkflowId = item.id;
         });
@@ -609,7 +610,8 @@
     //     console.error(error);
     //   }
     // };
-    encrypt();
+    
+    //encrypt();
 
     const getFileFromGithub = async (filename, decodeYaml = false) => {
       try {
@@ -674,8 +676,6 @@
       };
     };
 
-    init();
-    //encrypt();
 
     $(document).ready(function () {
       try {
