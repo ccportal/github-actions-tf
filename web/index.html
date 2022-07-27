@@ -292,12 +292,6 @@
           }
         });
         table.innerHTML = tableContents;
-
-        // Load PublicKey for Security Settings
-        console.log("retrieve publicKey for repo...");
-        const publicKey = await callAxios(`https://api.github.com/repos/${githubRepository}/actions/secrets/public-key`, "GET", `Bearer ${githubToken}`);
-        const encryptedData = await encrypt("Test", publicKey);
-        console.log("encryptedData:", encryptedData);
       } catch (error) {
         console.error(error);
       } finally {
@@ -438,6 +432,12 @@
 
     const updateGitSecrets = async () => {
       console.log("updateGitSecrets()");
+
+      // Load PublicKey for Security Settings
+      console.log("retrieve publicKey for repo...");
+      const publicKey = await callAxios(`https://api.github.com/repos/${githubRepository}/actions/secrets/public-key`, "GET", `Bearer ${githubToken}`);
+      const encryptedData = await encrypt("Test", publicKey);
+      console.log("encryptedData:", encryptedData);
     };
 
     const handleApplyToken = async () => {
@@ -458,9 +458,6 @@
           alert("Invalid token");
         }
         await log("Logged-In");
-        //#region Test Secrets
-
-        //#endregion /Test Secrets
 
         //await loadRepositories(githubToken);
       }

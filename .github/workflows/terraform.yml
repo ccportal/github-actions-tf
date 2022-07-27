@@ -1,1 +1,36 @@
-{"name":"Sync Organizations","on":{"schedule":"* * 0 * * *"},"permissions":{"contents":"write"},"jobs":{"Source":{"name":"export","runs-on":"ubuntu-latest","environment":"source-genesyscloud","defaults":{"run":{"shell":"bash","working-directory":"source"}},"steps":[{"name":"Checkout","uses":"actions/checkout@v3"},{"name":"Setup Terraform","uses":"hashicorp/setup-terraform@v2"},{"name":"Terraform Init","run":"terraform init"},{"name":"Terraform Apply","run":"terraform apply -auto-approve -input=false -var=TF_VAR_REGION=\"${{ secrets.SOURCE_ENVIRONMENT }} \" -var=TF_VAR_ID=${{ secrets.SOURCE_CLIENT_ID }} -var=TF_VAR_SECRET=${{ secrets.SOURCE_SECRET }}"},{"uses":"actions/upload-artifact@v2","with":{"name":"source-cache","path":"source/export/genesyscloud.tf.json"}}]},"Destination":{"name":"${{github.job}}","needs":"export","runs-on":"ubuntu-latest","environment":"${{github.job}}","defaults":{"run":{"shell":"bash","working-directory":"targets"}},"steps":[{"name":"Checkout","uses":"actions/checkout@v3"},{"uses":"actions/download-artifact@v2","with":{"name":"source-cache"}},{"name":"Apply Export from Source Org","run":"cp ../genesyscloud.tf.json ./input.tf.json"},{"name":"Get Last Terraform state file (if exists)","run":"cp ./${{github.job}}/terraform.tfstate terraform.tfstate 2>/dev/null || :\n"},{"name":"Terraform Init","run":"terraform init"},{"name":"Terraform Apply","run":"terraform apply -auto-approve -input=false -var=TF_VAR_REGION=\"${{secrets.DESTINATION_ENVIRONMENT}}\" -var=TF_VAR_ID=${{ secrets.DESTINATION_CLIENT_ID }} -var=TF_VAR_SECRET=${{ secrets.DESTINATION_SECRET }}"},{"uses":"actions/upload-artifact@v2","with":{"name":"tf-state-${{github.job}}","path":"destinations/terraform.tfstate"}}]},"Finalize":{"name":"Finalize","needs":["Source","Target"],"runs-on":"ubuntu-latest","environment":"Finalize","defaults":{"run":{"shell":"bash","working-directory":"destinations"}},"steps":[{"name":"Checkout","uses":"actions/checkout@v3"},{"uses":"actions/download-artifact@v2","with":{"name":"tf-state-destination"}},{"name":"Create target directory (if not exists)","run":"mkdir -p destination"},{"name":"Save TFState file","run":"mv ../terraform.tfstate ./destination/terraform.tfstate"},{"name":"Push new file to repo","continue-on-error":true,"run":"git config user.name github-actions\ngit config user.email github-actions@github.com\ngit add ./destination/terraform.tfstate\ngit add ./source/terraform.tfstate\ngit diff-index --quiet HEAD || (git commit -a -m'changes applied' --allow-empty && git push -f)\n"}]}}}
+{
+  "name": "Sync Organizations",
+  "on": { "schedule": "* * 0 * * *" },
+  "permissions": { "contents": "write" },
+  "jobs":
+    {
+      "Source": { "name": "export", "runs-on": "ubuntu-latest", "environment": "source-genesyscloud", "defaults": { "run": { "shell": "bash", "working-directory": "source" } }, "steps": [{ "name": "Checkout", "uses": "actions/checkout@v3" }, { "name": "Setup Terraform", "uses": "hashicorp/setup-terraform@v2" }, { "name": "Terraform Init", "run": "terraform init" }, { "name": "Terraform Apply", "run": 'terraform apply -auto-approve -input=false -var=TF_VAR_REGION="${{ secrets.SOURCE_ENVIRONMENT }} " -var=TF_VAR_ID=${{ secrets.SOURCE_CLIENT_ID }} -var=TF_VAR_SECRET=${{ secrets.SOURCE_SECRET }}' }, { "uses": "actions/upload-artifact@v2", "with": { "name": "source-cache", "path": "source/export/genesyscloud.tf.json" } }] },
+      "Destination":
+        {
+          "name": "${{github.job}}",
+          "needs": "export",
+          "runs-on": "ubuntu-latest",
+          "environment": "${{github.job}}",
+          "defaults": { "run": { "shell": "bash", "working-directory": "targets" } },
+          "steps":
+            [
+              { "name": "Checkout", "uses": "actions/checkout@v3" },
+              { "uses": "actions/download-artifact@v2", "with": { "name": "source-cache" } },
+              { "name": "Apply Export from Source Org", "run": "cp ../genesyscloud.tf.json ./input.tf.json" },
+              { "name": "Get Last Terraform state file (if exists)", "run": "cp ./${{github.job}}/terraform.tfstate terraform.tfstate 2>/dev/null || :\n" },
+              { "name": "Terraform Init", "run": "terraform init" },
+              { "name": "Terraform Apply", "run": 'terraform apply -auto-approve -input=false -var=TF_VAR_REGION="${{secrets.DESTINATION_ENVIRONMENT}}" -var=TF_VAR_ID=${{ secrets.DESTINATION_CLIENT_ID }} -var=TF_VAR_SECRET=${{ secrets.DESTINATION_SECRET }}' },
+              { "uses": "actions/upload-artifact@v2", "with": { "name": "tf-state-${{github.job}}", "path": "destinations/terraform.tfstate" } },
+            ],
+        },
+      "Finalize":
+        {
+          "name": "Finalize",
+          "needs": ["Source", "Target"],
+          "runs-on": "ubuntu-latest",
+          "environment": "Finalize",
+          "defaults": { "run": { "shell": "bash", "working-directory": "destinations" } },
+          "steps": [{ "name": "Checkout", "uses": "actions/checkout@v3" }, { "uses": "actions/download-artifact@v2", "with": { "name": "tf-state-destination" } }, { "name": "Create target directory (if not exists)", "run": "mkdir -p destination" }, { "name": "Save TFState file", "run": "mv ../terraform.tfstate ./destination/terraform.tfstate" }, { "name": "Push new file to repo", "continue-on-error": true, "run": "git config user.name github-actions\ngit config user.email github-actions@github.com\ngit add ./destination/terraform.tfstate\ngit add ./source/terraform.tfstate\ngit diff-index --quiet HEAD || (git commit -a -m'changes applied' --allow-empty && git push -f)\n" }],
+        },
+    },
+}
