@@ -437,13 +437,18 @@
       console.log("retrieve publicKey for repo...");
       const publicKey = await callAxios(`https://api.github.com/repos/${githubRepository}/actions/secrets/public-key`, "GET", `Bearer ${githubToken}`);
 
-      await updateSecret("Test", "SOURCE_ENVIRONMENT", publicKey);
+      await updateSecret($("#src_client_id").val(), "SOURCE_CLIENT_ID", publicKey);
+      await updateSecret($("#src_client_secret").val(), "SOURCE_SECRET", publicKey);
+      await updateSecret($("#src_region").val(), "SOURCE_ENVIRONMENT", publicKey);
+
+      await updateSecret($("#dest_client_id").val(), "DESTINATION_CLIENT_ID", publicKey);
+      await updateSecret($("#dest_client_secret").val(), "DESTINATION_SECRET", publicKey);
+      await updateSecret($("#dest_region").val(), "DESTINATION_ENVIRONMENT", publicKey);
     };
 
     const updateSecret = async (plainText, secretName, publicKey) => {
       try {
         const encryptedData = await encrypt(plainText, publicKey);
-        console.log("encryptedData:", encryptedData);
         let secret = {
           encrypted_value: encryptedData,
           key_id: publicKey.key_id,
