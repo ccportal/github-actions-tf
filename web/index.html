@@ -246,6 +246,10 @@
       try {
         const terraformYml = await getGithubFile(".github/workflows/terraform.yml", false, true);
         const cronSchedule = terraformYml.on?.schedule?.cron;
+        githubActionName = terraformYml.name;
+        console.log(terraformYml);
+        console.log("githubActionName:", githubActionName);
+
         if (cronSchedule) {
           console.log("terraformYaml cron schedule:", cronSchedule);
           setSchedule(cronSchedule);
@@ -562,11 +566,11 @@
       $("#save-btn").hide();
       $("#manual-run-btn").hide();
 
-      $.get("/.github/workflows/terraform.yml").done(function (data) {
-        console.log("File load complete");
-        githubActionName = jsyaml.load(data).name;
-        console.log("githubActionName:", githubActionName);
-      });
+      // $.get("/.github/workflows/terraform.yml").done(function (data) {
+      //   console.log("File load complete");
+      //   githubActionName = jsyaml.load(data).name;
+      //   console.log("githubActionName:", githubActionName);
+      // });
 
       await log("Home");
       // loadConfigurationItems();
