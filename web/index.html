@@ -648,10 +648,9 @@
       };
 
       const sha = await getSHA(".github/workflows/terraform.yml");
-      console.log("dump:", jsyaml.dump(terraformYml, { noCompatMode: true }));
-      //TODO: Dump returns a string
-      //TODO: make sure workflow_dispatch is set even if there is no schecule
-      //await pushToGithub(".github/workflows/terraform.yml", jsyaml.dump(terraformYml), "Updating Terraform Configuration", githubRepository.split("/")[1], githubRepository.split("/")[0], sha);
+      const dump = jsyaml.dump(terraformYml, { noCompatMode: true });
+      console.log("dump:", dump);
+      await pushToGithub(".github/workflows/terraform.yml", dump, "Updating Terraform Configuration", githubRepository.split("/")[1], githubRepository.split("/")[0], sha);
     };
 
     const encrypt = async (value, publicKey) => {
