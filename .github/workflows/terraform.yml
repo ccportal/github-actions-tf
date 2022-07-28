@@ -37,6 +37,7 @@ jobs:
         run: >-
           terraform apply -auto-approve -input=false -var=TF_VAR_REGION=${{secrets.SOURCE_ENVIRONMENT}} -var=TF_VAR_ID=${{secrets.SOURCE_CLIENT_ID}} -var=TF_VAR_SECRET=${{secrets.SOURCE_SECRET}}
 
+
       - uses: actions/upload-artifact@v2
         with:
           name: source-cache
@@ -49,7 +50,7 @@ jobs:
     defaults:
       run:
         shell: bash
-        working-directory: targets
+        working-directory: destinations
     steps:
       - name: Checkout
         uses: actions/checkout@v3
