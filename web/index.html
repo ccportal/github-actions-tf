@@ -34,7 +34,7 @@
         <span class="sr-only"></span>
       </div>
       </div>
-  
+
       </div>
 
       <div id="no-token-entered" class="container p-4">
@@ -429,12 +429,13 @@
           if(isLoading) {
             $("#token-entered-columns").hide();
           $("#spinner-saving").show();
-          }else 
+          }else
           {
             $("#token-entered-columns").show();
             $("#spinner-saving").hide();
           }
     }
+
     const handleSetConfiguration = async (config) => {
       //Validation:
       // if (!$("#src_client_id").val() || !$("#src_client_secret").val() || $("#src_region option:selected")[0].innerText === "") return alert("Source organization must be inputted before continuing");
