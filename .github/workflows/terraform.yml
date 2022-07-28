@@ -1,1 +1,103 @@
-"name: Sync Organizations\n'on':\n  schedule: '* * 0 * * *'\npermissions:\n  contents: write\njobs:\n  Source:\n    name: export\n    runs-on: ubuntu-latest\n    environment: source-genesyscloud\n    defaults:\n      run:\n        shell: bash\n        working-directory: source\n    steps:\n      - name: Checkout\n        uses: actions/checkout@v3\n      - name: Setup Terraform\n        uses: hashicorp/setup-terraform@v2\n      - name: Terraform Init\n        run: terraform init\n      - name: Terraform Apply\n        run: >-\n          terraform apply -auto-approve -input=false -var=TF_VAR_REGION=\"${{\n          secrets.SOURCE_ENVIRONMENT }} \" -var=TF_VAR_ID=${{\n          secrets.SOURCE_CLIENT_ID }} -var=TF_VAR_SECRET=${{\n          secrets.SOURCE_SECRET }}\n      - uses: actions/upload-artifact@v2\n        with:\n          name: source-cache\n          path: source/export/genesyscloud.tf.json\n  Destination:\n    name: ${{github.job}}\n    needs: export\n    runs-on: ubuntu-latest\n    environment: ${{github.job}}\n    defaults:\n      run:\n        shell: bash\n        working-directory: targets\n    steps:\n      - name: Checkout\n        uses: actions/checkout@v3\n      - uses: actions/download-artifact@v2\n        with:\n          name: source-cache\n      - name: Apply Export from Source Org\n        run: cp ../genesyscloud.tf.json ./input.tf.json\n      - name: Get Last Terraform state file (if exists)\n        run: >\n          cp ./${{github.job}}/terraform.tfstate terraform.tfstate 2>/dev/null\n          || :\n      - name: Terraform Init\n        run: terraform init\n      - name: Terraform Apply\n        run: >-\n          terraform apply -auto-approve -input=false\n          -var=TF_VAR_REGION=\"${{secrets.DESTINATION_ENVIRONMENT}}\"\n          -var=TF_VAR_ID=${{ secrets.DESTINATION_CLIENT_ID }}\n          -var=TF_VAR_SECRET=${{ secrets.DESTINATION_SECRET }}\n      - uses: actions/upload-artifact@v2\n        with:\n          name: tf-state-${{github.job}}\n          path: destinations/terraform.tfstate\n  Finalize:\n    name: Finalize\n    needs:\n      - Source\n      - Target\n    runs-on: ubuntu-latest\n    environment: Finalize\n    defaults:\n      run:\n        shell: bash\n        working-directory: destinations\n    steps:\n      - name: Checkout\n        uses: actions/checkout@v3\n      - uses: actions/download-artifact@v2\n        with:\n          name: tf-state-destination\n      - name: Create target directory (if not exists)\n        run: mkdir -p destination\n      - name: Save TFState file\n        run: mv ../terraform.tfstate ./destination/terraform.tfstate\n      - name: Push new file to repo\n        continue-on-error: true\n        run: >\n          git config user.name github-actions\n\n          git config user.email github-actions@github.com\n\n          git add ./destination/terraform.tfstate\n\n          git add ./source/terraform.tfstate\n\n          git diff-index --quiet HEAD || (git commit -a -m'changes applied'\n          --allow-empty && git push -f)\n"
+name: Sync Organizations
+on:
+  # schedule:
+  #  - cron:  '*/10 * * * *'
+  # push:
+  #   branches:
+  #   - "master"
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  Source:
+    name: export
+    runs-on: ubuntu-latest
+    environment: source-genesyscloud
+    defaults:
+      run:
+        shell: bash
+        working-directory: source
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+      - name: Terraform Init
+        run: terraform init
+      - name: Terraform Apply
+        run: >-
+          terraform apply -auto-approve -input=false -var=TF_VAR_REGION="${{
+          secrets.SOURCE_ENVIRONMENT }} " -var=TF_VAR_ID=${{
+          secrets.SOURCE_CLIENT_ID }} -var=TF_VAR_SECRET=${{
+          secrets.SOURCE_SECRET }}
+      - uses: actions/upload-artifact@v2
+        with:
+          name: source-cache
+          path: source/export/genesyscloud.tf.json
+  Destination:
+    name: ${{github.job}}
+    needs: export
+    runs-on: ubuntu-latest
+    environment: ${{github.job}}
+    defaults:
+      run:
+        shell: bash
+        working-directory: targets
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - uses: actions/download-artifact@v2
+        with:
+          name: source-cache
+      - name: Apply Export from Source Org
+        run: cp ../genesyscloud.tf.json ./input.tf.json
+      - name: Get Last Terraform state file (if exists)
+        run: >
+          cp ./${{github.job}}/terraform.tfstate terraform.tfstate 2>/dev/null
+          || :
+      - name: Terraform Init
+        run: terraform init
+      - name: Terraform Apply
+        run: >-
+          terraform apply -auto-approve -input=false
+          -var=TF_VAR_REGION="${{secrets.DESTINATION_ENVIRONMENT}}"
+          -var=TF_VAR_ID=${{ secrets.DESTINATION_CLIENT_ID }}
+          -var=TF_VAR_SECRET=${{ secrets.DESTINATION_SECRET }}
+      - uses: actions/upload-artifact@v2
+        with:
+          name: tf-state-${{github.job}}
+          path: destinations/terraform.tfstate
+  Finalize:
+    name: Finalize
+    needs:
+      - Source
+      - Target
+    runs-on: ubuntu-latest
+    environment: Finalize
+    defaults:
+      run:
+        shell: bash
+        working-directory: destinations
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - uses: actions/download-artifact@v2
+        with:
+          name: tf-state-destination
+      - name: Create target directory (if not exists)
+        run: mkdir -p destination
+      - name: Save TFState file
+        run: mv ../terraform.tfstate ./destination/terraform.tfstate
+      - name: Push new file to repo
+        continue-on-error: true
+        run: >
+          git config user.name github-actions
+
+          git config user.email github-actions@github.com
+
+          git add ./destination/terraform.tfstate
+
+          git add ./source/terraform.tfstate
+
+          git diff-index --quiet HEAD || (git commit -a -m'changes applied'
+          --allow-empty && git push -f)
