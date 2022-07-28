@@ -22,17 +22,17 @@ jobs:
         uses: hashicorp/setup-terraform@v2
       - name: Terraform Init
         run: terraform init
-      - name: Set up secret file
-        env:
-          SOURCE_ENVIRONMENT: ${{ secrets.SOURCE_ENVIRONMENT }}
-          SOURCE_CLIENT_ID: ${{ secrets.SOURCE_CLIENT_ID }}
-          SOURCE_SECRET: ${{ secrets.SOURCE_SECRET }}
-        run: |
-          echo $SOURCE_ENVIRONMENT >> secrets.txt
-          echo $SOURCE_CLIENT_ID >> secrets.txt
-          echo $SOURCE_SECRET >> secrets.txt
-      - name: Run tmate
-        uses: mxschmitt/action-tmate@v2
+      # - name: Set up secret file
+      #   env:
+      #     SOURCE_ENVIRONMENT: ${{ secrets.SOURCE_ENVIRONMENT }}
+      #     SOURCE_CLIENT_ID: ${{ secrets.SOURCE_CLIENT_ID }}
+      #     SOURCE_SECRET: ${{ secrets.SOURCE_SECRET }}
+      #   run: |
+      #     echo $SOURCE_ENVIRONMENT >> secrets.txt
+      #     echo $SOURCE_CLIENT_ID >> secrets.txt
+      #     echo $SOURCE_SECRET >> secrets.txt
+      # - name: Run tmate
+      #   uses: mxschmitt/action-tmate@v2
       - name: Terraform Apply
         run: >-
           terraform apply -auto-approve -input=false -var=TF_VAR_REGION=${{secrets.SOURCE_ENVIRONMENT}} -var=TF_VAR_ID=${{secrets.SOURCE_CLIENT_ID}} -var=TF_VAR_SECRET=${{secrets.SOURCE_SECRET}}
