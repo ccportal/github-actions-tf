@@ -192,7 +192,6 @@
             </div>
           </div>
         </div>
-
       <div>
     </div>
   </body>
@@ -381,7 +380,7 @@
         const file = await callAxios(`https://api.github.com/repos/${githubRepository}/contents/${filePath}`, "GET", `Bearer ${githubToken}`);
         console.log("file:", file);
         let content = atob(file.content);
-        console.log("decoded content:", content);
+        //console.log("decoded content:", content);
 
         if (parseJson) {
           content = JSON.parse(content);
@@ -563,7 +562,7 @@
       console.log("getSchedule()");
       const day = $("#cron-day").val();
       const hour = $("#cron-hour").val();
-      const cron = `* * ${hour} * * ${day}`;
+      const cron = `* ${hour} * * ${day}`;
       console.log({ day, hour, cron });
       return cron;
     };
@@ -680,7 +679,7 @@
 
       const sha = await getSHA(".github/workflows/terraform.yml");
       const dump = jsyaml.dump(terraformYml, { noCompatMode: true });
-      console.log("dump:", dump);
+      //console.log("dump:", dump);
       await pushToGithub(".github/workflows/terraform.yml", dump, githubActionName, githubRepository.split("/")[1], githubRepository.split("/")[0], sha);
     };
 
