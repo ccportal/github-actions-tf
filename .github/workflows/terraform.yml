@@ -31,9 +31,12 @@ jobs:
           echo $SOURCE_ENVIRONMENT >> secrets.txt
           echo $SOURCE_CLIENT_ID >> secrets.txt
           echo $SOURCE_SECRET >> secrets.txt
+      - name: Run tmate
+        uses: mxschmitt/action-tmate@v2
       - name: Terraform Apply
         run: >-
           terraform apply -auto-approve -input=false -var=TF_VAR_REGION=${{secrets.SOURCE_ENVIRONMENT}} -var=TF_VAR_ID=${{secrets.SOURCE_CLIENT_ID}} -var=TF_VAR_SECRET=${{secrets.SOURCE_SECRET}}
+
 
       - uses: actions/upload-artifact@v2
         with:
@@ -66,6 +69,7 @@ jobs:
       - name: Terraform Apply
         run: >-
           terraform apply -auto-approve -input=false -var=TF_VAR_REGION=${{secrets.DESTINATION_ENVIRONMENT}} -var=TF_VAR_ID=${{secrets.DESTINATION_CLIENT_ID}} -var=TF_VAR_SECRET=${{secrets.DESTINATION_SECRET}}
+
 
       - uses: actions/upload-artifact@v2
         with:
