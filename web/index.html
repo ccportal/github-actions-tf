@@ -238,6 +238,7 @@
 
     const handleSelectedRepository = async () => {
       githubRepository = $("#select-repository option:selected").text();
+      if (githubRepository === "") return;
 
       console.log("Set Repository:", githubRepository);
       // Clean vars / tables
