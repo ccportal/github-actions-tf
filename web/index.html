@@ -247,7 +247,6 @@
         const terraformYml = await getGithubFile(".github/workflows/terraform.yml", false, true);
         const cronSchedule = terraformYml.on?.schedule?.cron;
         githubActionName = terraformYml.name;
-        console.log(terraformYml);
         console.log("githubActionName:", githubActionName);
 
         if (cronSchedule) {
