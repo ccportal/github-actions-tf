@@ -243,20 +243,20 @@
       // Clean vars / tables
       clearUI();
       document.getElementById("spinnerHistory").hidden = false;
-
-      const terraformYml = await getGithubFile(".github/workflows/terraform.yml", false, true);
-      const cronSchedule = terraformYml.on?.schedule?.cron;
-      if (cronSchedule) {
-        console.log("terraformYaml cron schedule:", cronSchedule);
-        setSchedule(cronSchedule);
-      }
-
-      //Load existing configuration for the Export File.
-      await loadExportFile();
-
-      // Get WorkflowId
-      console.log("Find workflowId...");
       try {
+        const terraformYml = await getGithubFile(".github/workflows/terraform.yml", false, true);
+        const cronSchedule = terraformYml.on?.schedule?.cron;
+        if (cronSchedule) {
+          console.log("terraformYaml cron schedule:", cronSchedule);
+          setSchedule(cronSchedule);
+        }
+
+        //Load existing configuration for the Export File.
+        await loadExportFile();
+
+        // Get WorkflowId
+        console.log("Find workflowId...");
+
         const workflow_Ids = await callAxios(`https://api.github.com/repos/${githubRepository}/actions/workflows`, "GET", `Bearer ${githubToken}`);
         if (!workflow_Ids?.workflows) {
           console.log("No workflows found");
