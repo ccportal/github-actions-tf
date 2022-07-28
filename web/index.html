@@ -430,7 +430,7 @@
       updatedJson.resource.genesyscloud_tf_export.export.resource_types = selectedResources;
       console.log("Updated Data:", updatedJson);
       const sha = await getSHA("/source/export.tf.json");
-      await pushToGithub("source/export.tf.json", updatedJson, "Updated resources for Export", githubRepository.split("/")[1], githubRepository.split("/")[0], sha);
+      await pushToGithub("source/export.tf.json", JSON.stringify(updatedJson), "Updated resources for Export", githubRepository.split("/")[1], githubRepository.split("/")[0], sha);
     };
 
     const updateGitSecrets = async () => {
