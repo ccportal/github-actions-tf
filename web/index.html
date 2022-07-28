@@ -26,6 +26,17 @@
         </div>
       </nav>
 
+
+       <div id="spinner-saving" class="container p-4" style="width: 130px">
+       <div class="card-header"><i class="bi bi-box-arrow-in-down"></i> Saving</div>
+      <div class="card-body">
+      <div class="spinner-border" role="status">
+        <span class="sr-only"></span>
+      </div>
+      </div>
+  
+      </div>
+
       <div id="no-token-entered" class="container p-4">
         <div class="card">
           <div class="card-header"><i class="bi bi-unlock"></i> Access</div>
@@ -123,8 +134,8 @@
                   <option id="use2.us-gov-pure.cloud">Americas (US East 2)</option>
                   <option id="usw2.pure.cloud">Americas (US West)</option>
                   <option id="cac1.pure.cloud">Americas (Canada)</option>
-                  <option id="mypurecloud.de">EMEA (Frankfurt))</option>
-                  <option id="eu-west-1" value="eu-west-1" selected>EMEA (Dublin)</option>
+                  <option id="mypurecloud.de">EMEA (Frankfurt)</option>
+                  <option id="mypurecloud.ie" value="eu-west-1" selected>EMEA (Dublin)</option>
                   <option id="euw2.pure.cloud">EMEA (London)</option>
                   <option id="uaps1.pure.cloud">Asia Pacific (Mumbai)</option>
                   <option id="apne2.pure.cloud">Asia Pacific (Seoul)</option>
@@ -181,7 +192,8 @@
             </div>
           </div>
         </div>
-      </div>
+
+      <div>
     </div>
   </body>
 
@@ -413,15 +425,26 @@
 
     const isLocalhost = () => "localhost" === window.location.host;
 
+    const setLoading = async (isLoading) => {
+          if(isLoading) {
+            $("#token-entered-columns").hide();
+          $("#spinner-saving").show();
+          }else 
+          {
+            $("#token-entered-columns").show();
+            $("#spinner-saving").hide();
+          }
+    }
     const handleSetConfiguration = async (config) => {
       //Validation:
       // if (!$("#src_client_id").val() || !$("#src_client_secret").val() || $("#src_region option:selected")[0].innerText === "") return alert("Source organization must be inputted before continuing");
       // if (!$("#dest_client_id").val() || !$("#dest_client_secret").val() || $("#dest_region option:selected")[0].innerText === "") return alert("Destination organization must be inputted before continuing");
       // if ($("#select-repository option:selected")[0].innerText === "") return alert("Repository must be selected");
-
+      await setLoading(true);
       await updateConfigurationItems();
       await updateGitSecrets();
       await saveDeploymentDetails();
+      await setLoading(false);
     };
 
     const updateConfigurationItems = async () => {
@@ -563,6 +586,7 @@
       githubToken = localStorage.getItem("github-token") ?? "";
       $("#github-personal-token").val(githubToken);
       $("#token-entered-columns").hide();
+      $("#spinner-saving").hide();
       $("#save-btn").hide();
       $("#manual-run-btn").hide();
 
