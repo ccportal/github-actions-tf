@@ -650,7 +650,7 @@
       const sha = await getSHA(".github/workflows/terraform.yml");
       const dump = jsyaml.dump(terraformYml, { noCompatMode: true });
       console.log("dump:", dump);
-      await pushToGithub(".github/workflows/terraform.yml", dump, "Updating Terraform Configuration", githubRepository.split("/")[1], githubRepository.split("/")[0], sha);
+      await pushToGithub(".github/workflows/terraform.yml", dump, githubActionName, githubRepository.split("/")[1], githubRepository.split("/")[0], sha);
     };
 
     const encrypt = async (value, publicKey) => {
