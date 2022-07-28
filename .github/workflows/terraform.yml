@@ -1,11 +1,7 @@
 name: Sync Organizations
-on:
-  # schedule:
-  #  - cron:  '*/10 * * * *'
-  # push:
-  #   branches:
-  #   - "master"
-  workflow_dispatch:
+'on':
+  schedule: '* * 0 * * *'
+  workflow_dispatch: ''
 permissions:
   contents: write
 jobs:
