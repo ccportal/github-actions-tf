@@ -36,7 +36,7 @@ jobs:
           path: source/export/genesyscloud.tf.json
   Destination:
     name: ${{github.job}}
-    needs: export
+    needs: Source
     runs-on: ubuntu-latest
     environment: ${{github.job}}
     defaults:
