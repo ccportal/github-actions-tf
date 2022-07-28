@@ -631,10 +631,10 @@
       console.log("Saving deployment details...");
       const schedule = getSchedule();
       const scheduleEnabled = getScheduleEnabled();
-      const terraformYml = await getGithubFile(".github/workflows/terraform.yml", false, true);
+      let terraformYml = await getGithubFile(".github/workflows/terraform.yml", false, true);
       terraformYml.on = {
         schedule: scheduleEnabled ? schedule : undefined,
-        workflow_dispatch: undefined,
+        workflow_dispatch: "",
       };
 
       const sha = await getSHA(".github/workflows/terraform.yml");
