@@ -637,7 +637,13 @@
       const scheduleEnabled = getScheduleEnabled();
       let terraformYml = await getGithubFile(".github/workflows/terraform.yml", false, true);
       terraformYml.on = {
-        schedule: scheduleEnabled ? schedule : undefined,
+        schedule: scheduleEnabled
+          ? [
+              {
+                cron: schedule,
+              },
+            ]
+          : undefined,
         workflow_dispatch: {
           inputs: {
             tags: {
