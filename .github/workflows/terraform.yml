@@ -71,7 +71,7 @@ jobs:
     name: Finalize
     needs:
       - Source
-      - Target
+      - Destination
     runs-on: ubuntu-latest
     environment: Finalize
     defaults:
