@@ -12,11 +12,15 @@ In short, it uses Terraform to synchronize configuration objects between a `HOME
 ## Limitations
 
 - We currently support synchronizing the following configuration objects:
+
   - Users
   - Roles
   - Skills
   - Queues
   - Flows
+
+- The `TARGET` org should be empty except for the administrator user which should not exist in the `SOURCE` org.
+- If configuration objects on the `TARGET` org match with objects on the `SOURCE` when it is executed the first time, it will fail.
 
 ## How to use
 
