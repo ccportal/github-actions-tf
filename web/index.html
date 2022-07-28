@@ -43,18 +43,22 @@
           <div class="card-body">
             <div class="input-group">
               <span class="input-group-text" id="basic-addon1">Github Personal Token</span>
-              <input id="github-personal-token" type="text" class="form-control" placeholder="enter a valid token" aria-label="Username" aria-describedby="basic-addon1" onchange="personalTokenOnChange()" />
-            </div>
+              <input id="github-personal-token" type="text" class="form-control" placeholder="enter a valid token" aria-label="Username" aria-describedby="basic-addon1" onchange="personalTokenOnChange()" />          
+            </div>            
             <div class="d-flex justify-content-end">
               <div class="form-check mt-1">
                 <input class="form-check-input" type="checkbox" id="remember-token" onchange="handleRememberCheck()" checked />
                 <label class="form-check-label" for="remember-token"> Remember the token </label>
-              </div>
-            </div>
+              </div>            
+            </div> 
+            <div id="spinnerLogin" class="spinner-border" role="status" hidden >
+                <span class="sr-only"></span>
+            </div>       
             <div class="d-flex justify-content-center">
               <button type="button" class="btn btn-primary mt-3" onclick="handleApplyToken()">Apply</button>
-              <button type="button" class="btn btn-default mt-3" onclick="handleClearToken()">Clear</button>
+              <button type="button" class="btn btn-default mt-3" onclick="handleClearToken()">Clear</button>              
             </div>
+         
           </div>
         </div>
       </div>
@@ -492,6 +496,7 @@
 
     const handleApplyToken = async () => {
       console.log("handleApplyToken()");
+      document.getElementById("spinnerLogin").hidden = false;
       if (githubToken?.length > 1) {
         if (rememberToken) {
           localStorage.setItem("github-token", githubToken);
@@ -511,6 +516,8 @@
         } catch (err) {
           console.log(err);
           alert("Invalid token");
+        } finally {
+          document.getElementById("spinnerLogin").hidden = true;
         }
         await log("Logged-In");
 
