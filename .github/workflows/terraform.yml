@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
     inputs:
       tags:
-        description: Manual workflow run
+        description: Sync Organizations
 permissions:
   contents: write
 jobs:
