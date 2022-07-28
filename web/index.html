@@ -640,14 +640,14 @@
         schedule: scheduleEnabled
           ? [
               {
-                cron: "* * 0 * * *",
+                cron: schedule,
               },
             ]
           : undefined,
         workflow_dispatch: {
           inputs: {
             tags: {
-              description: "Manual workflow run",
+              description: githubActionName,
             },
           },
         },
