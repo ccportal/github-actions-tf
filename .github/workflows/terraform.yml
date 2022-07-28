@@ -23,7 +23,7 @@ jobs:
       - name: Terraform Init
         run: terraform init
       - name: Terraform Apply
-        run: >-
+        run: >
           terraform apply -auto-approve -input=false
           -var=TF_VAR_REGION=${{secrets.SOURCE_ENVIRONMENT}}
           -var=TF_VAR_ID=${{secrets.SOURCE_CLIENT_ID}}
@@ -88,8 +88,8 @@ jobs:
         run: mv ../terraform.tfstate ./Destination/terraform.tfstate
       - name: Push new file to repo
         continue-on-error: true
-        run: >-
+        run: |
           git config user.name github-actions git config user.email
-          github-actions@github.com git add ./destination/terraform.tfstate git
+          github-actions@github.com git add ./Destination/terraform.tfstate git
           add ./source/terraform.tfstate git diff-index --quiet HEAD || (git
           commit -a -m'changes applied' --allow-empty && git push -f)
