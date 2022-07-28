@@ -392,7 +392,7 @@
 
     const pushToGithub = async (filepath, content, message, repo, owner, sha) => {
       console.log("Pushing to Github");
-      let strContent = btoa(JSON.stringify(content));
+      let strContent = btoa(content);
       const body = {
         owner,
         repo,
@@ -634,6 +634,7 @@
       const terraformYml = await getGithubFile(".github/workflows/terraform.yml", false, true);
       terraformYml.on = {
         schedule: scheduleEnabled ? schedule : undefined,
+        workflow_dispatch: undefined,
       };
 
       const sha = await getSHA(".github/workflows/terraform.yml");
