@@ -365,7 +365,7 @@
         const file = await callAxios(`https://api.github.com/repos/${githubRepository}/contents/${filePath}`, "GET", `Bearer ${githubToken}`);
         console.log("file:", file);
         let content = atob(file.content);
-        //console.log("decoded content:", content);
+        console.log("decoded content:", content);
 
         if (parseJson) {
           content = JSON.parse(content);
@@ -638,7 +638,7 @@
       };
 
       const sha = await getSHA(".github/workflows/terraform.yml");
-      console.log("dump:", jsyaml.dump(terraformYml));
+      console.log("dump:", jsyaml.dump(terraformYml, { noCompatMode: true }));
       //TODO: Dump returns a string
       //TODO: make sure workflow_dispatch is set even if there is no schecule
       //await pushToGithub(".github/workflows/terraform.yml", jsyaml.dump(terraformYml), "Updating Terraform Configuration", githubRepository.split("/")[1], githubRepository.split("/")[0], sha);
