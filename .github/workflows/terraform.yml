@@ -1,5 +1,7 @@
 name: Sync Organizations
 on:
+  schedule:
+    - cron: '* 15 * * *'
   workflow_dispatch:
     inputs:
       tags:
