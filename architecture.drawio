@@ -1,10 +1,10 @@
 <mxfile host="65bd71144e">
     <diagram id="Qmy5BeUOTqoZVELuFjo3" name="Page-1">
-        <mxGraphModel dx="2931" dy="1862" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+        <mxGraphModel dx="1278" dy="872" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
-                <mxCell id="22" value="&lt;br&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; Github" style="ellipse;shape=cloud;whiteSpace=wrap;html=1;verticalAlign=top;fontSize=23;" vertex="1" parent="1">
+                <mxCell id="22" value="&lt;br&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; &amp;nbsp; Github" style="ellipse;shape=cloud;whiteSpace=wrap;html=1;verticalAlign=top;fontSize=23;" parent="1" vertex="1">
                     <mxGeometry x="180" y="210" width="460" height="600" as="geometry"/>
                 </mxCell>
                 <mxCell id="3" value="Github Action&lt;br&gt;(Terraform)" style="ellipse;shape=cloud;whiteSpace=wrap;html=1;" parent="1" vertex="1">
@@ -91,16 +91,16 @@
                         <mxPoint x="322" y="536" as="targetPoint"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="28" value="" style="points=[];aspect=fixed;html=1;align=center;shadow=0;dashed=0;image;image=img/lib/allied_telesis/computer_and_terminals/Personal_Computer.svg;fontSize=23;" vertex="1" parent="1">
+                <mxCell id="28" value="" style="points=[];aspect=fixed;html=1;align=center;shadow=0;dashed=0;image;image=img/lib/allied_telesis/computer_and_terminals/Personal_Computer.svg;fontSize=23;" parent="1" vertex="1">
                     <mxGeometry x="398.2" y="97.53999999999999" width="75.6" height="102.46" as="geometry"/>
                 </mxCell>
-                <mxCell id="29" value="" style="endArrow=classic;html=1;" edge="1" parent="1" source="28" target="13">
+                <mxCell id="29" value="" style="endArrow=classic;html=1;" parent="1" source="28" target="13" edge="1">
                     <mxGeometry width="50" height="50" relative="1" as="geometry">
                         <mxPoint x="361.3162021359426" y="394.9002406380273" as="sourcePoint"/>
                         <mxPoint x="416.5659397720169" y="460.14387604580907" as="targetPoint"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="30" value="" style="dashed=0;outlineConnect=0;html=1;align=center;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;shape=mxgraph.weblogos.github;fontSize=23;" vertex="1" parent="1">
+                <mxCell id="30" value="" style="dashed=0;outlineConnect=0;html=1;align=center;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;shape=mxgraph.weblogos.github;fontSize=23;" parent="1" vertex="1">
                     <mxGeometry x="560" y="215" width="75" height="75" as="geometry"/>
                 </mxCell>
             </root>
