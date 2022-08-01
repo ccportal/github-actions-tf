@@ -1,10 +1,34 @@
 {
   "terraform_resources": [
-    { "id": "genesyscloud_routing_language", "displayName": "Language" },
-    { "id": "genesyscloud_routing_skill", "displayName": "Skills" },
-    { "id": "genesyscloud_user", "displayName": "Users" },
-    { "id": "genesyscloud_user_roles", "displayName": "User Roles" },
-    { "id": "genesyscloud_routing_queue", "displayName": "Queues" },
-    { "id": "genesyscloud_architect_datatable", "displayName": "Data Table" }
+    {
+      "id": "genesyscloud_routing_language",
+      "displayName": "Language",
+      "dependencies": []
+    },
+    {
+      "id": "genesyscloud_routing_skill",
+      "displayName": "Skills",
+      "dependencies": []
+    },
+    {
+      "id": "genesyscloud_user",
+      "displayName": "Users",
+      "dependencies": []
+    },
+    {
+      "id": "genesyscloud_user_roles",
+      "displayName": "User Roles",
+      "dependencies": ["genesyscloud_user"]
+    },
+    {
+      "id": "genesyscloud_routing_queue",
+      "displayName": "Queues",
+      "dependencies": ["genesyscloud_user"]
+    },
+    {
+      "id": "genesyscloud_architect_datatable",
+      "displayName": "Data Table",
+      "dependencies": []
+    }
   ]
 }

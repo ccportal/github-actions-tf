@@ -77,8 +77,8 @@
                 </div>
 
                 <div class="mt-3">Configuration Items</div>
-                <div id="terraform_resources"></div>
-
+                <!-- <div id="terraform_resources"></div> -->
+                <div data-role="controlgroup" id="terraform_resources"></div>
                 <div class="mt-3">Schedule</div>
                 <div class="form-check">
                   <input class="form-check-input" type="checkbox" id="cron-enabled" onchange="getScheduleEnabled()" />
@@ -455,8 +455,6 @@
       //Get the existing Configuration file:
       let JSONData = exportConfiguration;
       console.log("JSON Data:", JSONData, selectedResources);
-
-      await saveSelectedResources();
       let updatedJson = JSONData;
       updatedJson.resource.genesyscloud_tf_export.export.resource_types = selectedResources;
       console.log("Updated Data:", updatedJson);
@@ -634,33 +632,76 @@
       console.log("Loading Resources!!", selectedResources, data);
       for (var r = 0; r < data.terraform_resources.length; r++) {
         let resource = data.terraform_resources[r];
-        let isChecked = selectedResources.includes(resource.id);
-        console.log("Setting Resource", resource);
-        //Create new option
-        let mainDiv = $("<div>", { class: "form-check" });
-        let input = $("<input>", { class: "form-check-input", type: "checkbox", id: resource.id, checked: isChecked });
-        let label = $("<label>", { class: "form-check-label", for: resource.id, html: resource.displayName });
-        mainDiv.append(input);
-        mainDiv.append(label);
-        $("#terraform_resources").append(mainDiv);
-      }
-    };
+        console.log('Loading Resource', resource);
+        let isChecked = selectedResources.includes(resource.id) ? 'checked' : null;
 
-    const saveSelectedResources = async () => {
-      console.log("Saving Selected resources", availableResources, selectedResources);
-      let _selectedResources = [];
-
-      for (var r = 0; r < availableResources.terraform_resources.length; r++) {
-        let resource = availableResources.terraform_resources[r];
-        if (document.getElementById(resource.id).checked) {
-          if (!selectedResources.includes(resource.id)) selectedResources.push(resource.id);
-        } else {
-          if (selectedResources.includes(resource.id)) selectedResources.splice(resource.id);
+        //determine if it is disabled
+        let isDisabled;
+        if(isChecked === 'checked'){
+          let itemDependencyFor = availableResources.terraform_resources.filter(x => x.dependencies.includes(resource.id) && x.id);
+          console.log('Item dependency for', itemDependencyFor, resource.id)
+          if(itemDependencyFor.length > 0) isDisabled = 'disabled';
         }
+        
+       // let isDisabled = selectedResources.includes(resource.id) ? 'disabled' : null;
+        var checkbox = '<label><input type="checkbox" id="' + resource.id + '" ' + isChecked + ' ' + isDisabled + '>' + resource.displayName + '</label></br>';
+        $('#terraform_resources').append(checkbox);       
       }
-
-      console.log("Updated Selected Resources:", selectedResources);
     };
+    
+  $(document).on('change', '[type=checkbox]', function (e) {
+    // code here
+    let configId = e.target.id;
+    let isChecked = e.target.checked;
+    let resourceList = availableResources.terraform_resources;
+    let changedResource  = resourceList.find(x=>x.id === configId);
+
+    //Add or remove the resource from the selected resources
+    if(isChecked){
+      console.log('Item is checked so adding to dependencies', changedResource.dependencies, selectedResources);
+      selectedResources.push(configId) 
+
+      //handle dependencies
+      for (var r = 0; r < changedResource.dependencies.length; r++) {
+        console.log(selectedResources.find(x=> changedResource.dependencies[r]))
+        console.log('Checking Selected Resource for Dependency', selectedResources, changedResource.dependencies[r], selectedResources.includes('genesyscloud_user'))
+        if (!selectedResources.includes(changedResource.dependencies[r])) {
+          selectedResources.push(changedResource.dependencies[r]);
+        }
+          $(`#${changedResource.dependencies[r]}`).prop('checked', true);
+          $(`#${changedResource.dependencies[r]}`).prop('disabled', true);
+        
+      }
+    }else{ 
+      
+      console.log('Item is not checked', selectedResources.indexOf(configId));
+
+      selectedResources.splice(selectedResources.indexOf(configId), 1);
+
+     //Handle Dependencies
+      for (var r = 0; r < changedResource.dependencies.length; r++) {
+          //check no make sure the dependency is not needed for anything else
+          let otherDependency = resourceList.filter(x=>x.dependencies.includes(changedResource.dependencies[r]) && x.id !== configId);
+          console.log('Other Dependencies', otherDependency, selectedResources);
+          var isDependencyValid = false;
+          for (var d = 0; d < otherDependency.length; d++) {
+            if(selectedResources.includes(otherDependency[d].id))isDependencyValid = true;
+          }
+              
+            if(!isDependencyValid)
+            $(`#${changedResource.dependencies[r]}`).prop('disabled', false);
+        
+      }
+    }
+
+    console.log('Selected Resources Updated', selectedResources);
+  }); 
+
+    
+    const onSelectedItemChanged = async (e) => {
+      console.log('Selected Item Changed'. e);
+    }
+
 
     const saveDeploymentDetails = async () => {
       console.log("Saving deployment details...");
