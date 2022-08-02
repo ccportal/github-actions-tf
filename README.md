@@ -1,4 +1,4 @@
-# Business Continiuity for Genesys Cloud
+# Business Continuity for Genesys Cloud
 
 This repository contains a set of Github actions and a web frontend to democase Business Continuity (NOT Disaster Recovery) for Genesys Cloud.
 
