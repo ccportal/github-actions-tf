@@ -24,7 +24,7 @@
     "genesyscloud_tf_export": {
       "export": {
         "directory": "./export",
-        "resource_types": [],
+        "resource_types": ["genesyscloud_user", "genesyscloud_routing_queue"],
         "include_state_file": false
       }
     }
