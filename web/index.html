@@ -629,10 +629,15 @@
 
     const LoadResources = async (data) => {
       this.availableResources = data;
-      console.log("Loading Resources!!", selectedResources, data);
-      for (var r = 0; r < data.terraform_resources.length; r++) {
-        let resource = data.terraform_resources[r];
-        console.log('Loading Resource', resource);
+
+      let orderedResources = data.terraform_resources.sort(function (a, b) {
+        var textA = a.displayName.toUpperCase();
+        var textB = b.displayName.toUpperCase();
+        return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
+      });
+      console.log("Loading Resources!!", selectedResources, data, orderedResources);
+      for (var r = 0; r < orderedResources.length; r++) {
+        let resource = orderedResources[r];
         let isChecked = selectedResources.includes(resource.id) ? 'checked' : null;
 
         //determine if it is disabled
@@ -644,7 +649,7 @@
         }
         
        // let isDisabled = selectedResources.includes(resource.id) ? 'disabled' : null;
-        var checkbox = '<label><input type="checkbox" id="' + resource.id + '" ' + isChecked + ' ' + isDisabled + '>' + resource.displayName + '</label></br>';
+        var checkbox = '<label><input type="checkbox" id="' + resource.id + '" ' + isChecked + ' ' + isDisabled + '> ' + resource.displayName + ' </label></br>';
         $('#terraform_resources').append(checkbox);       
       }
     };

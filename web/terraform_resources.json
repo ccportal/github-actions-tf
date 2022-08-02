@@ -1,34 +1,89 @@
 {
   "terraform_resources": [
     {
-      "id": "genesyscloud_routing_language",
-      "displayName": "Language",
-      "dependencies": []
-    },
-    {
-      "id": "genesyscloud_routing_skill",
-      "displayName": "Skills",
+      "id": "genesyscloud_auth_division",
+      "displayName": "Authorization Division",
       "dependencies": []
     },
     {
       "id": "genesyscloud_user",
       "displayName": "Users",
+      "dependencies": [
+        "genesyscloud_auth_division",
+        "genesyscloud_routing_skill",
+        "genesyscloud_routing_language",
+        "genesyscloud_location"
+      ]
+    },
+    {
+      "id": "genesyscloud_routing_skill",
+      "displayName": "Routing Skill",
+      "dependencies": []
+    },
+    {
+      "id": "genesyscloud_routing_language",
+      "displayName": "Routing Language",
+      "dependencies": []
+    },
+    {
+      "id": "genesyscloud_location",
+      "displayName": "Location",
+      "dependencies": []
+    },
+    {
+      "id": "genesyscloud_routing_queue",
+      "displayName": "Routing Queue",
+      "dependencies": [
+        "genesyscloud_auth_division",
+        "data.genesyscloud_flow",
+        "genesyscloud_architect_user_prompt",
+        "genesyscloud_routing_email_domain",
+        "genesyscloud_routing_email_route",
+        "genesyscloud_routing_skill",
+        "genesyscloud_script",
+        "genesyscloud_routing_wrapupcode",
+        "genesyscloud_user"
+      ]
+    },
+    {
+      "id": "genesyscloud_flow",
+      "displayName": "Flows",
+      "dependencies": []
+    },
+    {
+      "id": "genesyscloud_architect_user_prompt",
+      "displayName": "User Audio Prompt",
+      "dependencies": []
+    },
+    {
+      "id": "genesyscloud_routing_email_domain",
+      "displayName": "Routing Email Domain",
+      "dependencies": []
+    },
+    {
+      "id": "genesyscloud_routing_email_route",
+      "displayName": "Routing Email Domain Route",
+      "dependencies": [
+        "genesyscloud_routing_queue",
+        "genesyscloud_routing_skill",
+        "genesyscloud_routing_language",
+        "genesyscloud_flow"
+      ]
+    },
+    {
+      "id": "genesyscloud_script",
+      "displayName": "Scripts",
+      "dependencies": []
+    },
+    {
+      "id": "genesyscloud_routing_wrapupcode",
+      "displayName": "Routing Wrapup Code",
       "dependencies": []
     },
     {
       "id": "genesyscloud_user_roles",
       "displayName": "User Roles",
       "dependencies": ["genesyscloud_user"]
-    },
-    {
-      "id": "genesyscloud_routing_queue",
-      "displayName": "Queues",
-      "dependencies": ["genesyscloud_user"]
-    },
-    {
-      "id": "genesyscloud_architect_datatable",
-      "displayName": "Data Table",
-      "dependencies": []
     }
   ]
 }
