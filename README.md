@@ -1,5 +1,7 @@
 # Business Continuity for Genesys Cloud
 
+> This code is provided as-is and should not be used in a production environment. For production-ready applications, please get in touch with the Genesys Professional Services department.
+
 This repository contains a set of Github actions and a web frontend to democase Business Continuity (NOT Disaster Recovery) for Genesys Cloud.
 
 In short, it uses Terraform to synchronize configuration objects between a `HOME` Genesys Cloud organization and a `TARGET` Genesys Cloud organization.
