@@ -35,7 +35,6 @@
       "displayName": "Routing Queue",
       "dependencies": [
         "genesyscloud_auth_division",
-        "data.genesyscloud_flow",
         "genesyscloud_architect_user_prompt",
         "genesyscloud_routing_email_domain",
         "genesyscloud_routing_email_route",
@@ -44,11 +43,6 @@
         "genesyscloud_routing_wrapupcode",
         "genesyscloud_user"
       ]
-    },
-    {
-      "id": "genesyscloud_flow",
-      "displayName": "Flows",
-      "dependencies": []
     },
     {
       "id": "genesyscloud_architect_user_prompt",
@@ -66,8 +60,7 @@
       "dependencies": [
         "genesyscloud_routing_queue",
         "genesyscloud_routing_skill",
-        "genesyscloud_routing_language",
-        "genesyscloud_flow"
+        "genesyscloud_routing_language"
       ]
     },
     {
