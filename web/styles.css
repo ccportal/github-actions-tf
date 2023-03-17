@@ -1,12 +1,16 @@
 body {
-  font-family: "Open Sans", "Arial", "Helvetica Neue", sans-serif;
+  font-family: 'Open Sans', 'Arial', 'Helvetica Neue', sans-serif;
   font-weight: 400;
   font-size: 16px;
-  background: -webkit-gradient(linear, left bottom, right top, from(#08aeea), to(#b721ff));
+  /* background: -webkit-gradient(linear, left bottom, right top, from(#08aeea), to(#b721ff));
   background: -webkit-linear-gradient(bottom left, #08aeea 0%, #b721ff 100%);
   background: -moz-linear-gradient(bottom left, #08aeea 0%, #b721ff 100%);
   background: -o-linear-gradient(bottom left, #08aeea 0%, #b721ff 100%);
-  background: linear-gradient(to top right, #08aeea 0%, #b721ff 100%);
+  background: linear-gradient(to top right, #08aeea 0%, #b721ff 100%); */
+}
+
+.bg-dark {
+  background-color: #23395d !important;
 }
 
 #spinnerHistory {
@@ -51,40 +55,6 @@ body {
    #CARD
    ========================================================================== */
 
-.card {
-  background: #fff;
-  -webkit-border-radius: 10px !important;
-  -moz-border-radius: 10px !important;
-  border-radius: 10px !important;
-  -webkit-box-shadow: 0px 8px 20px 0px rgba(0, 0, 0, 0.15);
-  -moz-box-shadow: 0px 8px 20px 0px rgba(0, 0, 0, 0.15);
-  box-shadow: 0px 8px 20px 0px rgba(0, 0, 0, 0.15);
-  border: none;
-}
-
-.card-header {
-  padding: 10px 0;
-  background: #1a1a1a;
-  -webkit-border-top-left-radius: 10px !important;
-  -moz-border-radius-topleft: 10px !important;
-  border-top-left-radius: 10px !important;
-  -webkit-border-top-right-radius: 10px !important;
-  -moz-border-radius-topright: 10px !important;
-  border-top-right-radius: 10px !important;
-}
-
-.card-body {
-  padding: 22px 25px;
-  padding-bottom: 23px;
-  background-color: #f5f5ff !important;
-  -webkit-border-bottom-left-radius: 10px !important;
-  -moz-border-radius-bottomleft: 10px !important;
-  border-bottom-left-radius: 10px !important;
-  -webkit-border-bottom-right-radius: 10px !important;
-  -moz-border-radius-bottomright: 10px !important;
-  border-bottom-right-radius: 10px !important;
-}
-
 @media (max-width: 767px) {
   .card-5 .card-body {
     padding: 40px 30px;
@@ -93,7 +63,36 @@ body {
 }
 
 .card-header {
-  background-color: black !important;
+  background-color: #23395d !important;
   color: white !important;
   text-align: center !important;
+}
+
+.corpo-warm-red {
+  color: #ff4f1f !important;
+}
+
+.corpo-teal {
+  color: #00ae9e !important;
+}
+
+.corpo-aqua {
+  color: #3b90aa !important;
+}
+
+.white {
+  color: #ffffff !important;
+}
+
+@font-face {
+  font-family: springwood;
+  src: url('./springwood_brush-webfont.woff');
+}
+
+.corpo-font {
+  font-family: springwood;
+}
+
+.bigger {
+  font-size: 1.2em !important;
 }
