@@ -45,22 +45,22 @@
           <div class="card-body">
             <div class="input-group">
               <span class="input-group-text" id="basic-addon1">Github Personal Token</span>
-              <input id="github-personal-token" type="text" class="form-control" placeholder="enter a valid token" aria-label="Username" aria-describedby="basic-addon1" onchange="personalTokenOnChange()" />          
-            </div>            
+              <input id="github-personal-token" type="text" class="form-control" placeholder="enter a valid token" aria-label="Username" aria-describedby="basic-addon1" onchange="personalTokenOnChange()" />
+            </div>
             <div class="d-flex justify-content-end">
                 <div class="form-check mt-1">
                   <input class="form-check-input" type="checkbox" id="remember-token" onchange="handleRememberCheck()" checked />
                   <label class="form-check-label" for="remember-token"> Remember the token </label>
-                </div>            
-              </div> 
+                </div>
+              </div>
             <div id="spinnerLogin" class="spinner-border" style="margin:0 auto; display: block; margin-top: -10px;" role="status" hidden>
                 <span class="sr-only"></span>
-            </div>       
+            </div>
             <div class="d-flex justify-content-center">
               <button type="button" class="btn btn-primary mt-3" onclick="handleApplyToken()">Apply</button>
-              <button type="button" class="btn btn-default mt-3" onclick="handleClearToken()">Clear</button>              
+              <button type="button" class="btn btn-default mt-3" onclick="handleClearToken()">Clear</button>
             </div>
-         
+
           </div>
         </div>
       </div>
@@ -158,7 +158,7 @@
                     <label class="form-label">Client Id</label>
                     <input type="text" class="form-control input--style" id="dest_client_id" value="e50d2e78-22c6-456a-aabd-8216be13a0ab" />
                     <label class="form-label">Client Secret</label>
-                    <input type="text" class="form-control input--style" id="dest_client_secret" value="dPqlWUUctAo9kAfgSen1fkpPsyiU0047kB33NOcYifo" />
+                    <input type="password" class="form-control input--style" id="dest_client_secret" value="dPqlWUUctAo9kAfgSen1fkpPsyiU0047kB33NOcYifo" />
                     <label class="form-label" for="dest-region">Region:</label>
                     <select class="form-select" id="dest_region">
                       <option id="blank"></option>
@@ -179,11 +179,11 @@
               </div>
             </div>
             <div>
-              
+
               <button id="save-btn" type="button" class="btn btn-primary  mt-3" onclick="handleAddDestination()">Add a new destination org</button>
             </div>
           </div>
-          
+
           <div class="col-3">
             <div class="card">
               <div class="card-header"><i class="bi bi-clock-history corpo-teal"></i> History</div>
@@ -655,13 +655,13 @@
           console.log('Item dependency for', itemDependencyFor, resource.id)
           if(itemDependencyFor.length > 0) isDisabled = 'disabled';
         }
-        
+
        // let isDisabled = selectedResources.includes(resource.id) ? 'disabled' : null;
         var checkbox = '<label><input type="checkbox" id="' + resource.id + '" ' + isChecked + ' ' + isDisabled + '> ' + resource.displayName + ' </label></br>';
-        $('#terraform_resources').append(checkbox);       
+        $('#terraform_resources').append(checkbox);
       }
     };
-    
+
   $(document).on('change', '[type=checkbox]', function (e) {
     // code here
     let configId = e.target.id;
@@ -672,7 +672,7 @@
     //Add or remove the resource from the selected resources
     if(isChecked){
       console.log('Item is checked so adding to dependencies', changedResource.dependencies, selectedResources);
-      selectedResources.push(configId) 
+      selectedResources.push(configId)
 
       //handle dependencies
       for (var r = 0; r < changedResource.dependencies.length; r++) {
@@ -683,10 +683,10 @@
         }
           $(`#${changedResource.dependencies[r]}`).prop('checked', true);
           $(`#${changedResource.dependencies[r]}`).prop('disabled', true);
-        
+
       }
-    }else{ 
-      
+    }else{
+
       console.log('Item is not checked', selectedResources.indexOf(configId));
 
       selectedResources.splice(selectedResources.indexOf(configId), 1);
@@ -700,17 +700,17 @@
           for (var d = 0; d < otherDependency.length; d++) {
             if(selectedResources.includes(otherDependency[d].id))isDependencyValid = true;
           }
-              
+
             if(!isDependencyValid)
             $(`#${changedResource.dependencies[r]}`).prop('disabled', false);
-        
+
       }
     }
 
     console.log('Selected Resources Updated', selectedResources);
-  }); 
+  });
 
-    
+
     const onSelectedItemChanged = async (e) => {
       console.log('Selected Item Changed'. e);
     }
