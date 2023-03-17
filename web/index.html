@@ -150,34 +150,40 @@
                 </select>
               </div>
             </div>
-
-            <div class="card mt-4">
-              <div class="card-header"><i class="bi bi-box-arrow-in-down corpo-teal"></i> Destination Org #1</div>
-              <div class="card-body">
-                <div class="input-group-desc">
-                  <label class="form-label">Client Id</label>
-                  <input type="text" class="form-control input--style" id="dest_client_id" value="e50d2e78-22c6-456a-aabd-8216be13a0ab" />
-                  <label class="form-label">Client Secret</label>
-                  <input type="text" class="form-control input--style" id="dest_client_secret" value="dPqlWUUctAo9kAfgSen1fkpPsyiU0047kB33NOcYifo" />
-                  <label class="form-label" for="dest-region">Region:</label>
-                  <select class="form-select" id="dest_region">
-                    <option id="blank"></option>
-                    <option id="mypurecloud.com" value="us-east-1">Americas (US East)</option>
-                    <option id="use2.us-gov-pure.cloud" value="us-east-2">Americas (US East 2)</option>
-                    <option id="usw2.pure.cloud" value="us-west-2">Americas (US West)</option>
-                    <option id="cac1.pure.cloud" value="ca-central-1">Americas (Canada)</option>
-                    <option id="mypurecloud.de" value="eu-central-1" selected>EMEA (Frankfurt)</option>
-                    <option id="mypurecloud.ie" value="eu-west-1">EMEA (Dublin)</option>
-                    <option id="euw2.pure.cloud" value="eu-west-2">EMEA (London)</option>
-                    <option id="uaps1.pure.cloud" value="ap-south-1">Asia Pacific (Mumbai)</option>
-                    <option id="apne2.pure.cloud" value="ap-northeast-2">Asia Pacific (Seoul)</option>
-                    <option id="mypurecloud.com.au" value="ap-southeast-2">Asia Pacific (Sydney)</option>
-                    <option id="mypurecloud.jp" value="ap-northeast-1">Asia Pacific (Tokyo)</option>
-                  </select>
+            <div id="destination-list-container">
+              <div class="card mt-4">
+                <div class="card-header"><i class="bi bi-box-arrow-in-down corpo-teal"></i> Destination Org #1</div>
+                <div class="card-body">
+                  <div class="input-group-desc">
+                    <label class="form-label">Client Id</label>
+                    <input type="text" class="form-control input--style" id="dest_client_id" value="e50d2e78-22c6-456a-aabd-8216be13a0ab" />
+                    <label class="form-label">Client Secret</label>
+                    <input type="text" class="form-control input--style" id="dest_client_secret" value="dPqlWUUctAo9kAfgSen1fkpPsyiU0047kB33NOcYifo" />
+                    <label class="form-label" for="dest-region">Region:</label>
+                    <select class="form-select" id="dest_region">
+                      <option id="blank"></option>
+                      <option id="mypurecloud.com" value="us-east-1">Americas (US East)</option>
+                      <option id="use2.us-gov-pure.cloud" value="us-east-2">Americas (US East 2)</option>
+                      <option id="usw2.pure.cloud" value="us-west-2">Americas (US West)</option>
+                      <option id="cac1.pure.cloud" value="ca-central-1">Americas (Canada)</option>
+                      <option id="mypurecloud.de" value="eu-central-1" selected>EMEA (Frankfurt)</option>
+                      <option id="mypurecloud.ie" value="eu-west-1">EMEA (Dublin)</option>
+                      <option id="euw2.pure.cloud" value="eu-west-2">EMEA (London)</option>
+                      <option id="uaps1.pure.cloud" value="ap-south-1">Asia Pacific (Mumbai)</option>
+                      <option id="apne2.pure.cloud" value="ap-northeast-2">Asia Pacific (Seoul)</option>
+                      <option id="mypurecloud.com.au" value="ap-southeast-2">Asia Pacific (Sydney)</option>
+                      <option id="mypurecloud.jp" value="ap-northeast-1">Asia Pacific (Tokyo)</option>
+                    </select>
+                  </div>
                 </div>
               </div>
             </div>
+            <div>
+              
+              <button id="save-btn" type="button" class="btn btn-primary  mt-3" onclick="handleAddDestination()">Add a new destination org</button>
+            </div>
           </div>
+          
           <div class="col-3">
             <div class="card">
               <div class="card-header"><i class="bi bi-clock-history corpo-teal"></i> History</div>
@@ -749,6 +755,39 @@
 
       return encrypted;
     };
+
+    var dest = 1;
+    const handleAddDestination = ()=>{
+      console.log('handleAddDestination()');
+      dest ++;
+      $("#destination-list-container").append(`
+              <div class="card mt-4">
+                <div class="card-header"><i class="bi bi-box-arrow-in-down corpo-teal"></i> Destination Org #${dest}</div>
+                <div class="card-body">
+                  <div class="input-group-desc">
+                    <label class="form-label">Client Id</label>
+                    <input type="text" class="form-control input--style" id="dest_client_id_${dest}" value="" />
+                    <label class="form-label">Client Secret</label>
+                    <input type="text" class="form-control input--style" id="dest_client_secret_${dest}" value="" />
+                    <label class="form-label" for="dest-region">Region:</label>
+                    <select class="form-select" id="dest_region_${dest}">
+                      <option id="blank"></option>
+                      <option id="mypurecloud.com" value="us-east-1">Americas (US East)</option>
+                      <option id="use2.us-gov-pure.cloud" value="us-east-2">Americas (US East 2)</option>
+                      <option id="usw2.pure.cloud" value="us-west-2">Americas (US West)</option>
+                      <option id="cac1.pure.cloud" value="ca-central-1">Americas (Canada)</option>
+                      <option id="mypurecloud.de" value="eu-central-1">EMEA (Frankfurt)</option>
+                      <option id="mypurecloud.ie" value="eu-west-1">EMEA (Dublin)</option>
+                      <option id="euw2.pure.cloud" value="eu-west-2">EMEA (London)</option>
+                      <option id="uaps1.pure.cloud" value="ap-south-1">Asia Pacific (Mumbai)</option>
+                      <option id="apne2.pure.cloud" value="ap-northeast-2">Asia Pacific (Seoul)</option>
+                      <option id="mypurecloud.com.au" value="ap-southeast-2">Asia Pacific (Sydney)</option>
+                      <option id="mypurecloud.jp" value="ap-northeast-1">Asia Pacific (Tokyo)</option>
+                    </select>
+                  </div>
+                </div>
+              </div>`);
+    }
 
     window.sodium = {
       onload: function (_sodium) {
