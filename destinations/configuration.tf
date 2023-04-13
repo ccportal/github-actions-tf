@@ -16,6 +16,7 @@ variable "TF_VAR_REGION" {
 
 
 provider "genesyscloud" {
+  version            = "~> 1.14.0"
   oauthclient_id     = var.TF_VAR_ID
   oauthclient_secret = var.TF_VAR_SECRET
   aws_region         = var.TF_VAR_REGION
