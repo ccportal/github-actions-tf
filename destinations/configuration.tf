@@ -1,5 +1,5 @@
 terraform {
-  required_version = "~> 1.2.1"
+  required_version = "~> 1.4.2"
 }
 
 variable "TF_VAR_ID" {
@@ -16,7 +16,7 @@ variable "TF_VAR_REGION" {
 
 
 provider "genesyscloud" {
-  oauthclient_id = var.TF_VAR_ID
+  oauthclient_id     = var.TF_VAR_ID
   oauthclient_secret = var.TF_VAR_SECRET
-  aws_region = var.TF_VAR_REGION
+  aws_region         = var.TF_VAR_REGION
 }
