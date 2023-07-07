@@ -1,6 +1,6 @@
 {
   "terraform": {
-    "required_version": "~> 1.2.1",
+    "required_version": "~> 1.5.2",
     "required_providers": {
       "genesyscloud": {
         "source": "mypurecloud/genesyscloud",
@@ -15,11 +15,7 @@
       "aws_region": "${var.TF_VAR_REGION}"
     }
   },
-  "variable": [
-    { "TF_VAR_ID": { "type": "string" } },
-    { "TF_VAR_SECRET": { "type": "string" } },
-    { "TF_VAR_REGION": { "type": "string" } }
-  ],
+  "variable": [{ "TF_VAR_ID": { "type": "string" } }, { "TF_VAR_SECRET": { "type": "string" } }, { "TF_VAR_REGION": { "type": "string" } }],
   "resource": {
     "genesyscloud_tf_export": {
       "export": {
